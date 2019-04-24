@@ -18,6 +18,10 @@ public class Card {
         this.MP = MP;
     }
 
+    public void addMP(int MP) {
+        this.MP += MP;
+    }
+
     public void setNumberOfPlayer(int numberOfPlayer) {
         this.numberOfPlayer = numberOfPlayer;
     }

@@ -1,9 +1,30 @@
 public class Minion extends Card {
 
-    public Minion(String name, int cost, int MP) {
+    private int HP;
+    private int AP;
+    private int attackRange;
+    private String clas;
+    private boolean canCounterAttack;
+
+    public Minion(String name, String clas, int cost, int MP, int HP, int AP, int attackRange) {
         super(name, cost, MP);
+        this.clas = clas;
+        this.HP = HP;
+        this.AP = AP;
+        this.attackRange = attackRange;
+        this.canCounterAttack = true;
     }
 
+    public void addHP(int HP) {
+        this.HP += HP;
+    }
 
+    public void addAP(int AP) {
+        this.AP += AP;
+    }
+
+    public void setCanCounterAttack(boolean canCounterAttack) {
+        this.canCounterAttack = canCounterAttack;
+    }
 
 }
