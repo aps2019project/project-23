@@ -20,14 +20,38 @@ public class Delete extends Buff {
 
     public void effectBuffsOnCard(Card card, int numberOfPlayer) {
         if (card.numberOfPlayer == numberOfPlayer) {
-            for (int i = 0 ; i < card.buffs.size() ; i ++ ) {
-                if (!card.buffs.get(i).positive && card.buffs.get(i).mainBuff && card.buffs.get(i).posOrNeg)
-                    card.buffs.remove(i);
+            for (int i = 0; i < card.buffs.size(); i++) {
+                if (!card.buffs.get(i).positive && card.buffs.get(i).mainBuff && card.buffs.get(i).posOrNeg) {
+                    if (card.buffs.get(i).continuous)
+                        card.buffs.get(i).setOn(false);
+                    else {
+                        if (card.buffs.get(i) instanceof Weakness) {
+                            if (((Weakness) card.buffs.get(i)).getAddAP() != 0) {
+                                if (card instanceof Hero) {
+                                    ((Hero) card).addAP(-((Weakness) card.buffs.get(i)).getTotalOfAdding());
+                                } else if (card instanceof Minion) {
+                                    ((Minion) card).addAP(-((Weakness) card.buffs.get(i)).getTotalOfAdding());
+                                }
+                            } else if (((Weakness) card.buffs.get(i)).getAddHealth() != 0) {
+                                if (card instanceof Hero) {
+                                    ((Hero) card).addHP(-((Weakness) card.buffs.get(i)).getTotalOfAdding());
+                                } else if (card instanceof Minion) {
+                                    ((Minion) card).addHP(-((Weakness) card.buffs.get(i)).getTotalOfAdding());
+                                }
+                            }
+                        }
+                        card.buffs.remove(i);
+                    }
+                }
             }
         } else {
-            for (int i = 0 ; i < card.buffs.size() ; i ++ ) {
-                if (card.buffs.get(i).positive && card.buffs.get(i).mainBuff && card.buffs.get(i).posOrNeg)
-                    card.buffs.remove(i);
+            for (int i = 0; i < card.buffs.size(); i++) {
+                if (card.buffs.get(i).positive && card.buffs.get(i).mainBuff && card.buffs.get(i).posOrNeg) {
+                    if (card.buffs.get(i).continuous)
+                        card.buffs.get(i).setOn(false);
+                    else
+                        card.buffs.remove(i);
+                }
             }
         }
     }

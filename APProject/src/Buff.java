@@ -9,6 +9,7 @@ abstract class Buff {
     protected boolean positive;
     protected boolean posOrNeg;
     protected boolean mainBuff;
+    protected boolean isOn;
 
     public boolean isPositive() {
         return positive;
@@ -40,10 +41,17 @@ abstract class Buff {
         this.continuous = continuous;
         this.turn = turn;
         this.allTurnEffect = allTurnEffect;
+        this.isOn = true;
+    }
+
+    public void setOn(boolean on) {
+        isOn = on;
     }
 
     public abstract Buff copyBuff();
+
     public abstract void giveBuffsToCard(ArrayList<Integer[]> cellEffect, int numberOfPlayer);
-    public abstract void effectBuffsOnCard(Card card , int numberOfPlayer);
+
+    public abstract void effectBuffsOnCard(Card card, int numberOfPlayer);
 
 }

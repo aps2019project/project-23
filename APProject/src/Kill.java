@@ -4,6 +4,7 @@ public class Kill extends Buff {
 
     public Kill(){
         super(false,false,false,false,1);
+        posOrNeg = false;
     }
 
     public Buff copyBuff(){
