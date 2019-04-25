@@ -23,13 +23,24 @@ public class Poison extends Buff {
     }
 
     public void giveBuffsToCard(ArrayList<Integer[]> cellEffect, int numberOfPlayer) {
-        for (int i = 0; i < cellEffect.size(); i++) {
-            Main.getCardsCell()[cellEffect.get(i)[0]][cellEffect.get(i)[1]].addBuff(this.copyBuff());
-            this.effectBuffsOnCard(Main.getCardsCell()[cellEffect.get(i)[0]][cellEffect.get(i)[1]], numberOfPlayer);
+        if (!isCell) {
+            for (int i = 0; i < cellEffect.size(); i++) {
+                Main.getCardsCell()[cellEffect.get(i)[0]][cellEffect.get(i)[1]].addBuff(this.copyBuff());
+                this.effectBuffsOnCard(Main.getCardsCell()[cellEffect.get(i)[0]][cellEffect.get(i)[1]], numberOfPlayer);
+            }
+        } else {
+            for (int i = 0; i < cellEffect.size(); i++) {
+                Main.getBuffCell()[cellEffect.get(i)[0]][cellEffect.get(i)[1]] = this.copyBuff();
+            }
         }
     }
 
     public void effectBuffsOnCard(Card card, int numberOfPlayer) {
+        if (card instanceof Hero) {
+            ((Hero) card).addHP(addHealth);
+        } else if (card instanceof Minion) {
+            ((Minion) card).addHP(addHealth);
+        }
     }
 
 }

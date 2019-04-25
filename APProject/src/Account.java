@@ -60,6 +60,19 @@ public class Account {
         System.out.println("5. help");
     }
 
+    public Account copyOfAccount() {
+        Account account = new Account(username, password);
+        account.budget = this.budget;
+        account.counterOfWin = this.counterOfWin;
+
+        return account;
+    }
+
+    public void saveAccount(){
+        MainMenu.addAccount(copyOfAccount());
+        MainMenu.getAccounts().remove(MainMenu.indexOfAccount(username));
+    }
+
     public void menu() {
         String command;
         Pattern enterPat = Pattern.compile("^enter \\[(?<entry>\\p{all}+)]$");
@@ -75,7 +88,7 @@ public class Account {
             } else if (command.toLowerCase().matches("logout"))
                 return;
             else if (command.toLowerCase().matches("save")) {
-
+                saveAccount();
             }
             command = command.toLowerCase();
             matcher = enterPat.matcher(command);

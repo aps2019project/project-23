@@ -5,6 +5,7 @@ public class Main {
 
     private static Scanner scanner;
     private static Card[][] cardsCell = new Card[9][5];
+    private static Buff[][] buffCell = new Buff[9][5];
 
     public static void setNullCardsCell(Card[][] cardsCell) {
         for (int i = 0; i < 9; i++) {
@@ -16,6 +17,10 @@ public class Main {
 
     public static Card[][] getCardsCell() {
         return cardsCell;
+    }
+
+    public static Buff[][] getBuffCell() {
+        return buffCell;
     }
 
     static {

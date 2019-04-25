@@ -84,7 +84,7 @@ public class MainMenu {
         for (Account account : accounts) {
             if (account.getUsername().matches(username)) {
                 if (account.getPassword().matches(password)) {
-                    account.menu();
+                    account.copyOfAccount().menu();
                 } else {
                     System.out.println("Invalid password");
                     return;
@@ -94,6 +94,7 @@ public class MainMenu {
     }
 
     public static void menu() {
+        loadAccounts();
         Pattern createAccountPat = Pattern.compile("^create account \\[(?<username>\\p{all}+)]$");
         Pattern loginPat = Pattern.compile("^login \\[?<username>\\p{all}+]$");
         Matcher matcher;

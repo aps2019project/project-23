@@ -36,9 +36,30 @@ public class Weakness extends Buff {
     }
 
     public void giveBuffsToCard(ArrayList<Integer[]> cellEffect, int numberOfPlayer) {
+        for (int i = 0; i < cellEffect.size(); i++) {
+            Main.getCardsCell()[cellEffect.get(i)[0]][cellEffect.get(i)[1]].addBuff(this.copyBuff());
+            this.effectBuffsOnCard(Main.getCardsCell()[cellEffect.get(i)[0]][cellEffect.get(i)[1]], numberOfPlayer);
+        }
     }
 
     public void effectBuffsOnCard(Card card, int numberOfPlayer) {
+        if (addAP != 0) {
+            if (card instanceof Minion) {
+                ((Minion) card).addAP(addAP);
+                addTotalOfAdding(addAP);
+            } else if (card instanceof Hero) {
+                ((Hero) card).addAP(addAP);
+                addTotalOfAdding(addAP);
+            }
+        } else if (addHealth != 0) {
+            if (card instanceof Minion) {
+                ((Minion) card).addHP(addHealth);
+                addTotalOfAdding(addHealth);
+            } else if (card instanceof Hero) {
+                ((Hero) card).addHP(addHealth);
+                addTotalOfAdding(addHealth);
+            }
+        }
     }
 
 }
