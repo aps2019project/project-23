@@ -28,8 +28,9 @@ public class Spell extends Card {
     }
 
     public void setNullCellEffect() {
-        for (int i = 0; i < cellEffect.size(); i++)
+        for (int i = 0; i < cellEffect.size(); i++) {
             cellEffect.remove(0);
+        }
     }
 
     public boolean setAroundfriendlyMinion(String[] targetCommunitys, int x, int y) {
