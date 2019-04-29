@@ -12,8 +12,9 @@ public class Minion extends Card {
     private ArrayList<Buff> spechialBuff = new ArrayList<Buff>();
     private ArrayList<Integer[]> cellEffect = new ArrayList<Integer[]>();
     private String targetCommunity;
+    private String specialPower;
 
-    public Minion(String name, String clas, int cost, int MP, int HP, int AP, int attackRange, ArrayList<Buff> spechialBuff, String timeOfSpechialPower, String targetCommunity) {
+    public Minion(String name, String clas, int cost, int MP, int HP, int AP, int attackRange, ArrayList<Buff> spechialBuff, String timeOfSpechialPower, String targetCommunity , String specialPower) {
         super(name, cost, MP);
         this.clas = clas;
         this.HP = HP;
@@ -27,6 +28,7 @@ public class Minion extends Card {
         }
         this.timeOfSpechialPower = timeOfSpechialPower;
         this.targetCommunity = targetCommunity;
+        this.specialPower = specialPower;
     }
 
     public void addHP(int HP) {
@@ -47,6 +49,14 @@ public class Minion extends Card {
 
     public boolean isOnOrOf() {
         return onOrOf;
+    }
+
+    public String getClas() {
+        return clas;
+    }
+
+    public String getSpecialPower() {
+        return specialPower;
     }
 
     public void setOnOrOf(boolean onOrOf) {

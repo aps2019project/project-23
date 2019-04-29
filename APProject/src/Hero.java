@@ -7,8 +7,9 @@ public class Hero extends Card {
     private String clas;
     private boolean canCounterAttack;
     private boolean onOrOf;
+    private String specialPower;
 
-    public Hero(String name, String clas, int cost, int MP, int HP, int AP, int attackRange, int cooldown) {
+    public Hero(String name, String clas, int cost, int MP, int HP, int AP, int attackRange, int cooldown , String specialPower) {
         super(name, cost, MP);
         this.clas = clas;
         this.cooldown = cooldown;
@@ -16,6 +17,7 @@ public class Hero extends Card {
         this.attackRange = attackRange;
         this.HP = HP;
         this.onOrOf = true;
+        this.specialPower = specialPower;
     }
 
     public void addHP(int HP) {
@@ -32,6 +34,14 @@ public class Hero extends Card {
 
     public int getAP() {
         return AP;
+    }
+
+    public String getClas() {
+        return clas;
+    }
+
+    public String getSpecialPower() {
+        return specialPower;
     }
 
     public boolean isOnOrOf() {

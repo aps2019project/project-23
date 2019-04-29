@@ -14,7 +14,6 @@ public class AddAP extends Buff {
         return addAP;
     }
 
-    ;
 
     public void giveBuffsToCard(ArrayList<Integer[]> cellEffect, int numberOfPlayer) {
         for (int i = 0; i < cellEffect.size(); i++) {
@@ -22,7 +21,6 @@ public class AddAP extends Buff {
         }
     }
 
-    ;
 
     public void effectBuffsOnCard(Card card, int numberOfPlayer) {
         if (cards.indexOf(card) != -1) {
@@ -39,6 +37,5 @@ public class AddAP extends Buff {
         }
     }
 
-    ;
 
 }

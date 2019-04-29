@@ -3,6 +3,7 @@ import java.util.ArrayList;
 public class Card {
 
     protected String name;
+    protected String cardID;
     protected int cost;
     protected int MP;
     protected int numberOfPlayer;
@@ -20,6 +21,10 @@ public class Card {
 
     public void addMP(int MP) {
         this.MP += MP;
+    }
+
+    public void setCardID(String cardID) {
+        this.cardID = cardID;
     }
 
     public void setNumberOfPlayer(int numberOfPlayer) {
