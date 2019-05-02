@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-abstract class Buff {
+abstract public class Buff {
 
     protected int turn;
     protected boolean allTurn;
