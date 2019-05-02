@@ -310,37 +310,65 @@ public class Main {
         Shop.addAllCards(minion);
         minion = new Minion("arjang div", "melee", 600, 3, 6, 6, 1, null, "combo", "", "combo");
         Shop.addAllCards(minion);
-        System.out.println(1);
 
     }
 
     public static void setShopHero() {
 
         ArrayList<Buff> buffs = new ArrayList<Buff>();
-        Power power = new Power(true,false,true,false,0,4,0);
+        Power power = new Power(true, false, true, false, 0, 4, 0);
         buffs.add(power);
-        Hero hero = new Hero("div sefid","melee",8000,1,50,4,1,2,"Give power buff with 4 AP to hero",buffs);
+        Hero hero = new Hero("div sefid", "melee", 8000, 1, 50, 4, 1, 2, "Give power buff with 4 AP to hero", buffs);
         Shop.addAllCards(hero);
         setNullArray(buffs);
-        Stun stun = new Stun(true,false,false,false,1);
+        Stun stun = new Stun(true, false, false, false, 1);
         buffs.add(stun);
-        hero = new Hero("simorq" , "melee" , 9000 , 5,50,4,1,8,"Stun all of enemy for one turn" , buffs);
+        hero = new Hero("simorq", "melee", 9000, 5, 50, 4, 1, 8, "Stun all of enemy for one turn", buffs);
         Shop.addAllCards(hero);
         setNullArray(buffs);
-        Disarm disarm = new Disarm(true,false,false,false,1);
+        Disarm disarm = new Disarm(true, false, false, false, 1);
         buffs.add(disarm);
-        hero = new Hero("ejdehaye haft sar" , "melee" , 8000,0,50,4,1,1,"Disarm one of enemy" , buffs);
+        hero = new Hero("ejdehaye haft sar", "melee", 8000, 0, 50, 4, 1, 1, "Disarm one of enemy", buffs);
         Shop.addAllCards(hero);
         setNullArray(buffs);
-        stun = new Stun(true,false,false,false,1);
-        hero = new Hero("rakhsh" , "melee" , 8000,1,50,4,1,2,"Stun one of enemy for one turn" , buffs);
+        stun = new Stun(true, false, false, false, 1);
+        hero = new Hero("rakhsh", "melee", 8000, 1, 50, 4, 1, 2, "Stun one of enemy for one turn", buffs);
         Shop.addAllCards(hero);
         setNullArray(buffs);
-        Poison poison = new Poison(true,false,false,false,false,false,3,0,-1);
+        Poison poison = new Poison(true, false, false, false, false, false, 3, 0, -1);
         buffs.add(poison);
-        hero = new Hero("zahak" , "melee" , 10000,0,50,2,1,0,"Poison enemy for 3 turn" , buffs);
+        hero = new Hero("zahak", "melee", 10000, 0, 50, 2, 1, 0, "Poison enemy for 3 turn", buffs);
         Shop.addAllCards(hero);
         setNullArray(buffs);
+        HolyCell holyCell = new HolyCell(3);
+        buffs.add(holyCell);
+        hero = new Hero("kave", "melee", 8000, 1, 50, 4, 1, 3, "Holy Cell for 3 turn", buffs);
+        Shop.addAllCards(hero);
+        setNullArray(buffs);
+        poison = new Poison(false, false, true, false, true, false, 0, 0, -4);
+        buffs.add(poison);
+        hero = new Hero("arash", "ranged", 10000, 2, 30, 2, 6, 2, "Knock 4 to enemy", buffs);
+        Shop.addAllCards(hero);
+        setNullArray(buffs);
+        Delete delete = new Delete(false, false, true, false, 0);
+        buffs.add(delete);
+        hero = new Hero("afsane", "ranged", 11000, 1, 40, 3, 3, 2, "Dispel enemy", buffs);
+        Shop.addAllCards(hero);
+        setNullArray(buffs);
+        Holy holy = new Holy(true, false, true, true, 0);
+        buffs.add(holy);
+        buffs.add(holy);
+        buffs.add(holy);
+        hero = new Hero("esfandiar", "hybrid", 12000, 0, 35, 3, 3, 0, "Have 3 continue holy buff", buffs);
+        Shop.addAllCards(hero);
+        setNullArray(buffs);
+        hero = new Hero("rostam", "hybrid", 8000, 0, 55, 7, 4, 0, "Don't have", buffs);
+        Shop.addAllCards(hero);
+
+    }
+
+    public static void setShopItem() {
+
 
 
     }
@@ -398,6 +426,8 @@ public class Main {
             System.out.println(i);*/
         setShopSpell();
         setShopMinion();
+        setShopHero();
+        setShopItem();
         MainMenu.menu();
     }
 
