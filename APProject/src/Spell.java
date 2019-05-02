@@ -16,13 +16,13 @@ public class Spell extends Card {
         return desc;
     }
 
-    public Spell(String name, String desc, String targetCommunity, int cost, int MP, int length, int width , ArrayList<Buff> buffs) {
+    public Spell(String name, String desc, String targetCommunity, int cost, int MP, int length, int width, ArrayList<Buff> buffs) {
         super(name, cost, MP);
         this.desc = desc;
         this.targetCommunity = targetCommunity;
         this.length = length;
         this.width = width;
-        for (Buff buff:buffs) {
+        for (Buff buff : buffs) {
             this.buffs.add(buff);
         }
     }
@@ -217,6 +217,15 @@ public class Spell extends Card {
         }
 
         return true;
+    }
+
+    public Card copyOfCard() {
+        ArrayList<Buff> buffs = new ArrayList<Buff>();
+        for (Buff buff : this.buffs) {
+            buffs.add(buff.copyBuff());
+        }
+        Spell spell = new Spell(name, desc, targetCommunity, cost, MP, length, width, buffs);
+        return spell;
     }
 
 }
