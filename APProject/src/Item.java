@@ -17,4 +17,8 @@ public class Item extends Card {
         return collectable;
     }
 
+    public Card copyOfCard () {
+        return null;
+    }
+
 }
