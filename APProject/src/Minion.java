@@ -14,7 +14,7 @@ public class Minion extends Card {
     private String targetCommunity;
     private String specialPower;
 
-    public Minion(String name, String clas, int cost, int MP, int HP, int AP, int attackRange, ArrayList<Buff> spechialBuff, String timeOfSpechialPower, String targetCommunity , String specialPower) {
+    public Minion(String name, String clas, int cost, int MP, int HP, int AP, int attackRange, ArrayList<Buff> spechialBuff, String timeOfSpechialPower, String targetCommunity, String specialPower) {
         super(name, cost, MP);
         this.clas = clas;
         this.HP = HP;
@@ -22,9 +22,10 @@ public class Minion extends Card {
         this.attackRange = attackRange;
         this.canCounterAttack = true;
         this.onOrOf = true;
-        this.spechialBuff = spechialBuff;
-        for (Buff buff : spechialBuff) {
-            this.spechialBuff.add(buff);
+        if (spechialBuff != null) {
+            for (Buff buff : spechialBuff) {
+                this.spechialBuff.add(buff);
+            }
         }
         this.timeOfSpechialPower = timeOfSpechialPower;
         this.targetCommunity = targetCommunity;
@@ -168,6 +169,19 @@ public class Minion extends Card {
                     }
                 }
             }
+        } else if (targetCommunities[1].matches("friendly")) {
+            if (targetCommunities[2].matches("M")) {
+                for (int i = -1 * number; i < number + 1; i++) {
+                    for (int j = -1 * number; j < number + 1; j++) {
+                        if (Main.getCardsCell()[x + i][y + j] instanceof Minion) {
+                            if (Main.getCardsCell()[x + i][y + j].numberOfPlayer == this.numberOfPlayer) {
+                                Integer[] cell = {x + i, y + j};
+                                cellEffect.add(cell);
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         if (targetCommunities.length > 3) {
@@ -190,6 +204,17 @@ public class Minion extends Card {
         } else if (targetCommunities[0].matches("around")) {
             setAroundCell(x, y, targetCommunities);
         }
+
+    }
+
+    public Card copyOfCard() {
+
+        ArrayList<Buff> buffs = new ArrayList<Buff>();
+        for (Buff buff : spechialBuff) {
+            buffs.add(buff.copyBuff());
+        }
+        Minion minion = new Minion(name, clas, cost, MP, HP, AP, attackRange, buffs, timeOfSpechialPower, targetCommunity, specialPower);
+        return minion;
 
     }
 
