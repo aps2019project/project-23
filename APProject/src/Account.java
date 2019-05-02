@@ -8,7 +8,7 @@ public class Account {
     private int budget;
     private int counterOfWin;
     private int MP;
-    Collection collection;
+    private Collection collection;
 
     public Collection getCollection() {
         return collection;
@@ -18,6 +18,7 @@ public class Account {
         this.password = password;
         this.username = username;
         this.budget = 15000;
+        collection = new Collection();
     }
 
     public int getMP() {
@@ -53,32 +54,21 @@ public class Account {
     }
 
     public void help() {
-        System.out.println("1. collection");
-        System.out.println("2. shop");
-        System.out.println("3. battle");
+        System.out.println("1. enter collection");
+        System.out.println("2. enter shop");
+        System.out.println("3. enter battle");
         System.out.println("4. exit");
-        System.out.println("5. help");
+        System.out.println("5. logout");
+        System.out.println("6. help");
     }
 
-    public Account copyOfAccount() {
-        Account account = new Account(username, password);
-        account.budget = this.budget;
-        account.counterOfWin = this.counterOfWin;
-
-        return account;
-    }
-
-    public void saveAccount(){
-        MainMenu.addAccount(copyOfAccount());
-        MainMenu.getAccounts().remove(MainMenu.indexOfAccount(username));
-    }
-
-    public void menu() {
+    public void menu(Account account) {
         String command;
-        Pattern enterPat = Pattern.compile("^enter \\[(?<entry>\\p{all}+)]$");
+        Pattern enterPat = Pattern.compile("^enter (?<entry>\\p{all}+)$");
         Matcher matcher;
         while (true) {
             command = Main.getScanner().nextLine();
+            command = command.trim();
             if (command.toLowerCase().matches("help")) {
                 help();
                 continue;
@@ -87,17 +77,14 @@ public class Account {
                 System.exit(0);
             } else if (command.toLowerCase().matches("logout"))
                 return;
-            else if (command.toLowerCase().matches("save")) {
-                saveAccount();
-            }
             command = command.toLowerCase();
             matcher = enterPat.matcher(command);
             if (matcher.find()) {
-                if (matcher.group("entery").matches("collection"))
+                if (matcher.group("entry").matches("collection"))
                     collection.menu();
-                else if (matcher.group("entery").matches("shop"))
-                    Shop.menu();
-                else if (matcher.group("entery").matches("battle"))
+                else if (matcher.group("entry").matches("shop"))
+                    Shop.menu(account);
+                else if (matcher.group("entry").matches("battle"))
                     Battle.menu();
             }
         }
