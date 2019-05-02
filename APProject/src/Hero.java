@@ -1,3 +1,6 @@
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 public class Hero extends Card {
 
     private int HP;
@@ -8,8 +11,9 @@ public class Hero extends Card {
     private boolean canCounterAttack;
     private boolean onOrOf;
     private String specialPower;
+    private ArrayList<Buff> specialBuff = new ArrayList<Buff>();
 
-    public Hero(String name, String clas, int cost, int MP, int HP, int AP, int attackRange, int cooldown , String specialPower) {
+    public Hero(String name, String clas, int cost, int MP, int HP, int AP, int attackRange, int cooldown , String specialPower , ArrayList<Buff> buffs) {
         super(name, cost, MP);
         this.clas = clas;
         this.cooldown = cooldown;
@@ -18,6 +22,10 @@ public class Hero extends Card {
         this.HP = HP;
         this.onOrOf = true;
         this.specialPower = specialPower;
+        if (buffs != null){
+            for (Buff buff : specialBuff)
+                this.specialBuff.add(buff);
+        }
     }
 
     public void addHP(int HP) {
@@ -54,6 +62,10 @@ public class Hero extends Card {
 
     public void setCanCounterAttack(boolean canCounterAttack) {
         this.canCounterAttack = canCounterAttack;
+    }
+
+    public Card copyOfCard(){
+        return null;
     }
 
 }
