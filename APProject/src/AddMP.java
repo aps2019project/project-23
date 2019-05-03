@@ -17,10 +17,8 @@ public class AddMP extends Buff {
     }
 
     public Buff copyBuff() {
-
-        AddMP addMP = new AddMP(turn, this.addMP,allTurnAddMP);
+        AddMP addMP = new AddMP(turn, this.addMP, allTurnAddMP);
         return addMP;
-
     }
 
     public void giveBuffsToCard(ArrayList<Integer[]> cellEffect, int numberOfPlayer) {
