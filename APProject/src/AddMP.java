@@ -2,13 +2,15 @@ import java.util.ArrayList;
 
 public class AddMP extends Buff {
 
-    private int addMP;
+    private ArrayList<Integer> addMP = new ArrayList<Integer>();
 
-    public AddMP(int turn, int addMP) {
+    public AddMP(int turn, ArrayList<Integer> addMP) {
 
         super(false, true, false, false, turn);
         this.posOrNeg = false;
-        this.addMP = addMP;
+        for ( int i = 0 ; i < addMP.size() ; i ++ ) {
+            this.addMP.add(addMP.get(i));
+        }
 
     }
 
