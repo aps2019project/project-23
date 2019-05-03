@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class Card {
+abstract public class Card {
 
     protected String name;
     protected String cardID;
@@ -30,5 +30,6 @@ public class Card {
     public void setNumberOfPlayer(int numberOfPlayer) {
         this.numberOfPlayer = numberOfPlayer;
     }
+    public abstract Card copyOfCard();
 
 }
