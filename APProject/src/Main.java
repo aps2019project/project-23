@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
+<<<<<<< HEAD
 
     private static Scanner scanner;
     private static Card[][] cardsCell = new Card[9][5];
@@ -432,3 +433,9 @@ public class Main {
     }
 
 }
+=======
+    public static void main(String[] args) {
+        System.out.println("shajuuuuu");
+    }
+}
+>>>>>>> master
