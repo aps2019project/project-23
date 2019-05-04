@@ -11,16 +11,16 @@ public class Item extends Card {
         return collectableItems;
     }
 
-    public static void addCollectableItem (Item item) {
+    public static void addCollectableItem(Item item) {
         collectableItems.add(item);
     }
 
-    public Item(String name , int cost , int MP , String desc , boolean collectable , ArrayList<Buff> buffs , String effect){
+    public Item(String name, int cost, int MP, String desc, boolean collectable, ArrayList<Buff> buffs, String effect) {
 
-        super(name,cost,MP);
+        super(name, cost, MP);
         this.desc = desc;
         this.collectable = collectable;
-        for (Buff buff:buffs) {
+        for (Buff buff : buffs) {
             this.buffs.add(buff);
         }
         this.effect = effect;
@@ -35,8 +35,15 @@ public class Item extends Card {
         return collectable;
     }
 
-    public Card copyOfCard () {
-        return null;
+    public Card copyOfCard() {
+
+        ArrayList<Buff> buffs = new ArrayList<Buff>();
+        for (Buff buff : this.buffs) {
+            buffs.add(buff.copyBuff());
+        }
+        Item item = new Item(name, cost, MP, desc, collectable, buffs, effect);
+        return item;
+
     }
 
 }
