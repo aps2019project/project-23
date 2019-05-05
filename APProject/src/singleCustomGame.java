@@ -7,8 +7,21 @@ public class singleCustomGame {
         System.out.println("start game [deck name] [mode] [number of flag (for mode 3)]");
     }
 
-    public static void setGame(String deckName, String mode, String numberOfFlag) {
+    public static int setGame(String deckName, int mode, int numberOfFlag, Account account) {
+        if (account.getCollection().indexOfDeck(deckName) == -1) {
+            System.out.println("Don't exist this deck");
+            return 0;
+        }
+        if (mode > 3 || mode < 0) {
+            System.out.println("Enter correct mode");
+            return 1;
+        }
+        if (numberOfFlag > 45) {
+            System.out.println("Enter correct number og flag");
+            return 1;
+        }
 
+        return 2;
 
     }
 
@@ -33,14 +46,14 @@ public class singleCustomGame {
             }
             matcher = startGamePat.matcher(command);
             if (matcher.find()) {
-                setGame(matcher.group("deckName"), matcher.group("mode"), "none");
+                setGame(matcher.group("deckName"), Integer.parseInt(matcher.group("mode")), 0, account);
 
             }
 
             matcher = startGameMode3.matcher(command);
             if (matcher.find()) {
-                setGame(matcher.group("deckName"), matcher.group("mode"), matcher.group("numberOfFlag"));
-                
+                setGame(matcher.group("deckName"), Integer.parseInt(matcher.group("mode")), Integer.parseInt(matcher.group("numberOfFlag")), account);
+
             }
 
         }
@@ -48,3 +61,4 @@ public class singleCustomGame {
     }
 
 }
+
