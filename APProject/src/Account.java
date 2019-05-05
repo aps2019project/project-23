@@ -84,8 +84,11 @@ public class Account {
                     collection.menu();
                 else if (matcher.group("entry").matches("shop"))
                     Shop.menu(account);
-                else if (matcher.group("entry").matches("battle"))
-                    Battle.menu();
+                else if (matcher.group("entry").matches("battle")) {
+                    if (collection.validDeck()) {
+                        Battle.menu();
+                    }
+                }
             }
         }
     }
