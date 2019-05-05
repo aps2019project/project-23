@@ -5,13 +5,21 @@ import java.util.regex.Pattern;
 public class Collection {
 
     private ArrayList<Card> allCards = new ArrayList<Card>();
-<<<<<<< HEAD
-
-    public void show() {
-=======
     private ArrayList<Card> allOfCardInCollection = new ArrayList<Card>();
     private ArrayList<Deck> allDecks = new ArrayList<Deck>();
     private Deck mainDeck;
+
+    public Deck getMainDeck() {
+        return mainDeck;
+    }
+
+    public void setMainDeck(Deck deck) {
+        mainDeck = deck;
+    }
+
+    public ArrayList<Deck> getAllDecks() {
+        return allDecks;
+    }
 
     public ArrayList<Card> getAllOfCardInCollection() {
         return allOfCardInCollection;
@@ -21,13 +29,23 @@ public class Collection {
         return allCards;
     }
 
+    public boolean validDeck() {
+
+        if (mainDeck != null) {
+            System.out.println("selected deck is valid");
+            return true;
+        }
+        System.out.println("selected deck is invalid");
+        return false;
+
+    }
+
     public void addCardToCollection(Card card) {
         allCards.add(card);
         allOfCardInCollection.add(card);
     }
 
     public void show(ArrayList<Card> allCards) {
->>>>>>> master
 
         int counter = 0;
         System.out.println("Heroes :");
@@ -78,9 +96,6 @@ public class Collection {
 
     }
 
-<<<<<<< HEAD
-    public void search(String cardName){
-=======
     public int indexOfCard(String cardName) {
         for (int i = 0; i < allCards.size(); i++) {
             if (allCards.get(i).name.matches(cardName))
@@ -165,10 +180,11 @@ public class Collection {
             System.out.println("This card exist in selected deck");
             return;
         }
-        if (allDecks.get(indexOfDeck(deckName)).counterOfCard() == 20) {
-            System.out.println("Exist 20 cards in selected deck. You can't add more cards");
-            return;
-        }
+        if (!(allCards.get(indexOfCardID(cardID)) instanceof Hero) && !((allCards.get(indexOfCardID(cardID)) instanceof Item)))
+            if (allDecks.get(indexOfDeck(deckName)).counterOfCard() == 20) {
+                System.out.println("Exist 20 cards in selected deck. You can't add more cards");
+                return;
+            }
         if (allCards.get(indexOfCardID(cardID)) instanceof Hero) {
             if (allDecks.get(indexOfDeck(deckName)).existHeroInDeck()) {
                 System.out.println("Exist a Hero in selected deck");
@@ -266,7 +282,6 @@ public class Collection {
         System.out.println("10. select deck [deck name]");
         System.out.println("11. show all decks");
         System.out.println("12. show deck [deck name]");
-        System.out.println("13. help");
 
     }
 
@@ -284,26 +299,12 @@ public class Collection {
             }
         }
         return counter;
->>>>>>> master
 
     }
 
     public void menu() {
 
         String command;
-<<<<<<< HEAD
-        Pattern searchPat = Pattern.compile("^search \\[(?<cardName>)\\p{all}+]$");
-        Matcher matcher ;
-        while (true) {
-            command = Main.getScanner().nextLine().toLowerCase();
-            if (command.matches("exit"))
-                return;
-            else if (command.matches("show"))
-                show();
-            matcher = searchPat.matcher(command);
-            if ( matcher.find() ) {
-                search(matcher.group("cardName"));
-=======
         Pattern searchPat = Pattern.compile("^search \\[(?<cardName>\\p{all}+)]$");
         Pattern createDeckPat = Pattern.compile("^create deck \\[(?<deckName>\\p{all}+)]$");
         Pattern deleteDeckPat = Pattern.compile("^delete deck \\[(?<deckName>\\p{all}+)]$");
@@ -369,7 +370,6 @@ public class Collection {
             matcher = showDeckPat.matcher(command);
             if (matcher.find()) {
                 showDeck(matcher.group("deckName"));
->>>>>>> master
             }
 
         }
@@ -377,3 +377,4 @@ public class Collection {
     }
 
 }
+
