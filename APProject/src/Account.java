@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -9,6 +10,7 @@ public class Account {
     private int counterOfWin;
     private int MP;
     private Collection collection;
+    private ArrayList<Match> allMatches = new ArrayList<Match>();
 
     public Collection getCollection() {
         return collection;
@@ -41,10 +43,6 @@ public class Account {
         return counterOfWin;
     }
 
-    public void addCounterOfWin() {
-        counterOfWin++;
-    }
-
     public int getBudget() {
         return budget;
     }
@@ -53,13 +51,30 @@ public class Account {
         budget += money;
     }
 
+    public void setCounterOfWin() {
+        int counterOfWin = 0;
+        for (Match match : allMatches) {
+            if (match.getWinOrLose().matches("win")) {
+                counterOfWin++;
+            }
+        }
+        this.counterOfWin = counterOfWin;
+    }
+
     public void help() {
         System.out.println("1. enter collection");
         System.out.println("2. enter shop");
         System.out.println("3. enter battle");
         System.out.println("4. exit");
         System.out.println("5. logout");
-        System.out.println("6. help");
+    }
+
+    public void matchHistory() {
+        for (int i = 0; i < allMatches.size(); i++) {
+            System.out.printf("%d.\n", i);
+            System.out.println("    ");
+            allMatches.get(i).show();
+        }
     }
 
     public void menu(Account account) {
@@ -69,7 +84,9 @@ public class Account {
         while (true) {
             command = Main.getScanner().nextLine();
             command = command.trim();
-            if (command.toLowerCase().matches("help")) {
+            if (command.toLowerCase().matches("match history")) {
+                matchHistory();
+            } else if (command.toLowerCase().matches("help")) {
                 help();
                 continue;
             } else if (command.toLowerCase().matches("exit")) {
@@ -86,7 +103,7 @@ public class Account {
                     Shop.menu(account);
                 else if (matcher.group("entry").matches("battle")) {
                     if (collection.validDeck()) {
-                        Battle.menu();
+                        Battle.menu(account);
                     }
                 }
             }
