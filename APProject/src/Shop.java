@@ -86,7 +86,6 @@ public class Shop {
         System.out.println("5. buy [card name]");
         System.out.println("6. sell [cardID]");
         System.out.println("7. show");
-        System.out.println("8. help");
 
     }
 
