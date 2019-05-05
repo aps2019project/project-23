@@ -8,7 +8,7 @@ public class Battle {
 
     public static void singlePlayMenuHelp() {
         System.out.println("1. story");
-        System.out.println("2. custom");
+        System.out.println("2. custom game");
         System.out.println("3. exit");
     }
 
@@ -23,7 +23,9 @@ public class Battle {
             } else if (command.matches("exit")) {
                 return;
             }
-
+            else if (command.matches("custom game")){
+                singleCustomGame.menu(account);
+            }
 
         }
 
