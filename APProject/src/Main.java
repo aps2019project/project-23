@@ -496,6 +496,56 @@ public class Main {
     }
 
     public static void main(String[] args) {
+        /*Hero hero = new Hero("shaj", 100, 1);
+        Hero hero1 = new Hero("sds", 12, 1);
+        hero1.setNumberOfPlayer(1);
+        Minion minion = new Minion("sqhsq", 100, 1);
+        minion.setNumberOfPlayer(1);
+        Minion minion1 = new Minion("sdfs", 10, 12);
+        minion1.setNumberOfPlayer(1);
+        Minion minion2 = new Minion("sdsdsds", 100, 1212);
+        minion2.setNumberOfPlayer(1);
+        Minion minion3 = new Minion("Sd", 12, 21);
+        minion3.setNumberOfPlayer(1);
+        Minion minion4 = new Minion("Sd", 12, 21);
+        minion4.setNumberOfPlayer(1);
+        Minion minion5 = new Minion("Sd", 12, 21);
+        minion5.setNumberOfPlayer(1);
+        Minion minion6 = new Minion("Sd", 12, 21);
+        Minion minion7 = new Minion("Sd", 12, 21);
+        Minion minion8 = new Minion("Sd", 12, 21);
+        Minion minion9 = new Minion("Sd", 12, 21);
+        Minion minion10 = new Minion("Sd", 12, 21);
+        Minion minion11 = new Minion("Sd", 12, 21);
+        Minion minion12 = new Minion("Sd", 12, 21);
+
+        Holy holy = new Holy(true, false, false, false, 1);
+        minion.buffs.add(holy);
+
+        cardsCell[0][0] = minion;
+        cardsCell[3][0] = minion1;
+        cardsCell[6][0] = minion12;
+        cardsCell[8][0] = minion2;
+        cardsCell[1][1] = minion3;
+        cardsCell[4][1] = minion11;
+        cardsCell[6][1] = minion4;
+        cardsCell[2][2] = hero1;
+        cardsCell[4][2] = minion5;
+        cardsCell[6][2] = hero;
+        cardsCell[8][2] = minion10;
+        cardsCell[3][3] = minion6;
+        cardsCell[0][4] = minion9;
+        cardsCell[2][4] = minion8;
+        cardsCell[6][4] = minion7;
+
+
+        setShopSpell();
+
+        Delete delete = new Delete(false, false, false, false, 1);
+        delete.effectBuffsOnCard(minion, 0);
+
+        for (int i = 0; i < minion.buffs.size(); i++)
+            System.out.println(i);*/
         setShopSpell();
         setShopMinion();
         setShopHero();
@@ -503,8 +553,4 @@ public class Main {
         MainMenu.menu();
     }
 
-<<<<<<< Updated upstream
 }
-=======
-}
->>>>>>> Stashed changes
