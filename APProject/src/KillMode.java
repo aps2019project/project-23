@@ -3,6 +3,27 @@ import java.util.Random;
 
 public class KillMode extends Custom {
 
+    private static ArrayList<Card> handPlayer1 = new ArrayList<Card>(5);
+    private static ArrayList<Card> handPlayer2 = new ArrayList<Card>(5);
+    private static Card selectedCard1;
+    private static Card selectedCard2;
+
+    public static Card getSelectedCard1() {
+        return selectedCard1;
+    }
+
+    public static Card getSelectedCard2() {
+        return selectedCard2;
+    }
+
+    public static ArrayList<Card> getHandPlayer1() {
+        return handPlayer1;
+    }
+
+    public static ArrayList<Card> getHandPlayer2() {
+        return handPlayer2;
+    }
+
     public static void setAccount(Deck deck, int numberOfPlayer, Account account) {
         for (Card card : deck.getDeckCard()) {
             card.setNumberOfPlayer(numberOfPlayer);
@@ -69,11 +90,13 @@ public class KillMode extends Custom {
         int turn2 = 0;
         boolean turnPlayer1 = true;
         boolean turnPlayer2 = false;
+
         Main.setNullCardsCell();
         Main.setNullBuffsCell();
         setAccount(player1Deck, 1, account);
         account.setNumberOfPlayer(1);
         setAccount(player2Deck, 2, account1);
+<<<<<<< Updated upstream
         account1.setNumberOfPlayer(2);
         setCellCard();
         ArrayList<Card> handPlayer1 = new ArrayList<Card>(5);
@@ -82,6 +105,15 @@ public class KillMode extends Custom {
         setRandomHand(handPlayer2, player2Deck);
         setRandomDeck(player1Deck);
         setRandomDeck(player2Deck);
+=======
+        account.setNumberOfPlayer(1);
+        account1.setNumberOfPlayer(2);
+        setRandomHand(handPlayer1, player1Deck);
+        setRandomHand(handPlayer1, player2Deck);
+        setRandomDeck(player1Deck);
+        setRandomDeck(player2Deck);
+        setCellCard();
+>>>>>>> Stashed changes
 
         String command;
         while (true) {
@@ -91,7 +123,11 @@ public class KillMode extends Custom {
                 if (command.matches("exit")) {
                     return;
                 } else {
+<<<<<<< Updated upstream
                     GameController.control(account, account1, player1Deck, player2Deck, handPlayer1, command, 1);
+=======
+                    GameController.control(account, account1, command, 1);
+>>>>>>> Stashed changes
                 }
             } else {
 
