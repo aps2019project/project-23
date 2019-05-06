@@ -1,5 +1,7 @@
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class File {
 
@@ -55,12 +57,46 @@ public class File {
                     fileWriter.write("\n");
                 }
                 fileWriter.write("\n");
-                fileWriter.write(".............................." + accounts.indexOf(account) + "..............................\n\n");
+                fileWriter.write("finish");
 
             }
             fileWriter.close();
         } catch (Exception e) {
             return;
+        }
+
+    }
+
+
+    public static void loadAccount() {
+
+        if (!Main.setFileScanner()) {
+            return;
+        }
+        String command;
+        Matcher matcher;
+        Pattern usernamePat = Pattern.compile("^Username:(?<username>\\p{all}+)$");
+        Pattern passwordPat = Pattern.compile("^Password:(?<password>\\p{all}+)$");
+
+        while (Main.getScanner().hasNext()) {
+
+            command = Main.getScanner().nextLine();
+            String username = "";
+            String password = "";
+            matcher = usernamePat.matcher(command);
+            if (matcher.find()) {
+                Account account;
+                username = matcher.group("username");
+                command = Main.getScanner().nextLine();
+                matcher = passwordPat.matcher(command);
+                if (matcher.find()) {
+                    password = matcher.group("password");
+                    account = new Account(username, password);
+                    
+                }
+
+            }
+
         }
 
     }
