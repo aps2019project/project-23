@@ -27,7 +27,7 @@ public class File {
                 } else {
                     for (Card card : account.getCollection().getAllCards()) {
                         fileWriter.write(account.getCollection().getAllCards().indexOf(card) + ".");
-                        fileWriter.write(card.name);
+                        fileWriter.write(card.name + "," + card.cardID);
                         fileWriter.write(" ");
                     }
                     fileWriter.write("\n");
@@ -36,8 +36,26 @@ public class File {
                 if (account.getCollection().getAllDecks().size() == 0) {
                     fileWriter.write("None\n");
                 } else {
-                    
+                    for (Deck deck : account.getCollection().getAllDecks()) {
+                        fileWriter.write(account.getCollection().getAllDecks().indexOf(deck) + "." + deck.getName() + ": ");
+                        for (Card card : deck.getDeckCard()) {
+                            fileWriter.write(deck.getDeckCard().indexOf(card) + "." + card.name + "," + card.cardID + " ");
+                        }
+                        fileWriter.write("\n");
+                    }
                 }
+                fileWriter.write("MainDeck:\n");
+                if (account.getCollection().getMainDeck() == null) {
+                    fileWriter.write("None\n");
+                } else {
+                    fileWriter.write(account.getCollection().getMainDeck().getName() + ": ");
+                    for (Card card : account.getCollection().getMainDeck().getDeckCard()) {
+                        fileWriter.write(account.getCollection().getMainDeck().getDeckCard().indexOf(card) + "." + card.name + "," + card.cardID + " ");
+                    }
+                    fileWriter.write("\n");
+                }
+                fileWriter.write("\n");
+                fileWriter.write(".............................." + accounts.indexOf(account) + "..............................\n\n");
 
             }
             fileWriter.close();
