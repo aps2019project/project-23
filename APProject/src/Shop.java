@@ -75,7 +75,6 @@ public class Shop {
         Pattern cardIDPat = Pattern.compile("^(?<playerName>\\p{all}+)_(?<cardName>\\p{all}+)_(?<ID>\\d+)$");
         Matcher matcher = cardIDPat.matcher(cardID);
         if (matcher.find()) {
-            System.out.printf("sasas\n");
             id = Integer.parseInt(matcher.group("ID"));
             cardName = matcher.group("cardName");
             playerName = matcher.group("playerName");
@@ -84,7 +83,6 @@ public class Shop {
             if (account.getCollection().getAllOfCardInCollection().get(i).name.matches(cardName)) {
                 matcher = cardIDPat.matcher(account.getCollection().getAllOfCardInCollection().get(i).cardID);
                 if (matcher.find()) {
-                    System.out.printf("qwert\n");
                     if (Integer.parseInt(matcher.group("ID")) > id) {
                         int newID = Integer.parseInt(matcher.group("ID"))-1;
                         newCardID = playerName + "_" + cardName + "_" + newID;
@@ -171,6 +169,15 @@ public class Shop {
 
         }
 
+    }
+
+    public static Card getCard(String cardName) {
+        for (Card card:allCards){
+            if (card.name.matches(cardName)){
+                return card.copyOfCard();
+            }
+        }
+        return null;
     }
 
 }
