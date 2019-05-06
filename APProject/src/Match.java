@@ -30,4 +30,12 @@ public class Match {
         return winOrLose;
     }
 
+    public String getNameOfOpponent() {
+        return nameOfOpponent;
+    }
+
+    public String getTimeOfMatch() {
+        return timeOfMatch;
+    }
+
 }
