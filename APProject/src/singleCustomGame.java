@@ -7,21 +7,33 @@ public class singleCustomGame {
         System.out.println("start game [deck name] [mode] [number of flag (for mode 3)]");
     }
 
-    public static int setGame(String deckName, int mode, int numberOfFlag, Account account) {
+    public static void setGame(String deckName, int mode, int numberOfFlag, Account account) {
         if (account.getCollection().indexOfDeck(deckName) == -1) {
             System.out.println("Don't exist this deck");
-            return 0;
+            return;
+        }
+        if (!account.getCollection().validate(deckName)) {
+            return;
         }
         if (mode > 3 || mode < 0) {
             System.out.println("Enter correct mode");
-            return 1;
+            return;
         }
         if (numberOfFlag > 45) {
-            System.out.println("Enter correct number og flag");
-            return 1;
+            System.out.println("Enter correct number of flag");
+            return;
         }
+        Custom.setPlayer1Deck(account.getCollection().getMainDeck().copyOfDeck());
+        Custom.setPlayer2Deck(account.getCollection().getAllDecks().get(account.getCollection().indexOfDeck(deckName)).copyOfDeck());
+        Account account1 = new Account("computer", "");
+        account1.getCollection().setMainDeck(account.getCollection().getAllDecks().get(account.getCollection().indexOfDeck(deckName)).copyOfDeck());
+        if (mode == 1) {
+            KillMode.game(account, account1);
+        } else if (mode == 2) {
 
-        return 2;
+        } else {
+
+        }
 
     }
 
@@ -47,13 +59,11 @@ public class singleCustomGame {
             matcher = startGamePat.matcher(command);
             if (matcher.find()) {
                 setGame(matcher.group("deckName"), Integer.parseInt(matcher.group("mode")), 0, account);
-
             }
 
             matcher = startGameMode3.matcher(command);
             if (matcher.find()) {
                 setGame(matcher.group("deckName"), Integer.parseInt(matcher.group("mode")), Integer.parseInt(matcher.group("numberOfFlag")), account);
-
             }
 
         }
@@ -61,4 +71,3 @@ public class singleCustomGame {
     }
 
 }
-
