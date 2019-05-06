@@ -13,6 +13,10 @@ public class Account {
     private ArrayList<Match> allMatches = new ArrayList<Match>();
     private int numberOfPlayer;
 
+    public ArrayList<Match> getAllMatches() {
+        return allMatches;
+    }
+
     public void setNumberOfPlayer(int numberOfPlayer) {
         this.numberOfPlayer = numberOfPlayer;
     }
