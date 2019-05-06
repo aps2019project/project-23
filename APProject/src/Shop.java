@@ -66,12 +66,43 @@ public class Shop {
 
     }
 
+    public static void setCardID(String cardID, Account account) {
+
+        int id = 0;
+        String cardName = "";
+        String playerName = "";
+        String newCardID = "";
+        Pattern cardIDPat = Pattern.compile("^(?<playerName>\\p{all}+)_(?<cardName>\\p{all}+)_(?<ID>\\d+)$");
+        Matcher matcher = cardIDPat.matcher(cardID);
+        if (matcher.find()) {
+            System.out.printf("sasas\n");
+            id = Integer.parseInt(matcher.group("ID"));
+            cardName = matcher.group("cardName");
+            playerName = matcher.group("playerName");
+        }
+        for (int i = 0; i < account.getCollection().getAllOfCardInCollection().size(); i++) {
+            if (account.getCollection().getAllOfCardInCollection().get(i).name.matches(cardName)) {
+                matcher = cardIDPat.matcher(account.getCollection().getAllOfCardInCollection().get(i).cardID);
+                if (matcher.find()) {
+                    System.out.printf("qwert\n");
+                    if (Integer.parseInt(matcher.group("ID")) > id) {
+                        int newID = Integer.parseInt(matcher.group("ID"))-1;
+                        newCardID = playerName + "_" + cardName + "_" + newID;
+                        account.getCollection().getAllOfCardInCollection().get(i).setCardID(newCardID);
+                    }
+                }
+            }
+        }
+
+    }
+
     public static void sell(String cardID, Account account) {
 
         if (account.getCollection().indexOfCardID(cardID) == -1) {
             System.out.println("You don't have this card");
             return;
         }
+        setCardID(cardID, account);
         account.addBudget(account.getCollection().getAllCards().get(account.getCollection().indexOfCardID(cardID)).cost);
         account.getCollection().deleteCard(cardID);
 
@@ -143,4 +174,3 @@ public class Shop {
     }
 
 }
-
