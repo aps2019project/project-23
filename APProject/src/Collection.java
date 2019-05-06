@@ -12,6 +12,10 @@ public class Collection {
     public Deck getMainDeck() {
         return mainDeck;
     }
+    
+    public void addToAllOfCardInCollection(Card card) {
+        allOfCardInCollection.add(card);
+    }
 
     public void setMainDeck(Deck deck) {
         mainDeck = deck;
