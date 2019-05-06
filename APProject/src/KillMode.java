@@ -5,8 +5,8 @@ public class KillMode extends Custom {
 
     private static ArrayList<Card> handPlayer1 = new ArrayList<Card>(5);
     private static ArrayList<Card> handPlayer2 = new ArrayList<Card>(5);
-    private static Card selectedCard1;
-    private static Card selectedCard2;
+    private static Card selectedCard1 = null;
+    private static Card selectedCard2 = null;
 
     public static Card getSelectedCard1() {
         return selectedCard1;
@@ -22,6 +22,14 @@ public class KillMode extends Custom {
 
     public static ArrayList<Card> getHandPlayer2() {
         return handPlayer2;
+    }
+
+    public static void setSelectedCard1(Card selectedCard1) {
+        KillMode.selectedCard1 = selectedCard1;
+    }
+
+    public static void setSelectedCard2(Card selectedCard2) {
+        KillMode.selectedCard2 = selectedCard2;
     }
 
     public static void setAccount(Deck deck, int numberOfPlayer, Account account) {
@@ -94,18 +102,7 @@ public class KillMode extends Custom {
         Main.setNullCardsCell();
         Main.setNullBuffsCell();
         setAccount(player1Deck, 1, account);
-        account.setNumberOfPlayer(1);
         setAccount(player2Deck, 2, account1);
-<<<<<<< Updated upstream
-        account1.setNumberOfPlayer(2);
-        setCellCard();
-        ArrayList<Card> handPlayer1 = new ArrayList<Card>(5);
-        ArrayList<Card> handPlayer2 = new ArrayList<Card>(5);
-        setRandomHand(handPlayer1, player1Deck);
-        setRandomHand(handPlayer2, player2Deck);
-        setRandomDeck(player1Deck);
-        setRandomDeck(player2Deck);
-=======
         account.setNumberOfPlayer(1);
         account1.setNumberOfPlayer(2);
         setRandomHand(handPlayer1, player1Deck);
@@ -113,7 +110,6 @@ public class KillMode extends Custom {
         setRandomDeck(player1Deck);
         setRandomDeck(player2Deck);
         setCellCard();
->>>>>>> Stashed changes
 
         String command;
         while (true) {
@@ -123,11 +119,7 @@ public class KillMode extends Custom {
                 if (command.matches("exit")) {
                     return;
                 } else {
-<<<<<<< Updated upstream
-                    GameController.control(account, account1, player1Deck, player2Deck, handPlayer1, command, 1);
-=======
                     GameController.control(account, account1, command, 1);
->>>>>>> Stashed changes
                 }
             } else {
 
@@ -138,3 +130,4 @@ public class KillMode extends Custom {
     }
 
 }
+
