@@ -15,12 +15,10 @@ public class MainMenu {
     }
 
     public static void saveAccounts() {
-
-
+        File.saveAccountInFile(accounts);
     }
 
     public static void loadAccounts() {
-
 
     }
 
@@ -97,7 +95,6 @@ public class MainMenu {
     }
 
     public static void menu() {
-        loadAccounts();
         Pattern createAccountPat = Pattern.compile("^create account \\[(?<username>\\p{all}+)]$");
         Pattern loginPat = Pattern.compile("^login \\[(?<username>\\p{all}+)]$");
         Matcher matcher;
