@@ -2,16 +2,23 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
-<<<<<<< HEAD
 
     private static Scanner scanner;
     private static Card[][] cardsCell = new Card[9][5];
     private static Buff[][] buffCell = new Buff[9][5];
 
-    public static void setNullCardsCell(Card[][] cardsCell) {
+    public static void setNullCardsCell() {
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 5; j++) {
                 cardsCell[i][j] = null;
+            }
+        }
+    }
+
+    public static void setNullBuffsCell(){
+        for ( int i = 0 ; i < 9 ; i ++ ) {
+            for ( int j = 0 ; j < 5 ; j ++ ) {
+                buffCell[i][j] = null;
             }
         }
     }
@@ -319,112 +326,176 @@ public class Main {
         ArrayList<Buff> buffs = new ArrayList<Buff>();
         Power power = new Power(true, false, true, false, 0, 4, 0);
         buffs.add(power);
-        Hero hero = new Hero("div sefid", "melee", 8000, 1, 50, 4, 1, 2, "Give power buff with 4 AP to hero", buffs,"hero",true,false,false);
+        Hero hero = new Hero("div sefid", "melee", 8000, 1, 50, 4, 1, 2, "Give power buff with 4 AP to hero", buffs, "hero", true, false, false);
         Shop.addAllCards(hero);
         setNullArray(buffs);
         Stun stun = new Stun(true, false, false, false, 1);
         buffs.add(stun);
-        hero = new Hero("simorq", "melee", 9000, 5, 50, 4, 1, 8, "Stun all of enemy for one turn", buffs,"all enemy" , true , false,false);
+        hero = new Hero("simorq", "melee", 9000, 5, 50, 4, 1, 8, "Stun all of enemy for one turn", buffs, "all enemy", true, false, false);
         Shop.addAllCards(hero);
         setNullArray(buffs);
         Disarm disarm = new Disarm(true, false, false, false, 1);
         buffs.add(disarm);
-        hero = new Hero("ejdehaye haft sar", "melee", 8000, 0, 50, 4, 1, 1, "Disarm one of enemy", buffs,"one enemy",true,false,false);
+        hero = new Hero("ejdehaye haft sar", "melee", 8000, 0, 50, 4, 1, 1, "Disarm one of enemy", buffs, "one enemy", true, false, false);
         Shop.addAllCards(hero);
         setNullArray(buffs);
         stun = new Stun(true, false, false, false, 1);
-        hero = new Hero("rakhsh", "melee", 8000, 1, 50, 4, 1, 2, "Stun one of enemy for one turn", buffs,"one enemy",true,false,false);
+        hero = new Hero("rakhsh", "melee", 8000, 1, 50, 4, 1, 2, "Stun one of enemy for one turn", buffs, "one enemy", true, false, false);
         Shop.addAllCards(hero);
         setNullArray(buffs);
         Poison poison = new Poison(true, false, false, false, false, false, 3, 0, -1);
         buffs.add(poison);
-        hero = new Hero("zahak", "melee", 10000, 0, 50, 2, 1, 0, "Poison enemy for 3 turn", buffs,"" , false,true,false);
+        hero = new Hero("zahak", "melee", 10000, 0, 50, 2, 1, 0, "Poison enemy for 3 turn", buffs, "", false, true, false);
         Shop.addAllCards(hero);
         setNullArray(buffs);
         HolyCell holyCell = new HolyCell(3);
         buffs.add(holyCell);
-        hero = new Hero("kave", "melee", 8000, 1, 50, 4, 1, 3, "Holy Cell for 3 turn", buffs,"cell" , true,false,false);
+        hero = new Hero("kave", "melee", 8000, 1, 50, 4, 1, 3, "Holy Cell for 3 turn", buffs, "cell", true, false, false);
         Shop.addAllCards(hero);
         setNullArray(buffs);
         poison = new Poison(false, false, true, false, true, false, 0, 0, -4);
         buffs.add(poison);
-        hero = new Hero("arash", "ranged", 10000, 2, 30, 2, 6, 2, "Knock 4 to enemy", buffs,"row" , true,false,false);
+        hero = new Hero("arash", "ranged", 10000, 2, 30, 2, 6, 2, "Knock 4 to enemy", buffs, "row", true, false, false);
         Shop.addAllCards(hero);
         setNullArray(buffs);
         Delete delete = new Delete(false, false, true, false, 0);
         buffs.add(delete);
-        hero = new Hero("afsane", "ranged", 11000, 1, 40, 3, 3, 2, "Dispel enemy", buffs,"one enemy" , true,false,false);
+        hero = new Hero("afsane", "ranged", 11000, 1, 40, 3, 3, 2, "Dispel enemy", buffs, "one enemy", true, false, false);
         Shop.addAllCards(hero);
         setNullArray(buffs);
         Holy holy = new Holy(true, false, true, true, 0);
         buffs.add(holy);
         buffs.add(holy);
         buffs.add(holy);
-        hero = new Hero("esfandiar", "hybrid", 12000, 0, 35, 3, 3, 0, "Have 3 continue holy buff", buffs,"",false,false,true);
+        hero = new Hero("esfandiar", "hybrid", 12000, 0, 35, 3, 3, 0, "Have 3 continue holy buff", buffs, "", false, false, true);
         Shop.addAllCards(hero);
         setNullArray(buffs);
-        hero = new Hero("rostam", "hybrid", 8000, 0, 55, 7, 4, 0, "Don't have", buffs,"",false,false,false);
+        hero = new Hero("rostam", "hybrid", 8000, 0, 55, 7, 4, 0, "Don't have", buffs, "", false, false, false);
         Shop.addAllCards(hero);
 
     }
 
     public static void setShopItem() {
 
-
+        ArrayList<Buff> buffs = new ArrayList<Buff>();
+        ArrayList<Integer> integers = new ArrayList<Integer>();
+        integers.add(1);
+        integers.add(1);
+        integers.add(1);
+        AddMP addMP = new AddMP(3, integers, false);
+        buffs.add(addMP);
+        Item item = new Item("taj danayi", 300, 0, "Add 1 MP for 3 turn", false, buffs, "first");
+        Shop.addAllCards(item);
+        setNullArray(buffs);
+        Holy holy = new Holy(true, false, true, false, 0);
+        for (int i = 0; i < 12; i++) {
+            buffs.add(holy);
+        }
+        item = new Item("namus separ", 400, 0, "Give 12 Holy Buff to hero", false, buffs, "first");
+        Shop.addAllCards(item);
+        setNullArray(buffs);
+        Disarm disarm = new Disarm(true, false, false, false, 1);
+        buffs.add(disarm);
+        item = new Item("kaman damol", 30000, 0, "Disarm when hero attack for one turn", false, buffs, "attack H");
+        Shop.addAllCards(item);
+        setNullArray(buffs);
+        Power power = new Power(false, false, true, false, 0, 0, 6);
+        buffs.add(power);
+        item = new Item("nushdaru", 0, 0, "Add 6 HP", true, buffs, "collect");
+        Item.addCollectableItem(item);
+        setNullArray(buffs);
+        power = new Power(false, false, true, false, 0, 2, 0);
+        buffs.add(power);
+        item = new Item("tir do shakh", 0, 0, "Add 2 AP", true, buffs, "collect");
+        Item.addCollectableItem(item);
+        setNullArray(buffs);
+        power = new Power(false, false, true, false, 0, -2, 0);
+        buffs.add(power);
+        item = new Item("par simorq", 3500, 0, "Add -2 AP to enemy hero", false, buffs, "first");
+        Shop.addAllCards(item);
+        setNullArray(buffs);
+        power = new Power(false, false, true, false, 0, 0, 3);
+        buffs.add(power);
+        Power power1 = new Power(true, false, true, false, 0, 3, 0);
+        buffs.add(power);
+        item = new Item("eksir", 0, 0, "Add 3 HP and Give power buff with 3 AP", true, buffs, "collect");
+        Item.addCollectableItem(item);
+        setNullArray(buffs);
+        integers = new ArrayList<Integer>();
+        integers.add(0);
+        integers.add(3);
+        addMP = new AddMP(2, integers, false);
+        buffs.add(addMP);
+        item = new Item("majun mana", 0, 0, "Add 3 MP next turn", true, buffs, "collect");
+        Item.addCollectableItem(item);
+        setNullArray(buffs);
+        holy = new Holy(true, false, false, false, 2);
+        for (int i = 0; i < 10; i++) {
+            buffs.add(holy);
+        }
+        item = new Item("majun ruyin tani", 0, 0, "Give 10 holy buff for 2 turn", true, buffs, "collect");
+        Item.addCollectableItem(item);
+        setNullArray(buffs);
+        Poison poison = new Poison(false, false, true, false, true, false, 0, 0, -8);
+        buffs.add(poison);
+        item = new Item("nefrin marg", 0, 0, "Add -8 HP on death", true, buffs, "death M");
+        Item.addCollectableItem(item);
+        setNullArray(buffs);
+        power = new Power(false, false, true, false, 0, 2, 0);
+        buffs.add(power);
+        item = new Item("random damage", 0, 0, "Add 2 AP", true, buffs, "collect");
+        Item.addCollectableItem(item);
+        setNullArray(buffs);
+        Weakness weakness = new Weakness(true, false, false, false, 1, 0, -2);
+        buffs.add(weakness);
+        item = new Item("terror hood", 5000, 0, "Give weakness with -2 AP", false, buffs, "attack MH");
+        Shop.addAllCards(item);
+        setNullArray(buffs);
+        power = new Power(false, false, true, false, 0, 6, 0);
+        buffs.add(power);
+        item = new Item("blades of agility", 0, 0, "Add 6 AP", true, buffs, "first");
+        Item.addCollectableItem(item);
+        setNullArray(buffs);
+        integers = new ArrayList<Integer>();
+        integers.add(1);
+        addMP = new AddMP(0, integers, true);
+        buffs.add(addMP);
+        item = new Item("king wisdom", 9000, 0, "Add 1 MP for all turn", false, buffs, "first");
+        Shop.addAllCards(item);
+        setNullArray(buffs);
+        poison = new Poison(false, false, true, false, true, false, 0, 0, -1);
+        buffs.add(poison);
+        item = new Item("assissnation dagger", 7000, 0, "Knock 1 to enemy hero", false, buffs, "addCard");
+        Shop.addAllCards(item);
+        setNullArray(buffs);
+        poison = new Poison(true, true, false, false, false, false, 1, 0, -1);
+        buffs.add(poison);
+        item = new Item("poisonous dagger", 7000, 0, "Give poison buff to one turn to enemy", false, buffs, "attack MH");
+        Shop.addAllCards(item);
+        setNullArray(buffs);
+        disarm = new Disarm(true, false, false, false, 1);
+        buffs.add(disarm);
+        item = new Item("shock hammer", 15000, 0, "Disarm enemy for one turn", false, buffs, "attack H");
+        Shop.addAllCards(item);
+        setNullArray(buffs);
+        power = new Power(true, false, true, false, 0, 1, 0);
+        buffs.add(power);
+        item = new Item("soul eater", 25000, 0, "Give power buff with 1 AP", false, buffs, "death MH");
+        Shop.addAllCards(item);
+        setNullArray(buffs);
+        holy = new Holy(true, false, false, false, 2);
+        buffs.add(holy);
+        item = new Item("qosl tamid", 20000, 0, "Give to holy buff to minion when spawn", false, buffs, "spawn M");
+        Shop.addAllCards(item);
+        setNullArray(buffs);
+        power = new Power(false, false, true, false, 0, 5, 0);
+        buffs.add(power);
+        item = new Item("shamshir chini", 0, 0, "Add 5 AP to melee", true, buffs, "first");
+        Item.addCollectableItem(item);
 
     }
 
     public static void main(String[] args) {
-        /*Hero hero = new Hero("shaj", 100, 1);
-        Hero hero1 = new Hero("sds", 12, 1);
-        hero1.setNumberOfPlayer(1);
-        Minion minion = new Minion("sqhsq", 100, 1);
-        minion.setNumberOfPlayer(1);
-        Minion minion1 = new Minion("sdfs", 10, 12);
-        minion1.setNumberOfPlayer(1);
-        Minion minion2 = new Minion("sdsdsds", 100, 1212);
-        minion2.setNumberOfPlayer(1);
-        Minion minion3 = new Minion("Sd", 12, 21);
-        minion3.setNumberOfPlayer(1);
-        Minion minion4 = new Minion("Sd", 12, 21);
-        minion4.setNumberOfPlayer(1);
-        Minion minion5 = new Minion("Sd", 12, 21);
-        minion5.setNumberOfPlayer(1);
-        Minion minion6 = new Minion("Sd", 12, 21);
-        Minion minion7 = new Minion("Sd", 12, 21);
-        Minion minion8 = new Minion("Sd", 12, 21);
-        Minion minion9 = new Minion("Sd", 12, 21);
-        Minion minion10 = new Minion("Sd", 12, 21);
-        Minion minion11 = new Minion("Sd", 12, 21);
-        Minion minion12 = new Minion("Sd", 12, 21);
-
-        Holy holy = new Holy(true, false, false, false, 1);
-        minion.buffs.add(holy);
-
-        cardsCell[0][0] = minion;
-        cardsCell[3][0] = minion1;
-        cardsCell[6][0] = minion12;
-        cardsCell[8][0] = minion2;
-        cardsCell[1][1] = minion3;
-        cardsCell[4][1] = minion11;
-        cardsCell[6][1] = minion4;
-        cardsCell[2][2] = hero1;
-        cardsCell[4][2] = minion5;
-        cardsCell[6][2] = hero;
-        cardsCell[8][2] = minion10;
-        cardsCell[3][3] = minion6;
-        cardsCell[0][4] = minion9;
-        cardsCell[2][4] = minion8;
-        cardsCell[6][4] = minion7;
-
-
-        setShopSpell();
-
-        Delete delete = new Delete(false, false, false, false, 1);
-        delete.effectBuffsOnCard(minion, 0);
-
-        for (int i = 0; i < minion.buffs.size(); i++)
-            System.out.println(i);*/
         setShopSpell();
         setShopMinion();
         setShopHero();
@@ -433,9 +504,3 @@ public class Main {
     }
 
 }
-=======
-    public static void main(String[] args) {
-        System.out.println("shajuuuuu");
-    }
-}
->>>>>>> master
