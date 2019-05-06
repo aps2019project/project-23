@@ -32,6 +32,10 @@ public class Minion extends Card {
         this.specialPower = specialPower;
     }
 
+    public int getAttackRange() {
+        return attackRange;
+    }
+
     public void addHP(int HP) {
         this.HP += HP;
     }
