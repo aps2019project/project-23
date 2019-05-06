@@ -11,6 +11,15 @@ public class Account {
     private int MP;
     private Collection collection;
     private ArrayList<Match> allMatches = new ArrayList<Match>();
+    private int numberOfPlayer;
+
+    public void setNumberOfPlayer(int numberOfPlayer) {
+        this.numberOfPlayer = numberOfPlayer;
+    }
+
+    public int getNumberOfPlayer() {
+        return numberOfPlayer;
+    }
 
     public Collection getCollection() {
         return collection;
@@ -21,6 +30,10 @@ public class Account {
         this.username = username;
         this.budget = 15000;
         collection = new Collection();
+    }
+
+    public void addMP(int MP) {
+        this.MP += MP;
     }
 
     public int getMP() {
