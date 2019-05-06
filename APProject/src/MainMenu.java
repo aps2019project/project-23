@@ -16,9 +16,11 @@ public class MainMenu {
 
     public static void saveAccounts() {
 
+
     }
 
     public static void loadAccounts() {
+
 
     }
 
@@ -39,6 +41,9 @@ public class MainMenu {
     }
 
     public static void showLeaderboard() {
+        for (Account account : accounts) {
+            account.setCounterOfWin();
+        }
         rankAccounts();
         for (Account account : accounts) {
             System.out.printf("%d - UserName : %s - Wins : ", accounts.indexOf(account) + 1, account.getUsername());
@@ -48,11 +53,9 @@ public class MainMenu {
 
     public static void help() {
         System.out.println("1. create account [username]");
-        System.out.println("2. login account [username]");
+        System.out.println("2. login [username]");
         System.out.println("3. show leaderboard");
         System.out.println("4. save");
-        System.out.println("5. logout");
-        System.out.println("6. help");
     }
 
     public static void createAccount(String username) {
@@ -84,7 +87,7 @@ public class MainMenu {
         for (Account account : accounts) {
             if (account.getUsername().matches(username)) {
                 if (account.getPassword().matches(password)) {
-                    account.copyOfAccount().menu();
+                    account.menu(account);
                 } else {
                     System.out.println("Invalid password");
                     return;
@@ -96,12 +99,12 @@ public class MainMenu {
     public static void menu() {
         loadAccounts();
         Pattern createAccountPat = Pattern.compile("^create account \\[(?<username>\\p{all}+)]$");
-        Pattern loginPat = Pattern.compile("^login \\[?<username>\\p{all}+]$");
+        Pattern loginPat = Pattern.compile("^login \\[(?<username>\\p{all}+)]$");
         Matcher matcher;
         String command;
         while (true) {
             command = Main.getScanner().nextLine();
-            command = command.toLowerCase();
+            command = command.toLowerCase().trim();
             matcher = createAccountPat.matcher(command);
             if (matcher.find())
                 createAccount(matcher.group("username"));
@@ -116,4 +119,3 @@ public class MainMenu {
     }
 
 }
-
