@@ -87,6 +87,9 @@ public class Hero extends Card {
             buffs.add(buff.copyBuff());
         }
         Hero hero = new Hero(name, clas, cost, MP, HP, AP, attackRange, cooldown, specialPower, buffs, targetCommunity, usable, onAttack, haveBuff);
+        if (cardID != null) {
+            hero.setCardID(cardID);
+        }
         return hero;
 
     }
