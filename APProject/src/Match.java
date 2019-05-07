@@ -6,9 +6,11 @@ public class Match {
     private String winOrLose;
     private String timeOfMatch;
 
-    public Match(String nameOfOppenent) {
-        Calendar time = Calendar.getInstance();
-        timeOfMatch = time.toString();
+    public Match(String nameOfOppenent, boolean load) {
+        if (!load) {
+            Calendar time = Calendar.getInstance();
+            timeOfMatch = time.toString();
+        }
         this.nameOfOpponent = nameOfOppenent;
     }
 
@@ -23,7 +25,7 @@ public class Match {
     public void show() {
         System.out.printf("Opponent : %s ", nameOfOpponent);
         System.out.printf("Win/Lose : %s ", winOrLose);
-        System.out.printf("Time : %s\n", timeOfMatch);
+        System.out.printf("Time : %s\n\n", timeOfMatch);
     }
 
     public String getWinOrLose() {
@@ -36,6 +38,10 @@ public class Match {
 
     public String getTimeOfMatch() {
         return timeOfMatch;
+    }
+
+    public void setTimeOfMatch(String timeOfMatch) {
+        this.timeOfMatch = timeOfMatch;
     }
 
 }
