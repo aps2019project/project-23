@@ -12,13 +12,17 @@ public class Collection {
     public Deck getMainDeck() {
         return mainDeck;
     }
-    
+
     public void addToAllOfCardInCollection(Card card) {
         allOfCardInCollection.add(card);
     }
 
     public void setMainDeck(Deck deck) {
         mainDeck = deck;
+    }
+
+    public void addAllDeck(Deck deck) {
+        allDecks.add(deck);
     }
 
     public ArrayList<Deck> getAllDecks() {
@@ -247,7 +251,7 @@ public class Collection {
         boolean existMainDeck = false;
 
         if (mainDeck != null) {
-            System.out.println("1 : deck_1 :");
+            System.out.printf("1 : %s :\n" , mainDeck.getName());
             show(mainDeck.getDeckCard());
             existMainDeck = true;
         }
