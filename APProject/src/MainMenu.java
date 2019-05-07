@@ -10,16 +10,13 @@ public class MainMenu {
         accounts.add(account);
     }
 
-    public static ArrayList<Account> getAccounts() {
-        return accounts;
-    }
-
     public static void saveAccounts() {
         File.saveAccountInFile(accounts);
     }
 
     public static void loadAccounts() {
-
+        File.loadAccount();
+        Main.setScannerUser();
     }
 
     public static void rankAccounts() {
@@ -72,6 +69,7 @@ public class MainMenu {
             if (account1.getUsername().matches(username))
                 return accounts.indexOf(account1);
         }
+
         return -1;
     }
 
