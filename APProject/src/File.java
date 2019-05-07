@@ -36,6 +36,9 @@ public class File {
                 }
 
                 for (Deck deck : account.getCollection().getAllDecks()) {
+                    if (deck == account.getCollection().getMainDeck()) {
+                        continue;
+                    }
                     fileWriter.write("Deck: ");
                     fileWriter.write(account.getCollection().getAllDecks().indexOf(deck) + ")" + deck.getName() + ": ");
                     for (Card card : deck.getDeckCard()) {
@@ -119,6 +122,7 @@ public class File {
                         }
                     }
                     account.getCollection().setMainDeck(deck);
+                    account.getCollection().addAllDeck(deck);
                 }
             }
 
