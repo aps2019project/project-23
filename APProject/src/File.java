@@ -29,30 +29,26 @@ public class File {
                 } else {
                     for (Card card : account.getCollection().getAllCards()) {
                         fileWriter.write(account.getCollection().getAllCards().indexOf(card) + ")");
-                        fileWriter.write(card.name + "_" + card.cardID);
+                        fileWriter.write(card.name + " " + card.cardID);
                         fileWriter.write("\n");
                     }
                     fileWriter.write("\n");
                 }
-                fileWriter.write("Decks:\n");
-                if (account.getCollection().getAllDecks().size() == 0) {
-                    fileWriter.write("None\n");
-                } else {
-                    for (Deck deck : account.getCollection().getAllDecks()) {
-                        fileWriter.write(account.getCollection().getAllDecks().indexOf(deck) + ")" + deck.getName() + ": ");
-                        for (Card card : deck.getDeckCard()) {
-                            fileWriter.write(deck.getDeckCard().indexOf(card) + "." + card.name + "_" + card.cardID + "\n");
-                        }
-                        fileWriter.write("\n");
+
+                for (Deck deck : account.getCollection().getAllDecks()) {
+                    fileWriter.write("Deck: ");
+                    fileWriter.write(account.getCollection().getAllDecks().indexOf(deck) + ")" + deck.getName() + ": ");
+                    for (Card card : deck.getDeckCard()) {
+                        fileWriter.write(deck.getDeckCard().indexOf(card) + ")" + card.name + "," + card.cardID + " ");
                     }
+                    fileWriter.write("\n");
                 }
-                fileWriter.write("MainDeck:\n");
-                if (account.getCollection().getMainDeck() == null) {
-                    fileWriter.write("None\n");
-                } else {
+
+                if (account.getCollection().getMainDeck() != null) {
+                    fileWriter.write("MainDeck: ");
                     fileWriter.write(account.getCollection().getMainDeck().getName() + ": ");
                     for (Card card : account.getCollection().getMainDeck().getDeckCard()) {
-                        fileWriter.write(account.getCollection().getMainDeck().getDeckCard().indexOf(card) + ")" + card.name + "_" + card.cardID + "\n");
+                        fileWriter.write(account.getCollection().getMainDeck().getDeckCard().indexOf(card) + ")" + card.name + "," + card.cardID + " ");
                     }
                     fileWriter.write("\n");
                 }
@@ -78,14 +74,54 @@ public class File {
         Pattern usernamePat = Pattern.compile("^Username:(?<username>\\p{all}+)$");
         Pattern passwordPat = Pattern.compile("^Password:(?<password>\\p{all}+)$");
         Pattern matchHistoryPat = Pattern.compile("^[\\d]+[)]name:(?<name>\\p{all}+)win:(?<win>\\p{all}+)time:(?<time>\\p{all}+)$");
-        Pattern collectionPat = Pattern.compile("^[\\d]+[)](?<cardName>\\p{all}+)_(?<cardID>\\p{all}+)$");
+        Pattern collectionPat = Pattern.compile("^[\\d]+[)](?<cardName>\\p{all}+) (?<cardID>\\p{all}+)$");
+        Pattern moneyPat = Pattern.compile("^Money:(?<money>\\d+)$");
+        Pattern deckPat = Pattern.compile("^[\\d]+[)](?<deckName>\\p{all}+):$");
+        Pattern cardInDeckPat = Pattern.compile("^[\\d]+[)](?<cardName>\\p{all}+),(?<cardID>\\p{all}+)$");
+        Pattern mainDeckPat = Pattern.compile("^(?<deckName>\\p{all}+):$");
 
         Account account = new Account("", "");
         String username = "";
         String password = "";
+        String[] commands;
         while (Main.getScanner().hasNext()) {
 
             command = Main.getScanner().nextLine();
+            commands = command.split(" ");
+
+            if (commands[0].matches("Deck:")) {
+                matcher = deckPat.matcher(commands[1]);
+                Deck deck;
+                if (matcher.find()) {
+                    deck = new Deck(matcher.group("deckName"));
+                    for (int i = 2; i < commands.length; i++) {
+                        matcher = cardInDeckPat.matcher(commands[i]);
+                        if (matcher.find()) {
+                            Card card = Shop.getCard(matcher.group("cardName"));
+                            card.setCardID(matcher.group("cardID"));
+                            account.getCollection().addToAllOfCardInCollection(card);
+                            deck.addCard(card);
+                        }
+                    }
+                    account.getCollection().addAllDeck(deck);
+                }
+            } else if (commands[0].matches("MainDeck:")) {
+                matcher = mainDeckPat.matcher(commands[1]);
+                Deck deck;
+                if (matcher.find()) {
+                    deck = new Deck(matcher.group("deckName"));
+                    for (int i = 2; i < commands.length; i++) {
+                        matcher = cardInDeckPat.matcher(commands[i]);
+                        if (matcher.find()) {
+                            Card card = Shop.getCard(matcher.group("cardName"));
+                            card.setCardID(matcher.group("cardID"));
+                            deck.addCard(card);
+                        }
+                    }
+                    account.getCollection().setMainDeck(deck);
+                }
+            }
+
             matcher = usernamePat.matcher(command);
             if (matcher.find()) {
                 username = matcher.group("username");
@@ -99,7 +135,13 @@ public class File {
                 continue;
             }
 
-            if (command.matches("MatchHistory")) {
+            matcher = moneyPat.matcher(command);
+            if (matcher.find()) {
+                account.setBudget(Integer.parseInt(matcher.group("money")));
+                continue;
+            }
+
+            if (command.matches("MatchHistory:")) {
                 command = Main.getScanner().nextLine();
                 matcher = matchHistoryPat.matcher(command);
                 while (matcher.find()) {
@@ -122,17 +164,18 @@ public class File {
                 matcher = collectionPat.matcher(command);
                 while (matcher.find()) {
                     Card card = Shop.getCard(matcher.group("cardName"));
-                    card.setCardID(matcher.group("cardID"));
-                    account.getCollection().addCardToCollection(card);
+                    if (card != null) {
+                        card.setCardID(matcher.group("cardID"));
+                        account.getCollection().addCardToCollection(card);
+                    }
                     command = Main.getScanner().nextLine();
                     matcher = collectionPat.matcher(command);
                 }
             }
 
-            if (command.matches("Deck:")) {
-                
+            if (command.matches("finish")) {
+                MainMenu.addAccount(account);
             }
-
 
         }
 
