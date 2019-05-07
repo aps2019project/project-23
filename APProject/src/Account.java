@@ -17,6 +17,14 @@ public class Account {
         return allMatches;
     }
 
+    public void setBudget(int budget) {
+        this.budget = budget;
+    }
+
+    public void addMatch(Match match) {
+        allMatches.add(match);
+    }
+
     public void setNumberOfPlayer(int numberOfPlayer) {
         this.numberOfPlayer = numberOfPlayer;
     }
@@ -82,13 +90,14 @@ public class Account {
         System.out.println("1. enter collection");
         System.out.println("2. enter shop");
         System.out.println("3. enter battle");
-        System.out.println("4. exit");
-        System.out.println("5. logout");
+        System.out.println("4. match history");
+        System.out.println("5. exit");
+        System.out.println("6. logout");
     }
 
     public void matchHistory() {
         for (int i = 0; i < allMatches.size(); i++) {
-            System.out.printf("%d.\n", i);
+            System.out.printf("%d.", i+1);
             System.out.println("    ");
             allMatches.get(i).show();
         }
