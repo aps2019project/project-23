@@ -4,6 +4,29 @@ import java.util.regex.Pattern;
 
 public class GameController {
 
+    private static ArrayList<Card> handPlayer1 = new ArrayList<Card>(5);
+    private static ArrayList<Card> handPlayer2 = new ArrayList<Card>(5);
+    private static Card selectedCard1 = null;
+    private static Card selectedCard2 = null;
+    protected static Deck player1Deck;
+    protected static Deck player2Deck;
+
+    public static ArrayList<Card> getHandPlayer2() {
+        return handPlayer2;
+    }
+
+    public static ArrayList<Card> getHandPlayer1() {
+        return handPlayer1;
+    }
+
+    public static void setPlayer2Deck(Deck player2Deck) {
+        GameController.player2Deck = player2Deck;
+    }
+
+    public static void setPlayer1Deck(Deck player1Deck) {
+        GameController.player1Deck = player1Deck;
+    }
+
     public static void gameInfo(int mode, Deck player1Deck, Deck player2Deck) {
 
         if (mode == 1) {
@@ -118,9 +141,9 @@ public class GameController {
             return;
         }
         if (account.getNumberOfPlayer() == 1) {
-            KillMode.setSelectedCard1(Main.getCardsCell()[x][y]);
+            selectedCard1 = Main.getCardsCell()[x][y];
         } else if (account.getNumberOfPlayer() == 2) {
-            KillMode.setSelectedCard2(Main.getCardsCell()[x][y]);
+            selectedCard2 = Main.getCardsCell()[x][y];
         }
 
     }
@@ -141,7 +164,7 @@ public class GameController {
 
         matcher = showCardInfoPat.matcher(command);
         if (matcher.find()) {
-            showCardInfo(matcher.group("cardID"), KillMode.getHandPlayer1());
+            showCardInfo(matcher.group("cardID"), handPlayer1);
             return;
         }
 
