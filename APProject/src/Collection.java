@@ -239,7 +239,6 @@ public class Collection {
     public void selectDeck(String deckName) {
 
         if (!validate(deckName)) {
-            System.out.println("Invalid deck");
             return;
         }
         mainDeck = allDecks.get(indexOfDeck(deckName));
