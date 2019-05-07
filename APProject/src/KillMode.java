@@ -3,35 +3,6 @@ import java.util.Random;
 
 public class KillMode extends Custom {
 
-    private static ArrayList<Card> handPlayer1 = new ArrayList<Card>(5);
-    private static ArrayList<Card> handPlayer2 = new ArrayList<Card>(5);
-    private static Card selectedCard1 = null;
-    private static Card selectedCard2 = null;
-
-    public static Card getSelectedCard1() {
-        return selectedCard1;
-    }
-
-    public static Card getSelectedCard2() {
-        return selectedCard2;
-    }
-
-    public static ArrayList<Card> getHandPlayer1() {
-        return handPlayer1;
-    }
-
-    public static ArrayList<Card> getHandPlayer2() {
-        return handPlayer2;
-    }
-
-    public static void setSelectedCard1(Card selectedCard1) {
-        KillMode.selectedCard1 = selectedCard1;
-    }
-
-    public static void setSelectedCard2(Card selectedCard2) {
-        KillMode.selectedCard2 = selectedCard2;
-    }
-
     public static void setAccount(Deck deck, int numberOfPlayer, Account account) {
         for (Card card : deck.getDeckCard()) {
             card.setNumberOfPlayer(numberOfPlayer);
@@ -105,10 +76,12 @@ public class KillMode extends Custom {
         setAccount(player2Deck, 2, account1);
         account.setNumberOfPlayer(1);
         account1.setNumberOfPlayer(2);
-        setRandomHand(handPlayer1, player1Deck);
-        setRandomHand(handPlayer1, player2Deck);
+        setRandomHand(GameController.getHandPlayer1(), player1Deck);
+        setRandomHand(GameController.getHandPlayer2(), player2Deck);
         setRandomDeck(player1Deck);
         setRandomDeck(player2Deck);
+        GameController.setPlayer1Deck(player1Deck);
+        GameController.setPlayer2Deck(player2Deck);
         setCellCard();
 
         String command;
