@@ -17,21 +17,9 @@ public class KillMode extends Custom {
                 Main.getCardsCell()[0][2] = card;
             }
         }
-
         for (Card card : player2Deck.getDeckCard()) {
             if (card instanceof Hero) {
                 Main.getCardsCell()[8][2] = card;
-            }
-        }
-
-        for (Card card : player1Deck.getDeckCard()) {
-            if (card instanceof Hero) {
-                player1Deck.deleteCard(card.cardID);
-            }
-        }
-        for (Card card : player2Deck.getDeckCard()) {
-            if (card instanceof Hero) {
-                player2Deck.deleteCard(card.cardID);
             }
         }
 
@@ -69,11 +57,13 @@ public class KillMode extends Custom {
         int turn2 = 0;
         boolean turnPlayer1 = true;
         boolean turnPlayer2 = false;
-
         Main.setNullCardsCell();
         Main.setNullBuffsCell();
         setAccount(player1Deck, 1, account);
         setAccount(player2Deck, 2, account1);
+        setCellCard();
+        player1Deck.deleteHero();
+        player2Deck.deleteHero();
         account.setNumberOfPlayer(1);
         account1.setNumberOfPlayer(2);
         setRandomHand(GameController.getHandPlayer1(), player1Deck);
@@ -82,7 +72,6 @@ public class KillMode extends Custom {
         setRandomDeck(player2Deck);
         GameController.setPlayer1Deck(player1Deck);
         GameController.setPlayer2Deck(player2Deck);
-        setCellCard();
 
         String command;
         while (true) {
