@@ -3,6 +3,22 @@ import java.util.regex.Pattern;
 
 public class singleCustomGame {
 
+    public static void setCardIDForComputer(Deck deck) {
+
+        Pattern pattern = Pattern.compile("^(?<username>\\p{all}+)_(?<cardName>\\p{all}+)_(?<number>\\d+)$");
+        Matcher matcher;
+        String cardID = "";
+
+        for (Card card : deck.getDeckCard()) {
+            matcher = pattern.matcher(card.cardID);
+            if (matcher.find()) {
+                cardID = "computer" + "_" + matcher.group("cardName") + "_" + matcher.group("number");
+                card.setCardID(cardID);
+            }
+        }
+
+    }
+
     public static void help() {
         System.out.println("start game [deck name] [mode] [number of flag (for mode 3)]");
     }
@@ -26,7 +42,8 @@ public class singleCustomGame {
         Custom.setPlayer1Deck(account.getCollection().getMainDeck().copyOfDeck());
         Custom.setPlayer2Deck(account.getCollection().getAllDecks().get(account.getCollection().indexOfDeck(deckName)).copyOfDeck());
         Account account1 = new Account("computer", "");
-        account1.getCollection().setMainDeck(account.getCollection().getAllDecks().get(account.getCollection().indexOfDeck(deckName)).copyOfDeck());
+        account1.getCollection().setMainDeck(Custom.player2Deck);
+        setCardIDForComputer(account1.getCollection().getMainDeck());
         if (mode == 1) {
             KillMode.game(account, account1);
         } else if (mode == 2) {
