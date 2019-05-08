@@ -6,8 +6,7 @@ public class GameController {
 
     private static ArrayList<Card> handPlayer1 = new ArrayList<Card>(5);
     private static ArrayList<Card> handPlayer2 = new ArrayList<Card>(5);
-    private static Card selectedCard1 = null;
-    private static Card selectedCard2 = null;
+    private static Card selectedCard = null;
     protected static Deck player1Deck;
     protected static Deck player2Deck;
 
@@ -60,11 +59,11 @@ public class GameController {
                     System.out.printf("cardID : %s, ", Main.getCardsCell()[i][j].cardID);
                     if (Main.getCardsCell()[i][j] instanceof Hero) {
                         System.out.printf("health : %d, ", ((Hero) Main.getCardsCell()[i][j]).getHP());
-                        System.out.printf("location : [%d,%d], ", i+1, j+1);
+                        System.out.printf("location : [%d,%d], ", i + 1, j + 1);
                         System.out.printf("power : %d\n", ((Hero) Main.getCardsCell()[i][j]).getAP());
                     } else if (Main.getCardsCell()[i][j] instanceof Minion) {
                         System.out.printf("health : %d, ", ((Minion) Main.getCardsCell()[i][j]).getHP());
-                        System.out.printf("location : [%d,%d], ", i+1, j+1);
+                        System.out.printf("location : [%d,%d], ", i + 1, j + 1);
                         System.out.printf("power : %d\n", ((Minion) Main.getCardsCell()[i][j]).getAP());
                     }
                 }
@@ -132,7 +131,6 @@ public class GameController {
     }
 
     public static void selectCard(String cardID, Account account) {
-
         boolean existCard = false;
         int x = 0, y = 0;
         for (int i = 0; i < 9; i++) {
@@ -140,6 +138,7 @@ public class GameController {
                 if (Main.getCardsCell()[i][j] == null) {
                     continue;
                 }
+                System.out.println(Main.getCardsCell()[i][j].cardID);
                 if (Main.getCardsCell()[i][j].cardID.matches(cardID)) {
                     existCard = true;
                     x = i;
@@ -155,18 +154,55 @@ public class GameController {
             System.out.println("This card is not for you");
             return;
         }
-        if (account.getNumberOfPlayer() == 1) {
-            selectedCard1 = Main.getCardsCell()[x][y];
-        } else if (account.getNumberOfPlayer() == 2) {
-            selectedCard2 = Main.getCardsCell()[x][y];
+        selectedCard = Main.getCardsCell()[x][y];
+
+    }
+
+    public static boolean checkMove(int x1, int y1, int x2, int y2) {
+
+
+    }
+
+    public static int[] getLocation(String cardID) {
+
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 5; j++) {
+                if (Main.getCardsCell()[i][j].cardID.matches(cardID)) {
+                    int[] cell = {i, j};
+                    return cell;
+                }
+            }
         }
+        return null;
+
+    }
+
+    public static void moveCard(int x, int y) {
+
+        int xOfCard = getLocation(selectedCard.cardID)[0];
+        int yOfCard = getLocation(selectedCard.cardID)[1];
+
+        if (!selectedCard.move || !selectedCard.attack) {
+            System.out.println("Can't move");
+            return;
+        }
+        if (Main.getCardsCell()[x][y] != null || !(Main.getCardsCell()[x][y] instanceof Item)) {
+            System.out.println("Exist card in this location");
+            return;
+        }
+        if (Math.abs(x - xOfCard) > 2 || Math.abs(y - yOfCard) > 2) {
+            System.out.println("Invalid target");
+            return;
+        }
+
 
     }
 
     public static void control(Account account, Account account1, String command, int mode) {
 
         Pattern showCardInfoPat = Pattern.compile("^show card info \\[(?<cardID>\\p{all}+)]$");
-        Pattern selectPat = Pattern.compile("^select \\[(?<cardID>)\\p{all}+]$");
+        Pattern selectPat = Pattern.compile("^select \\[(?<cardID>\\p{all}+)]$");
+        Pattern movePat = Pattern.compile("^move to \\(\\[(?<x>[1-9])],\\[(?<y>[1-5])]\\)$");
         Matcher matcher;
 
         if (command.matches("game info")) {
@@ -187,6 +223,15 @@ public class GameController {
         if (matcher.find()) {
             selectCard(matcher.group("cardID"), account);
             return;
+        }
+
+        matcher = movePat.matcher(command);
+        if (matcher.find()) {
+            if (selectedCard == null) {
+                System.out.println("Select on card and try again");
+                return;
+            }
+            moveCard(Integer.parseInt(matcher.group("x")) - 1, Integer.parseInt(matcher.group("y")) - 1);
         }
 
     }
