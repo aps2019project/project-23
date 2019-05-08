@@ -6,6 +6,7 @@ public class GameController {
 
     private static ArrayList<Card> handPlayer1 = new ArrayList<Card>(5);
     private static ArrayList<Card> handPlayer2 = new ArrayList<Card>(5);
+    private static ArrayList<Item> collectableItem = new ArrayList<>();
     private static Card selectedCard = null;
     protected static Deck player1Deck;
     protected static Deck player2Deck;
@@ -138,7 +139,6 @@ public class GameController {
                 if (Main.getCardsCell()[i][j] == null) {
                     continue;
                 }
-                System.out.println(Main.getCardsCell()[i][j].cardID);
                 if (Main.getCardsCell()[i][j].cardID.matches(cardID)) {
                     existCard = true;
                     x = i;
@@ -162,46 +162,46 @@ public class GameController {
 
         if (y1 == y2) {
             if (x1 > x2) {
-                if (Main.getCardsCell()[x1 - 1][y1] != null || !(Main.getCardsCell()[x1 - 1][y1] instanceof Item)) {
+                if (Main.getCardsCell()[x1 - 1][y1] != null && !(Main.getCardsCell()[x1 - 1][y1] instanceof Item)) {
                     return false;
                 }
             } else {
-                if (Main.getCardsCell()[x1 + 1][y1] != null || !(Main.getCardsCell()[x1 + 1][y1] instanceof Item)) {
+                if (Main.getCardsCell()[x1 + 1][y1] != null && !(Main.getCardsCell()[x1 + 1][y1] instanceof Item)) {
                     return false;
                 }
             }
         } else if (x1 == x2) {
             if (y1 > y2) {
-                if (Main.getCardsCell()[x1][y1 - 1] != null || !(Main.getCardsCell()[x1][y1 - 1] instanceof Item)) {
+                if (Main.getCardsCell()[x1][y1 - 1] != null && !(Main.getCardsCell()[x1][y1 - 1] instanceof Item)) {
                     return false;
                 }
             } else {
-                if (Main.getCardsCell()[x1][y1 + 1] != null || !(Main.getCardsCell()[x1][y1 + 1] instanceof Item)) {
+                if (Main.getCardsCell()[x1][y1 + 1] != null && !(Main.getCardsCell()[x1][y1 + 1] instanceof Item)) {
                     return false;
                 }
             }
         } else {
             if (x1 == x2 + 1 && y1 == y2 + 1) {
-                if (Main.getCardsCell()[x1 - 1][y1] != null || !(Main.getCardsCell()[x1 - 1][y1] instanceof Item)) {
-                    if (Main.getCardsCell()[x1][y1 - 1] != null || !(Main.getCardsCell()[x1][y1 - 1] instanceof Item)) {
+                if (Main.getCardsCell()[x1 - 1][y1] != null && !(Main.getCardsCell()[x1 - 1][y1] instanceof Item)) {
+                    if (Main.getCardsCell()[x1][y1 - 1] != null && !(Main.getCardsCell()[x1][y1 - 1] instanceof Item)) {
                         return false;
                     }
                 }
             } else if (x1 == x2 + 1 && y1 == y2 - 1) {
-                if (Main.getCardsCell()[x1 - 1][y1] != null || !(Main.getCardsCell()[x1 - 1][y1] instanceof Item)) {
-                    if (Main.getCardsCell()[x1][y1 + 1] != null | !(Main.getCardsCell()[x1][y1 + 1] instanceof Item)) {
+                if (Main.getCardsCell()[x1 - 1][y1] != null && !(Main.getCardsCell()[x1 - 1][y1] instanceof Item)) {
+                    if (Main.getCardsCell()[x1][y1 + 1] != null && !(Main.getCardsCell()[x1][y1 + 1] instanceof Item)) {
                         return false;
                     }
                 }
             } else if (x1 == x2 - 1 && y1 == y2 + 1) {
-                if (Main.getCardsCell()[x1 + 1][y1] != null || !(Main.getCardsCell()[x1 + 1][y1] instanceof Item)) {
-                    if (Main.getCardsCell()[x1][y1 - 1] != null || !(Main.getCardsCell()[x1][y1 - 1] instanceof Item)) {
+                if (Main.getCardsCell()[x1 + 1][y1] != null && !(Main.getCardsCell()[x1 + 1][y1] instanceof Item)) {
+                    if (Main.getCardsCell()[x1][y1 - 1] != null && !(Main.getCardsCell()[x1][y1 - 1] instanceof Item)) {
                         return false;
                     }
                 }
             } else {
-                if (Main.getCardsCell()[x1 + 1][y1] != null || !(Main.getCardsCell()[x1 + 1][y1] instanceof Item)) {
-                    if (Main.getCardsCell()[x1][y1 + 1] != null || !(Main.getCardsCell()[x1][y1 + 1] instanceof Item)) {
+                if (Main.getCardsCell()[x1 + 1][y1] != null && !(Main.getCardsCell()[x1 + 1][y1] instanceof Item)) {
+                    if (Main.getCardsCell()[x1][y1 + 1] != null && !(Main.getCardsCell()[x1][y1 + 1] instanceof Item)) {
                         return false;
                     }
                 }
@@ -212,9 +212,11 @@ public class GameController {
     }
 
     public static int[] getLocation(String cardID) {
-
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 5; j++) {
+                if (Main.getCardsCell()[i][j] == null) {
+                    continue;
+                }
                 if (Main.getCardsCell()[i][j].cardID.matches(cardID)) {
                     int[] cell = {i, j};
                     return cell;
@@ -225,7 +227,21 @@ public class GameController {
 
     }
 
-    public static void moveCard(int x, int y) {
+    public static void addCollectableItem(int x, int y, Account account) {
+        String cardID;
+        int counter = 0;
+        for (int i = 0; i < collectableItem.size(); i++) {
+            if (collectableItem.get(i).name.matches(((Item) Main.getCardsCell()[x][y]).name)) {
+                counter++;
+            }
+        }
+        cardID = account.getUsername() + Main.getCardsCell()[x][y].name + counter;
+        Main.getCardsCell()[x][y].setCardID(cardID);
+        collectableItem.add(((Item) Main.getCardsCell()[x][y]));
+        Main.getCardsCell()[x][y] = null;
+    }
+
+    public static void moveCard(int x, int y, Account account) {
 
         int xOfCard = getLocation(selectedCard.cardID)[0];
         int yOfCard = getLocation(selectedCard.cardID)[1];
@@ -234,28 +250,34 @@ public class GameController {
             selectedCard = null;
             return;
         }
-        if (!selectedCard.move || !selectedCard.attack) {
+        if (selectedCard.move || selectedCard.attack) {
             System.out.println("Can't move");
             selectedCard = null;
             return;
         }
-        if (Main.getCardsCell()[x][y] != null || !(Main.getCardsCell()[x][y] instanceof Item)) {
-            System.out.println("Invalid target");
+        if (Main.getCardsCell()[x][y] != null && !(Main.getCardsCell()[x][y] instanceof Item)) {
+            System.out.println("Invalid target3");
             selectedCard = null;
             return;
         }
         if (Math.abs(x - xOfCard) + Math.abs(y - yOfCard) > 2) {
-            System.out.println("Invalid target");
+            System.out.println("Invalid target2");
             selectedCard = null;
             return;
         }
         if (!checkMove(xOfCard, yOfCard, x, y)) {
-            System.out.println("Invalid target");
+            System.out.println("Invalid target1");
             selectedCard = null;
             return;
         }
-
-        System.out.printf("[%s] moved to [%d] [%d]\n", selectedCard.cardID, x, y);
+        if (Main.getCardsCell()[x][y] instanceof Item) {
+            addCollectableItem(x, y, account);
+        }
+        selectedCard.setMove(true);
+        Main.getCardsCell()[getLocation(selectedCard.cardID)[0]][getLocation(selectedCard.cardID)[1]] = null;
+        Main.getCardsCell()[x][y] = selectedCard;
+        System.out.printf("[%s] moved to [%d] [%d]\n", selectedCard.cardID, x + 1, y + 1);
+        selectedCard = null;
 
     }
 
@@ -289,10 +311,10 @@ public class GameController {
         matcher = movePat.matcher(command);
         if (matcher.find()) {
             if (selectedCard == null) {
-                System.out.println("Select on card and try again");
+                System.out.println("Select card and try again");
                 return;
             }
-            moveCard(Integer.parseInt(matcher.group("x")) - 1, Integer.parseInt(matcher.group("y")) - 1);
+            moveCard(Integer.parseInt(matcher.group("x")) - 1, Integer.parseInt(matcher.group("y")) - 1, account);
         }
 
     }
