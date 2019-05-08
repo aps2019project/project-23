@@ -1,5 +1,6 @@
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
 
 public class Main {
@@ -23,6 +24,19 @@ public class Main {
                 buffCell[i][j] = null;
             }
         }
+    }
+
+    public static void setCollectableItemInCells() {
+
+        Random random = new Random();
+        int collectable1 = random.nextInt(Item.getCollectableItems().size());
+        int collectable2 = random.nextInt(Item.getCollectableItems().size());
+        int collectable3 = random.nextInt(Item.getCollectableItems().size());
+
+        cardsCell[4][0] = Item.getCollectableItems().get(collectable1).copyOfCard();
+        cardsCell[5][2] = Item.getCollectableItems().get(collectable2).copyOfCard();
+        cardsCell[4][4] = Item.getCollectableItems().get(collectable1).copyOfCard();
+
     }
 
     public static Card[][] getCardsCell() {
