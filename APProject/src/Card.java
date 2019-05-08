@@ -3,7 +3,7 @@ import java.util.ArrayList;
 abstract public class Card {
 
     protected String name;
-    protected String cardID;
+    protected String cardID = "";
     protected int cost;
     protected int MP;
     protected int numberOfPlayer;
