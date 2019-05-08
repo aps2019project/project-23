@@ -225,6 +225,9 @@ public class Spell extends Card {
             buffs.add(buff.copyBuff());
         }
         Spell spell = new Spell(name, desc, targetCommunity, cost, MP, length, width, buffs);
+        if (cardID != null) {
+            spell.setCardID(cardID);
+        }
         return spell;
     }
 
