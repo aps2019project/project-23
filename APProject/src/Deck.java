@@ -17,15 +17,6 @@ public class Deck {
         return deckCard;
     }
 
-    public int indexOfHero() {
-        for (Card card : deckCard) {
-            if (card instanceof Hero) {
-                return deckCard.indexOf(card);
-            }
-        }
-        return -1;
-    }
-
     public void addCard(Card card) {
         deckCard.add(card);
     }
@@ -68,6 +59,15 @@ public class Deck {
             deck.addCard(card.copyOfCard());
         }
         return deck;
+    }
+
+    public void deleteHero() {
+        for (Card card : deckCard) {
+            if (card instanceof Hero) {
+                deckCard.remove(card);
+                return;
+            }
+        }
     }
 
 }
