@@ -8,6 +8,7 @@ public class Main {
     private static Card[][] cardsCell = new Card[9][5];
     private static Buff[][] buffCell = new Buff[9][5];
 
+
     public static void setNullCardsCell() {
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 5; j++) {
@@ -16,9 +17,9 @@ public class Main {
         }
     }
 
-    public static void setNullBuffsCell(){
-        for ( int i = 0 ; i < 9 ; i ++ ) {
-            for ( int j = 0 ; j < 5 ; j ++ ) {
+    public static void setNullBuffsCell() {
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 5; j++) {
                 buffCell[i][j] = null;
             }
         }
@@ -36,11 +37,12 @@ public class Main {
         scanner = new Scanner(System.in);
     }
 
-    public static void setFileScanner() {
+    public static boolean setFileScanner() {
         try {
             scanner = new Scanner(new File("/home/shajusoni/IdeaProjects/APProject/account.txt"));
-        }catch (Exception e) {
-            return;
+            return true;
+        } catch (Exception e) {
+            return false;
         }
     }
 
@@ -505,13 +507,19 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        MainMenu.loadAccounts();
-        setScannerUser();
-        setShopSpell();
-        setShopMinion();
-        setShopHero();
-        setShopItem();
-        MainMenu.menu();
+
+        try {
+            setScannerUser();
+            setShopSpell();
+            setShopMinion();
+            setShopHero();
+            setShopItem();
+            MainMenu.loadAccounts();
+            MainMenu.menu();
+        } catch (Exception e) {
+            System.out.println("Error!!");
+        }
+
     }
 
 }
