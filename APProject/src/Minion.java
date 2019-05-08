@@ -218,6 +218,9 @@ public class Minion extends Card {
             buffs.add(buff.copyBuff());
         }
         Minion minion = new Minion(name, clas, cost, MP, HP, AP, attackRange, buffs, timeOfSpechialPower, targetCommunity, specialPower);
+        if (cardID != null) {
+            minion.setCardID(cardID);
+        }
         return minion;
 
     }
