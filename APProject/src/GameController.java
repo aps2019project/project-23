@@ -160,6 +160,54 @@ public class GameController {
 
     public static boolean checkMove(int x1, int y1, int x2, int y2) {
 
+        if (y1 == y2) {
+            if (x1 > x2) {
+                if (Main.getCardsCell()[x1 - 1][y1] != null || !(Main.getCardsCell()[x1 - 1][y1] instanceof Item)) {
+                    return false;
+                }
+            } else {
+                if (Main.getCardsCell()[x1 + 1][y1] != null || !(Main.getCardsCell()[x1 + 1][y1] instanceof Item)) {
+                    return false;
+                }
+            }
+        } else if (x1 == x2) {
+            if (y1 > y2) {
+                if (Main.getCardsCell()[x1][y1 - 1] != null || !(Main.getCardsCell()[x1][y1 - 1] instanceof Item)) {
+                    return false;
+                }
+            } else {
+                if (Main.getCardsCell()[x1][y1 + 1] != null || !(Main.getCardsCell()[x1][y1 + 1] instanceof Item)) {
+                    return false;
+                }
+            }
+        } else {
+            if (x1 == x2 + 1 && y1 == y2 + 1) {
+                if (Main.getCardsCell()[x1 - 1][y1] != null || !(Main.getCardsCell()[x1 - 1][y1] instanceof Item)) {
+                    if (Main.getCardsCell()[x1][y1 - 1] != null || !(Main.getCardsCell()[x1][y1 - 1] instanceof Item)) {
+                        return false;
+                    }
+                }
+            } else if (x1 == x2 + 1 && y1 == y2 - 1) {
+                if (Main.getCardsCell()[x1 - 1][y1] != null || !(Main.getCardsCell()[x1 - 1][y1] instanceof Item)) {
+                    if (Main.getCardsCell()[x1][y1 + 1] != null | !(Main.getCardsCell()[x1][y1 + 1] instanceof Item)) {
+                        return false;
+                    }
+                }
+            } else if (x1 == x2 - 1 && y1 == y2 + 1) {
+                if (Main.getCardsCell()[x1 + 1][y1] != null || !(Main.getCardsCell()[x1 + 1][y1] instanceof Item)) {
+                    if (Main.getCardsCell()[x1][y1 - 1] != null || !(Main.getCardsCell()[x1][y1 - 1] instanceof Item)) {
+                        return false;
+                    }
+                }
+            } else {
+                if (Main.getCardsCell()[x1 + 1][y1] != null || !(Main.getCardsCell()[x1 + 1][y1] instanceof Item)) {
+                    if (Main.getCardsCell()[x1][y1 + 1] != null || !(Main.getCardsCell()[x1][y1 + 1] instanceof Item)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
 
     }
 
@@ -182,19 +230,32 @@ public class GameController {
         int xOfCard = getLocation(selectedCard.cardID)[0];
         int yOfCard = getLocation(selectedCard.cardID)[1];
 
+        if (x == xOfCard && y == yOfCard) {
+            selectedCard = null;
+            return;
+        }
         if (!selectedCard.move || !selectedCard.attack) {
             System.out.println("Can't move");
+            selectedCard = null;
             return;
         }
         if (Main.getCardsCell()[x][y] != null || !(Main.getCardsCell()[x][y] instanceof Item)) {
-            System.out.println("Exist card in this location");
+            System.out.println("Invalid target");
+            selectedCard = null;
             return;
         }
-        if (Math.abs(x - xOfCard) > 2 || Math.abs(y - yOfCard) > 2) {
+        if (Math.abs(x - xOfCard) + Math.abs(y - yOfCard) > 2) {
             System.out.println("Invalid target");
+            selectedCard = null;
+            return;
+        }
+        if (!checkMove(xOfCard, yOfCard, x, y)) {
+            System.out.println("Invalid target");
+            selectedCard = null;
             return;
         }
 
+        System.out.printf("[%s] moved to [%d] [%d]\n", selectedCard.cardID, x, y);
 
     }
 
