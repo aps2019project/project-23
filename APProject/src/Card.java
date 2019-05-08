@@ -8,6 +8,24 @@ abstract public class Card {
     protected int MP;
     protected int numberOfPlayer;
     protected ArrayList<Buff> buffs = new ArrayList<Buff>();
+    protected boolean move = false;
+    protected boolean attack = false;
+
+    public boolean isAttack() {
+        return attack;
+    }
+
+    public boolean isMove() {
+        return move;
+    }
+
+    public void setAttack(boolean attack) {
+        this.attack = attack;
+    }
+
+    public void setMove(boolean move) {
+        this.move = move;
+    }
 
     public void addBuff(Buff buff) {
         buffs.add(buff);
@@ -30,6 +48,7 @@ abstract public class Card {
     public void setNumberOfPlayer(int numberOfPlayer) {
         this.numberOfPlayer = numberOfPlayer;
     }
+
     public abstract Card copyOfCard();
 
 }
