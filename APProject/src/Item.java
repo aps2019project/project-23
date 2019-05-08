@@ -42,6 +42,9 @@ public class Item extends Card {
             buffs.add(buff.copyBuff());
         }
         Item item = new Item(name, cost, MP, desc, collectable, buffs, effect);
+        if (cardID != null) {
+            item.setCardID(cardID);
+        }
         return item;
 
     }
