@@ -72,6 +72,7 @@ public class KillMode extends Custom {
         setRandomDeck(player2Deck);
         GameController.setPlayer1Deck(player1Deck);
         GameController.setPlayer2Deck(player2Deck);
+        Main.setCollectableItemInCells();
 
         String command;
         while (true) {
