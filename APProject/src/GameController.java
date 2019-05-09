@@ -281,19 +281,44 @@ public class GameController {
 
     }
 
+    public static void attack(String cardID, Account account) {
+
+        if (selectedCard.isAttack()) {
+            System.out.printf("Card with [%s] can't attack\n" , selectedCard.cardID);
+            selectedCard = null;
+            return;
+        }
+        if (getLocation(cardID) == null) {
+            System.out.println("Invalid card id");
+            selectedCard = null;
+            return;
+        }
+        if (Main.getCardsCell()[getLocation(cardID)[0]][getLocation(cardID)[1]].numberOfPlayer == account.getNumberOfPlayer()) {
+            System.out.println("Invalid card id");
+            selectedCard = null;
+            return;
+        }
+        
+
+    }
+
     public static void control(Account account, Account account1, String command, int mode) {
 
         Pattern showCardInfoPat = Pattern.compile("^show card info \\[(?<cardID>\\p{all}+)]$");
         Pattern selectPat = Pattern.compile("^select \\[(?<cardID>\\p{all}+)]$");
         Pattern movePat = Pattern.compile("^move to \\(\\[(?<x>[1-9])],\\[(?<y>[1-5])]\\)$");
+        Pattern attackPat = Pattern.compile("^attack \\[(?<cardID>\\p{all}+)]$");
         Matcher matcher;
 
         if (command.matches("game info")) {
             gameInfo(mode, KillMode.player1Deck, KillMode.player2Deck);
+            return;
         } else if (command.matches("show my minions")) {
             showMyMinion(account);
+            return;
         } else if (command.matches("show opponent minions")) {
             showMyMinion(account1);
+            return;
         }
 
         matcher = showCardInfoPat.matcher(command);
@@ -315,6 +340,17 @@ public class GameController {
                 return;
             }
             moveCard(Integer.parseInt(matcher.group("x")) - 1, Integer.parseInt(matcher.group("y")) - 1, account);
+            return;
+        }
+
+        matcher = attackPat.matcher(command);
+        if (matcher.find()) {
+            if (selectedCard == null) {
+                System.out.println("Select card and try again");
+                return;
+            }
+            attack(matcher.group("cardID"), account);
+            return;
         }
 
     }
