@@ -6,7 +6,7 @@ public class GameController {
 
     private static ArrayList<Card> handPlayer1 = new ArrayList<Card>(5);
     private static ArrayList<Card> handPlayer2 = new ArrayList<Card>(5);
-    private static ArrayList<Item> collectableItem = new ArrayList<>();
+    private static ArrayList<Item> collectableItem1 = new ArrayList<>();
     private static Card selectedCard = null;
     protected static Deck player1Deck;
     protected static Deck player2Deck;
@@ -230,14 +230,14 @@ public class GameController {
     public static void addCollectableItem(int x, int y, Account account) {
         String cardID;
         int counter = 0;
-        for (int i = 0; i < collectableItem.size(); i++) {
-            if (collectableItem.get(i).name.matches(((Item) Main.getCardsCell()[x][y]).name)) {
+        for (int i = 0; i < collectableItem1.size(); i++) {
+            if (collectableItem1.get(i).name.matches(((Item) Main.getCardsCell()[x][y]).name)) {
                 counter++;
             }
         }
         cardID = account.getUsername() + Main.getCardsCell()[x][y].name + counter;
         Main.getCardsCell()[x][y].setCardID(cardID);
-        collectableItem.add(((Item) Main.getCardsCell()[x][y]));
+        collectableItem1.add(((Item) Main.getCardsCell()[x][y]));
         Main.getCardsCell()[x][y] = null;
     }
 
@@ -245,6 +245,16 @@ public class GameController {
 
         int xOfCard = getLocation(selectedCard.cardID)[0];
         int yOfCard = getLocation(selectedCard.cardID)[1];
+
+        if (selectedCard instanceof Hero) {
+            if (((Hero) selectedCard).isOnOrOf()) {
+                return;
+            }
+        } else if (selectedCard instanceof Minion) {
+            if (((Minion) selectedCard).isOnOrOf()) {
+                return;
+            }
+        }
 
         if (x == xOfCard && y == yOfCard) {
             selectedCard = null;
@@ -283,8 +293,13 @@ public class GameController {
 
     public static void attack(String cardID, Account account) {
 
+        int xOfAttacker = getLocation(selectedCard.cardID)[0];
+        int yOfAttacker = getLocation(selectedCard.cardID)[1];
+        int x = getLocation(cardID)[0];
+        int y = getLocation(cardID)[1];
+
         if (selectedCard.isAttack()) {
-            System.out.printf("Card with [%s] can't attack\n" , selectedCard.cardID);
+            System.out.printf("Card with [%s] can't attack\n", selectedCard.cardID);
             selectedCard = null;
             return;
         }
@@ -298,7 +313,51 @@ public class GameController {
             selectedCard = null;
             return;
         }
-        
+        if (selectedCard instanceof Minion) {
+            if (((Minion) selectedCard).getClas().matches("melee")) {
+                if (Math.abs(x - xOfAttacker) > 1 || Math.abs(y - yOfAttacker) > 1) {
+                    System.out.println("opponent minion is unavailable for attack");
+                    selectedCard = null;
+                    return;
+                }
+            } else if (((Minion) selectedCard).getClas().matches("ranged")) {
+                if ((Math.abs(x - xOfAttacker) < 2 && Math.abs(y - yOfAttacker) < 2) || Math.abs(x - xOfAttacker) > ((Minion) selectedCard).getAttackRange() || Math.abs(y - yOfAttacker) > ((Minion) selectedCard).getAttackRange()) {
+                    System.out.println("opponent minion is unavailable for attack");
+                    selectedCard = null;
+                    return;
+                }
+            } else if (((Minion) selectedCard).getClas().matches("hybrid")) {
+                if (Math.abs(x - xOfAttacker) > ((Minion) selectedCard).getAttackRange() || Math.abs(y - yOfAttacker) > ((Minion) selectedCard).getAttackRange()) {
+                    System.out.println("opponent minion is unavailable for attack");
+                    selectedCard = null;
+                    return;
+                }
+            } else {
+
+            }
+        } else if (selectedCard instanceof Hero) {
+            if (((Hero) selectedCard).getClas().matches("melee")) {
+                if (Math.abs(x - xOfAttacker) > 1 || Math.abs(y - yOfAttacker) > 1) {
+                    System.out.println("opponent minion is unavailable for attack");
+                    selectedCard = null;
+                    return;
+                }
+            } else if (((Hero) selectedCard).getClas().matches("ranged")) {
+                if ((Math.abs(x - xOfAttacker) < 2 && Math.abs(y - yOfAttacker) < 2) || Math.abs(x - xOfAttacker) > ((Minion) selectedCard).getAttackRange() || Math.abs(y - yOfAttacker) > ((Minion) selectedCard).getAttackRange()) {
+                    System.out.println("opponent minion is unavailable for attack");
+                    selectedCard = null;
+                    return;
+                }
+            } else if (((Hero) selectedCard).getClas().matches("hybrid")) {
+                if (Math.abs(x - xOfAttacker) > ((Minion) selectedCard).getAttackRange() || Math.abs(y - yOfAttacker) > ((Minion) selectedCard).getAttackRange()) {
+                    System.out.println("opponent minion is unavailable for attack");
+                    selectedCard = null;
+                    return;
+                }
+            } else {
+
+            }
+        }
 
     }
 
