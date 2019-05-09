@@ -32,6 +32,10 @@ public class Minion extends Card {
         this.specialPower = specialPower;
     }
 
+    public void setHP(int HP) {
+
+    }
+
     public int getAttackRange() {
         return attackRange;
     }
@@ -208,6 +212,13 @@ public class Minion extends Card {
         } else if (targetCommunities[0].matches("around")) {
             setAroundCell(x, y, targetCommunities);
         }
+
+    }
+
+    public void attack(int x, int y) {
+
+        Card card = Main.getCardsCell()[x][y];
+
 
     }
 

@@ -44,6 +44,10 @@ public class Hero extends Card {
 
     }
 
+    public void setHP(int HP) {
+        this.HP = HP;
+    }
+
     public void addHP(int HP) {
         this.HP += HP;
     }
