@@ -247,19 +247,11 @@ public class GameController {
         int yOfCard = getLocation(selectedCard.cardID)[1];
 
         if (selectedCard instanceof Hero) {
-<<<<<<< HEAD
             if (!((Hero) selectedCard).isOnOrOf()) {
                 return;
             }
         } else if (selectedCard instanceof Minion) {
             if (!((Minion) selectedCard).isOnOrOf()) {
-=======
-            if (((Hero) selectedCard).isOnOrOf()) {
-                return;
-            }
-        } else if (selectedCard instanceof Minion) {
-            if (((Minion) selectedCard).isOnOrOf()) {
->>>>>>> master
                 return;
             }
         }
@@ -309,7 +301,6 @@ public class GameController {
         int x = getLocation(cardID)[0];
         int y = getLocation(cardID)[1];
 
-<<<<<<< HEAD
         if (selectedCard instanceof Hero) {
             if (!((Hero) selectedCard).isOnOrOf()) {
                 return;
@@ -320,8 +311,6 @@ public class GameController {
             }
         }
 
-=======
->>>>>>> master
         if (selectedCard.isAttack()) {
             System.out.printf("Card with [%s] can't attack\n", selectedCard.cardID);
             selectedCard = null;
