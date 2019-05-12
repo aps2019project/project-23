@@ -33,7 +33,7 @@ public class Minion extends Card {
     }
 
     public void setHP(int HP) {
-
+        this.HP = HP;
     }
 
     public int getAttackRange() {
@@ -217,8 +217,20 @@ public class Minion extends Card {
 
     public void attack(int x, int y) {
 
+        int counterOfHoly = 0;
         Card card = Main.getCardsCell()[x][y];
+        for (Buff buff : card.getBuffs()) {
+            if (buff instanceof UnHoly) {
+                buff.effectBuffsOnCard(card, card.numberOfPlayer);
+            } else if (buff instanceof Holy) {
+                counterOfHoly++;
+            }
+        }
+        if (card instanceof Hero) {
 
+        } else if (card instanceof Minion) {
+            
+        }
 
     }
 
