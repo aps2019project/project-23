@@ -300,7 +300,11 @@ public class Hero extends Card {
             }
         }
         if (card instanceof Minion) {
+<<<<<<< Updated upstream
             if (((Minion) card).getSpecialPower().matches("defend")) {
+=======
+            if (((Minion) card).getTimeOfSpechialPower().matches("defend")) {
+>>>>>>> Stashed changes
                 ((Minion) card).defendPower(this);
             }
             if (HP <= ((Minion) card).getAP()) {

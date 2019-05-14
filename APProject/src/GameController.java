@@ -387,6 +387,7 @@ public class GameController {
         Pattern selectPat = Pattern.compile("^select \\[(?<cardID>\\p{all}+)]$");
         Pattern movePat = Pattern.compile("^move to \\(\\[(?<x>[1-9])],\\[(?<y>[1-5])]\\)$");
         Pattern attackPat = Pattern.compile("^attack \\[(?<cardID>\\p{all}+)]$");
+        Pattern comboAttack = Pattern.compile("^$");
         Matcher matcher;
 
         if (command.matches("game info")) {
