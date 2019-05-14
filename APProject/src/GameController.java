@@ -260,11 +260,11 @@ public class GameController {
             selectedCard = null;
             return;
         }
-        /*if (selectedCard.move || selectedCard.attack) {
+        if (selectedCard.move || selectedCard.attack) {
             System.out.println("Can't move");
             selectedCard = null;
             return;
-        }*/
+        }
         if (Main.getCardsCell()[x][y] != null && !(Main.getCardsCell()[x][y] instanceof Item)) {
             System.out.println("Invalid target");
             selectedCard = null;
@@ -375,9 +375,110 @@ public class GameController {
         }
         if (selectedCard instanceof Minion) {
             ((Minion) selectedCard).attack(x, y);
+            selectedCard.setAttack(true);
         } else if (selectedCard instanceof Hero) {
             ((Hero) selectedCard).attack(x, y);
+            selectedCard.setAttack(true);
         }
+
+    }
+
+    public static boolean existCardID(String cardID) {
+
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 5; j++) {
+                if (Main.getCardsCell()[i][j] == null) {
+                    continue;
+                }
+                if (Main.getCardsCell()[i][j].cardID.matches(cardID)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+
+    }
+
+    public static Card getCardInGame(String cardID) {
+
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 5; j++) {
+                if (Main.getCardsCell()[i][j] == null) {
+                    continue;
+                }
+                if (Main.getCardsCell()[i][j].cardID.matches(cardID)) {
+                    return Main.getCardsCell()[i][j];
+                }
+            }
+        }
+        return null;
+
+    }
+
+    public static void comboAttack(ArrayList<String> myCardID, String opponentCardID, Account account) {
+
+        if (!existCardID(opponentCardID)) {
+            System.out.printf("Don't exist [%s]\n", opponentCardID);
+            return;
+        }
+        for (String string : myCardID) {
+            if (!existCardID(string)) {
+                System.out.printf("Don't exist [%s]\n", string);
+                return;
+            }
+            if (getCardInGame(string) != null) {
+                if (getCardInGame(string).numberOfPlayer != account.getNumberOfPlayer()) {
+                    System.out.printf("[%s] don't for you\n", string);
+                    return;
+                }
+            }
+        }
+        if (getCardInGame(opponentCardID) != null) {
+            if (getCardInGame(opponentCardID).numberOfPlayer == account.getNumberOfPlayer()) {
+                System.out.printf("[%s] don't your opponent\n", opponentCardID);
+                return;
+            }
+        }
+        for (String string : myCardID) {
+            if (getCardInGame(string) != null) {
+                if (!(getCardInGame(string) instanceof Minion)) {
+                    System.out.printf("[%s] can't combo attack\n", string);
+                    return;
+                } else if (!(((Minion) getCardInGame(string)).getSpecialPower().matches("combo"))) {
+                    System.out.printf("[%s] can't combo attack\n", string);
+                    return;
+                }
+            }
+        }
+        int x = getLocation(opponentCardID)[0];
+        int y = getLocation(opponentCardID)[1];
+
+        for(String string:myCardID) {
+
+            if (getCardInGame(string) instanceof Minion) {
+                int xOfAttacker = getLocation(string)[0];
+                int yOfAttacker = getLocation(string)[1];
+                if (((Minion) getCardInGame(string)).getClas().matches("melee")) {
+                    if (Math.abs(x - xOfAttacker) > 1 || Math.abs(y - yOfAttacker) > 1) {
+                        System.out.println("opponent minion is unavailable for attack");
+                        return;
+                    }
+                } else if (((Minion) getCardInGame(string)).getClas().matches("ranged")) {
+                    if ((Math.abs(x - xOfAttacker) < 2 && Math.abs(y - yOfAttacker) < 2) || Math.abs(x - xOfAttacker) > ((Minion) getCardInGame(string)).getAttackRange() || Math.abs(y - yOfAttacker) > ((Minion) getCardInGame(string)).getAttackRange()) {
+                        System.out.println("opponent minion is unavailable for attack");
+                        return;
+                    }
+                } else if (((Minion) getCardInGame(string)).getClas().matches("hybrid")) {
+                    if (Math.abs(x - xOfAttacker) > ((Minion) getCardInGame(string)).getAttackRange() || Math.abs(y - yOfAttacker) > ((Minion) getCardInGame(string)).getAttackRange()) {
+                        System.out.println("opponent minion is unavailable for attack");
+                        return;
+                    }
+                }
+
+            }
+
+        }
+
 
     }
 
@@ -387,7 +488,7 @@ public class GameController {
         Pattern selectPat = Pattern.compile("^select \\[(?<cardID>\\p{all}+)]$");
         Pattern movePat = Pattern.compile("^move to \\(\\[(?<x>[1-9])],\\[(?<y>[1-5])]\\)$");
         Pattern attackPat = Pattern.compile("^attack \\[(?<cardID>\\p{all}+)]$");
-        Pattern comboAttack = Pattern.compile("^$");
+        Pattern comboAttackPat = Pattern.compile("^attack combo \\[(?<cardID>\\p{all}+)] (\\[\\p{all}+])+$");
         Matcher matcher;
 
         if (command.matches("game info")) {
@@ -431,6 +532,26 @@ public class GameController {
             }
             attack(matcher.group("cardID"), account);
             return;
+        }
+
+        matcher = comboAttackPat.matcher(command);
+        if (matcher.find()) {
+            Pattern pattern = Pattern.compile("^\\[(?<cardID>\\p{all}+)]$");
+            ArrayList<String> myCardID = new ArrayList<String>();
+            String opponentCardID = "";
+            Matcher matcher1;
+            String[] commands = command.split(" ");
+            for (int i = 3; i < commands.length; i++) {
+                matcher1 = pattern.matcher(commands[i]);
+                if (matcher1.find()) {
+                    myCardID.add(matcher1.group("cardID"));
+                }
+            }
+            matcher1 = pattern.matcher(commands[2]);
+            if (matcher1.find()) {
+                opponentCardID = matcher1.group("cardID");
+            }
+            comboAttack(myCardID, opponentCardID, account);
         }
 
     }
