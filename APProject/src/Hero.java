@@ -41,11 +41,16 @@ public class Hero extends Card {
         this.usable = usable;
         this.onAttack = onAttack;
         this.haveBuff = haveBuff;
+        this.canCounterAttack = true;
 
     }
 
     public void setHP(int HP) {
         this.HP = HP;
+    }
+
+    public void addSpecialBuff(Buff buff) {
+        specialBuff.add(buff);
     }
 
     public void addHP(int HP) {
@@ -82,6 +87,14 @@ public class Hero extends Card {
 
     public void setCanCounterAttack(boolean canCounterAttack) {
         this.canCounterAttack = canCounterAttack;
+    }
+
+    public int getAttackRange() {
+        return attackRange;
+    }
+
+    public boolean isCanCounterAttack() {
+        return canCounterAttack;
     }
 
     public Card copyOfCard() {
@@ -170,6 +183,138 @@ public class Hero extends Card {
             return setRow(x, y, targetCommunities);
         }
         return true;
+
+    }
+
+    public boolean existUnHoly() {
+        for (Buff buff : buffs) {
+            if (buff instanceof UnHoly) {
+                if (((UnHoly) buff).getAddAPForHoly() == 1) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public void attack(int x, int y) {
+
+        int counterOfHoly = 0;
+        int counterUnHoly = 0;
+        Card card = Main.getCardsCell()[x][y];
+        int xOfAttacker = GameController.getLocation(this.cardID)[0];
+        int yOfAttacker = GameController.getLocation(this.cardID)[1];
+        for (Buff buff : card.getBuffs()) {
+            if (buff instanceof UnHoly) {
+                if (((UnHoly) buff).getAddAPForHoly() == 1) {
+                    counterUnHoly++;
+                    break;
+                }
+            }
+        }
+        if (counterUnHoly == 0) {
+            for (Buff buff : card.getBuffs()) {
+                if (buff instanceof UnHoly) {
+                    buff.effectBuffsOnCard(card, card.numberOfPlayer);
+                } else if (buff instanceof Holy) {
+                    counterOfHoly++;
+                }
+            }
+        }
+        if (card instanceof Hero) {
+            if (((Hero) card).getHP() <= this.AP - counterOfHoly) {
+                ((Hero) card).setHP(0);
+            } else {
+                ((Hero) card).addHP(-1 * this.AP + counterOfHoly);
+            }
+        } else if (card instanceof Minion) {
+            if (((Minion) card).getHP() <= this.AP - counterOfHoly) {
+                ((Minion) card).setHP(0);
+            } else {
+                ((Minion) card).addHP(-1 * this.AP + counterOfHoly);
+            }
+        }
+        if (onAttack) {
+            for (Buff buff : specialBuff) {
+                card.addBuff(buff);
+                buff.effectBuffsOnCard(card, card.numberOfPlayer);
+            }
+        }
+
+        if (card instanceof Minion) {
+            if (((Minion) card).getClas().matches("melee")) {
+                if (Math.abs(x - xOfAttacker) > 1 || Math.abs(y - yOfAttacker) > 1) {
+                    if (((Minion) card).getSpecialPower().matches("defend")) {
+                        ((Minion) card).defendPower(this);
+                    }
+                    return;
+                }
+            } else if (((Minion) card).getClas().matches("ranged")) {
+                if ((Math.abs(x - xOfAttacker) < 2 && Math.abs(y - yOfAttacker) < 2) || Math.abs(x - xOfAttacker) > ((Minion) card).getAttackRange() || Math.abs(y - yOfAttacker) > ((Minion) card).getAttackRange()) {
+                    if (((Minion) card).getSpecialPower().matches("defend")) {
+                        ((Minion) card).defendPower(this);
+                    }
+                    return;
+                }
+            } else if (((Minion) card).getClas().matches("hybrid")) {
+                if (Math.abs(x - xOfAttacker) > ((Minion) card).getAttackRange() || Math.abs(y - yOfAttacker) > ((Minion) card).getAttackRange()) {
+                    if (((Minion) card).getSpecialPower().matches("defend")) {
+                        ((Minion) card).defendPower(this);
+                    }
+                    return;
+                }
+            }
+        } else if (card instanceof Hero) {
+            if (((Hero) card).getClas().matches("melee")) {
+                if (Math.abs(x - xOfAttacker) > 1 || Math.abs(y - yOfAttacker) > 1) {
+                    return;
+                }
+            } else if (((Hero) card).getClas().matches("ranged")) {
+                if ((Math.abs(x - xOfAttacker) < 2 && Math.abs(y - yOfAttacker) < 2) || Math.abs(x - xOfAttacker) > ((Hero) card).getAttackRange() || Math.abs(y - yOfAttacker) > ((Hero) card).getAttackRange()) {
+                    return;
+                }
+            } else if (((Hero) card).getClas().matches("hybrid")) {
+                if (Math.abs(x - xOfAttacker) > ((Hero) card).getAttackRange() || Math.abs(y - yOfAttacker) > ((Hero) card).getAttackRange()) {
+                    return;
+                }
+            }
+        }
+
+        if (card instanceof Hero) {
+            if (!((Hero) card).isCanCounterAttack()) {
+                return;
+            }
+        } else if (card instanceof Minion) {
+            if (!((Minion) card).isCanCounterAttack()) {
+                return;
+            }
+        }
+        counterOfHoly = 0;
+        if (!existUnHoly()) {
+            for (Buff buff : buffs) {
+                if (buff instanceof Holy) {
+                    counterOfHoly++;
+                } else if (buff instanceof UnHoly) {
+                    buff.effectBuffsOnCard(this, numberOfPlayer);
+                }
+            }
+        }
+        if (card instanceof Minion) {
+            if (((Minion) card).getSpecialPower().matches("defend")) {
+                ((Minion) card).defendPower(this);
+            }
+            if (HP <= ((Minion) card).getAP()) {
+                setHP(0);
+            } else {
+                addHP(-1 * ((Minion) card).getAP());
+            }
+        } else if (card instanceof Hero) {
+            if (HP <= ((Hero) card).getAP()) {
+                setHP(0);
+            } else {
+                addHP(-1 * ((Hero) card).getAP());
+            }
+        }
 
     }
 
