@@ -260,23 +260,23 @@ public class GameController {
             selectedCard = null;
             return;
         }
-        if (selectedCard.move || selectedCard.attack) {
+        /*if (selectedCard.move || selectedCard.attack) {
             System.out.println("Can't move");
             selectedCard = null;
             return;
-        }
+        }*/
         if (Main.getCardsCell()[x][y] != null && !(Main.getCardsCell()[x][y] instanceof Item)) {
-            System.out.println("Invalid target3");
+            System.out.println("Invalid target");
             selectedCard = null;
             return;
         }
         if (Math.abs(x - xOfCard) + Math.abs(y - yOfCard) > 2) {
-            System.out.println("Invalid target2");
+            System.out.println("Invalid target");
             selectedCard = null;
             return;
         }
         if (!checkMove(xOfCard, yOfCard, x, y)) {
-            System.out.println("Invalid target1");
+            System.out.println("Invalid target");
             selectedCard = null;
             return;
         }
@@ -285,6 +285,12 @@ public class GameController {
         }
         if (Main.getBuffCell()[x][y] != null) {
             selectedCard.addBuff(Main.getBuffCell()[x][y]);
+        }
+        if (Main.getBuffCell()[x][y] != null) {
+            selectedCard.addBuff(Main.getBuffCell()[x][y].copyBuff());
+            if ((Main.getBuffCell()[x][y] instanceof Poison)) {
+                Main.getBuffCell()[x][y].effectBuffsOnCard(selectedCard, selectedCard.numberOfPlayer);
+            }
         }
         selectedCard.setMove(true);
         Main.getCardsCell()[getLocation(selectedCard.cardID)[0]][getLocation(selectedCard.cardID)[1]] = null;
@@ -345,8 +351,6 @@ public class GameController {
                     selectedCard = null;
                     return;
                 }
-            } else {
-
             }
         } else if (selectedCard instanceof Hero) {
             if (((Hero) selectedCard).getClas().matches("melee")) {
@@ -356,20 +360,23 @@ public class GameController {
                     return;
                 }
             } else if (((Hero) selectedCard).getClas().matches("ranged")) {
-                if ((Math.abs(x - xOfAttacker) < 2 && Math.abs(y - yOfAttacker) < 2) || Math.abs(x - xOfAttacker) > ((Minion) selectedCard).getAttackRange() || Math.abs(y - yOfAttacker) > ((Minion) selectedCard).getAttackRange()) {
+                if ((Math.abs(x - xOfAttacker) < 2 && Math.abs(y - yOfAttacker) < 2) || Math.abs(x - xOfAttacker) > ((Hero) selectedCard).getAttackRange() || Math.abs(y - yOfAttacker) > ((Hero) selectedCard).getAttackRange()) {
                     System.out.println("opponent minion is unavailable for attack");
                     selectedCard = null;
                     return;
                 }
             } else if (((Hero) selectedCard).getClas().matches("hybrid")) {
-                if (Math.abs(x - xOfAttacker) > ((Minion) selectedCard).getAttackRange() || Math.abs(y - yOfAttacker) > ((Minion) selectedCard).getAttackRange()) {
+                if (Math.abs(x - xOfAttacker) > ((Hero) selectedCard).getAttackRange() || Math.abs(y - yOfAttacker) > ((Hero) selectedCard).getAttackRange()) {
                     System.out.println("opponent minion is unavailable for attack");
                     selectedCard = null;
                     return;
                 }
-            } else {
-
             }
+        }
+        if (selectedCard instanceof Minion) {
+            ((Minion) selectedCard).attack(x, y);
+        } else if (selectedCard instanceof Hero) {
+            ((Hero) selectedCard).attack(x, y);
         }
 
     }
