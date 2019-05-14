@@ -45,6 +45,10 @@ public class Hero extends Card {
 
     }
 
+    public int getCooldown() {
+        return cooldown;
+    }
+
     public void setHP(int HP) {
         this.HP = HP;
     }
@@ -186,39 +190,21 @@ public class Hero extends Card {
 
     }
 
-    public boolean existUnHoly() {
-        for (Buff buff : buffs) {
-            if (buff instanceof UnHoly) {
-                if (((UnHoly) buff).getAddAPForHoly() == 1) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     public void attack(int x, int y) {
 
         int counterOfHoly = 0;
-        int counterUnHoly = 0;
         Card card = Main.getCardsCell()[x][y];
         int xOfAttacker = GameController.getLocation(this.cardID)[0];
         int yOfAttacker = GameController.getLocation(this.cardID)[1];
-        for (Buff buff : card.getBuffs()) {
-            if (buff instanceof UnHoly) {
-                if (((UnHoly) buff).getAddAPForHoly() == 1) {
-                    counterUnHoly++;
-                    break;
-                }
+        if (onAttack) {
+            for (Buff buff : specialBuff) {
+                card.addBuff(buff);
+                buff.effectBuffsOnCard(card, numberOfPlayer);
             }
         }
-        if (counterUnHoly == 0) {
-            for (Buff buff : card.getBuffs()) {
-                if (buff instanceof UnHoly) {
-                    buff.effectBuffsOnCard(card, card.numberOfPlayer);
-                } else if (buff instanceof Holy) {
-                    counterOfHoly++;
-                }
+        for (Buff buff : card.getBuffs()) {
+            if (buff instanceof Holy) {
+                counterOfHoly++;
             }
         }
         if (card instanceof Hero) {
@@ -232,12 +218,6 @@ public class Hero extends Card {
                 ((Minion) card).setHP(0);
             } else {
                 ((Minion) card).addHP(-1 * this.AP + counterOfHoly);
-            }
-        }
-        if (onAttack) {
-            for (Buff buff : specialBuff) {
-                card.addBuff(buff);
-                buff.effectBuffsOnCard(card, card.numberOfPlayer);
             }
         }
 
@@ -290,35 +270,33 @@ public class Hero extends Card {
             }
         }
         counterOfHoly = 0;
-        if (!existUnHoly()) {
-            for (Buff buff : buffs) {
-                if (buff instanceof Holy) {
-                    counterOfHoly++;
-                } else if (buff instanceof UnHoly) {
-                    buff.effectBuffsOnCard(this, numberOfPlayer);
-                }
+        for (Buff buff : buffs) {
+            if (buff instanceof Holy) {
+                counterOfHoly++;
             }
         }
         if (card instanceof Minion) {
-<<<<<<< Updated upstream
-            if (((Minion) card).getSpecialPower().matches("defend")) {
-=======
             if (((Minion) card).getTimeOfSpechialPower().matches("defend")) {
->>>>>>> Stashed changes
                 ((Minion) card).defendPower(this);
             }
-            if (HP <= ((Minion) card).getAP()) {
+            if (HP <= ((Minion) card).getAP() + counterOfHoly) {
                 setHP(0);
             } else {
-                addHP(-1 * ((Minion) card).getAP());
+                addHP(-1 * ((Minion) card).getAP() + counterOfHoly);
             }
         } else if (card instanceof Hero) {
-            if (HP <= ((Hero) card).getAP()) {
+            if (HP <= ((Hero) card).getAP() + counterOfHoly) {
                 setHP(0);
             } else {
-                addHP(-1 * ((Hero) card).getAP());
+                addHP(-1 * ((Hero) card).getAP() + counterOfHoly);
             }
         }
+
+    }
+
+    public void useSpecialPower(int x , int y) {
+
+        
 
     }
 
