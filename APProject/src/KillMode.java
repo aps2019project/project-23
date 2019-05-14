@@ -73,6 +73,8 @@ public class KillMode extends Custom {
         GameController.setPlayer1Deck(player1Deck);
         GameController.setPlayer2Deck(player2Deck);
         Main.setCollectableItemInCells();
+        Poison poison = new Poison(true,false,true,false,false,false,0,0,-1);
+        Main.getBuffCell()[0][0] = poison;
 
         String command;
         while (true) {
