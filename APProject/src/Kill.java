@@ -20,9 +20,9 @@ public class Kill extends Buff {
 
     public void effectBuffsOnCard(Card card, int numberOfPlayer) {
         if (card instanceof Hero) {
-            ((Hero) card).addHP(((Hero) card).getHP());
+            ((Hero) card).setHP(0);
         } else if (card instanceof Minion) {
-            ((Minion) card).addHP(-((Minion) card).getHP());
+            ((Minion) card).setHP(0);
         }
     }
 
