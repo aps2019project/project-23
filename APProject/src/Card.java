@@ -15,6 +15,10 @@ abstract public class Card {
         return attack;
     }
 
+    public ArrayList<Buff> getBuffs() {
+        return buffs;
+    }
+
     public boolean isMove() {
         return move;
     }
