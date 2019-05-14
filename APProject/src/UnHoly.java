@@ -12,6 +12,10 @@ public class UnHoly extends Buff {
 
     }
 
+    public int getAddAPForHoly() {
+        return addAPForHoly;
+    }
+
     public Buff copyBuff() {
         UnHoly unHoly = new UnHoly(allTurnEffect, allTurn, continuous, turn, addAPForHoly);
         return unHoly;
@@ -21,6 +25,19 @@ public class UnHoly extends Buff {
     }
 
     public void effectBuffsOnCard(Card card, int numberOfPlayer) {
+        if (card instanceof Hero) {
+            if (((Hero) card).getHP() <= 1) {
+                ((Hero) card).setHP(0);
+            } else {
+                ((Hero) card).addHP(-1);
+            }
+        } else if (card instanceof Minion) {
+            if (((Minion) card).getHP() <= 1) {
+                ((Minion) card).setHP(0);
+            } else {
+                ((Minion) card).addHP(-1);
+            }
+        }
     }
 
 }
