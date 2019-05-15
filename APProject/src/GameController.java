@@ -10,6 +10,8 @@ public class GameController {
     private static Card selectedCard = null;
     protected static Deck player1Deck;
     protected static Deck player2Deck;
+    private static int turnOfSpecialPower1;
+    private static int turnOfSpecialPower2;
 
     public static ArrayList<Card> getHandPlayer2() {
         return handPlayer2;
@@ -45,6 +47,60 @@ public class GameController {
 
         } else {
 
+        }
+
+    }
+
+    public static void setMP(int turn, Account account, Account account1) {
+
+        if (turn % 2 == 1) {
+            switch (turn) {
+                case 3:
+                    account.setMP(3);
+                    break;
+                case 5:
+                    account.setMP(4);
+                    break;
+                case 7:
+                    account.setMP(5);
+                    break;
+                case 9:
+                    account.setMP(6);
+                    break;
+                case 11:
+                    account.setMP(7);
+                    break;
+                case 13:
+                    account.setMP(8);
+                    break;
+            }
+            if (turn > 14) {
+                account.setMP(9);
+            }
+        } else {
+            switch (turn) {
+                case 2:
+                    account1.setMP(3);
+                    break;
+                case 4:
+                    account1.setMP(4);
+                    break;
+                case 6:
+                    account1.setMP(5);
+                    break;
+                case 8:
+                    account1.setMP(6);
+                    break;
+                case 10:
+                    account1.setMP(7);
+                    break;
+                case 12:
+                    account1.setMP(8);
+                    break;
+            }
+            if (turn > 12) {
+                account1.setMP(9);
+            }
         }
 
     }
@@ -453,7 +509,7 @@ public class GameController {
         int x = getLocation(opponentCardID)[0];
         int y = getLocation(opponentCardID)[1];
 
-        for(String string:myCardID) {
+        for (String string : myCardID) {
 
             if (getCardInGame(string) instanceof Minion) {
                 int xOfAttacker = getLocation(string)[0];
@@ -478,8 +534,88 @@ public class GameController {
             }
 
         }
+        for (String string : myCardID) {
+            if (getCardInGame(string) instanceof Minion) {
+                if (getCardInGame(string).isAttack()) {
+                    System.out.printf("[%s] can't attack\n", string);
+                }
+            }
+        }
+        for (int i = 1; i < myCardID.size(); i++) {
+            ((Minion) getCardInGame(myCardID.get(0))).addAP(((Minion) getCardInGame(myCardID.get(i))).getAP());
+        }
+        ((Minion) getCardInGame(myCardID.get(0))).attack(getLocation(opponentCardID)[0], getLocation(opponentCardID)[1]);
+        for (int i = 1; i < myCardID.size(); i++) {
+            ((Minion) getCardInGame(myCardID.get(0))).addAP(((Minion) getCardInGame(myCardID.get(i))).getAP() * -1);
+        }
+        for (int i = 0; i < myCardID.size(); i++) {
+            getCardInGame(myCardID.get(i)).setAttack(true);
+        }
+
+    }
+
+    public static Hero getHero(Account account) {
+
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 5; j++) {
+                if (Main.getCardsCell()[i][j] instanceof Hero) {
+                    if (Main.getCardsCell()[i][j].numberOfPlayer == account.getNumberOfPlayer()) {
+                        return ((Hero) Main.getCardsCell()[i][j]);
+                    }
+                }
+            }
+        }
+        return null;
+
+    }
+
+    public static void addTurnOfSpecialPower(Account account, Account account1) {
+
+        if (!getHero(account).isOnSpecialBuff()) {
+            turnOfSpecialPower1++;
+        }
+        if (turnOfSpecialPower1 == getHero(account).getCooldown()) {
+            getHero(account).setOnSpecialBuff(true);
+        }
+        if (!getHero(account1).isOnSpecialBuff()) {
+            turnOfSpecialPower2++;
+        }
+        if (turnOfSpecialPower2 == getHero(account).getCooldown()) {
+            getHero(account1).setOnSpecialBuff(true);
+        }
+
+    }
+
+    public static void useSpecialPower(int x, int y, Account account) {
+
+        if (getHero(account).getCooldown() == 0) {
+            System.out.println("Your hero don't have special power");
+            return;
+        }
+        if (account.getMP() < getHero(account).MP) {
+            System.out.println("You don't have enough money");
+            return;
+        }
+        if (!getHero(account).isOnSpecialBuff()) {
+            System.out.println("You can't use special power");
+            return;
+        }
+        getHero(account).setOnSpecialBuff(false);
+        if (account.getNumberOfPlayer() == 1) {
+            turnOfSpecialPower1 = 0;
+        } else {
+            turnOfSpecialPower2 = 0;
+        }
+        account.addMP(-1 * getHero(account).MP);
+        getHero(account).useSpecialPower(x, y);
 
 
+    }
+    
+    public static void showHand(ArrayList<Card> hand , Deck deck){
+        
+           
+        
     }
 
     public static void control(Account account, Account account1, String command, int mode) {
@@ -489,6 +625,7 @@ public class GameController {
         Pattern movePat = Pattern.compile("^move to \\(\\[(?<x>[1-9])],\\[(?<y>[1-5])]\\)$");
         Pattern attackPat = Pattern.compile("^attack \\[(?<cardID>\\p{all}+)]$");
         Pattern comboAttackPat = Pattern.compile("^attack combo \\[(?<cardID>\\p{all}+)] (\\[\\p{all}+])+$");
+        Pattern useSpecialPowerPat = Pattern.compile("^use special power \\((?<x>[1-9]),(?<y>[1-5])\\)$");
         Matcher matcher;
 
         if (command.matches("game info")) {
@@ -552,6 +689,19 @@ public class GameController {
                 opponentCardID = matcher1.group("cardID");
             }
             comboAttack(myCardID, opponentCardID, account);
+        }
+
+        matcher = useSpecialPowerPat.matcher(command);
+        if (matcher.find()) {
+            useSpecialPower(Integer.parseInt(matcher.group("x")) - 1, Integer.parseInt(matcher.group("y")) - 1, account);
+        }
+
+        if (command.matches("show hand")) {
+            if (account.getNumberOfPlayer() == 1) {
+                showHand(handPlayer1, player1Deck);
+            } else {
+                showHand(handPlayer2, player2Deck);
+            }
         }
 
     }
