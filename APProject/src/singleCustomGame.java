@@ -39,6 +39,7 @@ public class singleCustomGame {
             System.out.println("Enter correct number of flag");
             return;
         }
+        GameController.setFirstAll();
         Custom.setPlayer1Deck(account.getCollection().getMainDeck().copyOfDeck());
         Custom.setPlayer2Deck(account.getCollection().getAllDecks().get(account.getCollection().indexOfDeck(deckName)).copyOfDeck());
         Account account1 = new Account("computer", "");
