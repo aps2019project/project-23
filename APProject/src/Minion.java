@@ -38,6 +38,10 @@ public class Minion extends Card {
         return timeOfSpechialPower;
     }
 
+    public void addSpecialBuffs(Buff buff) {
+        spechialBuff.add(buff);
+    }
+
     public void setHP(int HP) {
         this.HP = HP;
     }
@@ -228,24 +232,25 @@ public class Minion extends Card {
     public void attack(int x, int y) {
 
         int counterOfHoly = 0;
-        int counterUnHoly = 0;
         int xOfAttacker = GameController.getLocation(this.cardID)[0];
         int yOfAttacker = GameController.getLocation(this.cardID)[1];
         Card card = Main.getCardsCell()[x][y];
+        if (this.timeOfSpechialPower.matches("attack")) {
+            attackPower(x, y);
+        }
         for (Buff buff : card.getBuffs()) {
-            if (buff instanceof UnHoly) {
-                if (((UnHoly) buff).getAddAPForHoly() == 1) {
-                    counterOfHoly++;
-                    break;
-                }
+            if (buff instanceof Holy) {
+                counterOfHoly++;
             }
         }
-        if (counterUnHoly == 0) {
-            for (Buff buff : card.getBuffs()) {
-                if (buff instanceof UnHoly) {
-                    buff.effectBuffsOnCard(card, card.numberOfPlayer);
-                } else if (buff instanceof Holy) {
-                    counterOfHoly++;
+        for (Buff buff : buffs) {
+            if (buff instanceof UnHoly) {
+                if (((UnHoly) buff).getAddAPForHoly() == 1) {
+                    counterOfHoly = 0;
+                    break;
+                } else if (((UnHoly) buff).getAddAPForHoly() == 2) {
+                    counterOfHoly--;
+                    break;
                 }
             }
         }
@@ -261,9 +266,6 @@ public class Minion extends Card {
             } else {
                 ((Minion) card).addHP(-1 * this.AP + counterOfHoly);
             }
-        }
-        if (this.timeOfSpechialPower.matches("attack")) {
-            attackPower(x, y);
         }
 
         if (card instanceof Minion) {
@@ -316,46 +318,45 @@ public class Minion extends Card {
         }
 
         counterOfHoly = 0;
-        if (!existUnHoly()) {
-            for (Buff buff : buffs) {
-                if (buff instanceof Holy) {
-                    counterOfHoly++;
-                } else if (buff instanceof UnHoly) {
-                    buff.effectBuffsOnCard(this, numberOfPlayer);
-                }
+        for (Buff buff : buffs) {
+            if (buff instanceof Holy) {
+                counterOfHoly++;
             }
         }
         if (card instanceof Minion) {
             if (((Minion) card).getTimeOfSpechialPower().matches("defend")) {
                 ((Minion) card).defendPower(this);
             }
-            if (HP <= ((Minion) card).getAP()) {
+            if (HP <= ((Minion) card).getAP() + counterOfHoly) {
                 setHP(0);
             } else {
-                addHP(-1 * ((Minion) card).getAP());
+                addHP(-1 * ((Minion) card).getAP() + counterOfHoly);
             }
         } else if (card instanceof Hero) {
-            if (HP <= ((Hero) card).getAP()) {
+            if (HP <= ((Hero) card).getAP() + counterOfHoly) {
                 setHP(0);
             } else {
-                addHP(-1 * ((Hero) card).getAP());
+                addHP(-1 * ((Hero) card).getAP() + counterOfHoly);
             }
         }
 
     }
 
-    public boolean existUnHoly() {
-        for (Buff buff : buffs) {
-            if (buff instanceof UnHoly) {
-                if (((UnHoly) buff).getAddAPForHoly() == 1) {
-                    return true;
-                }
+    public boolean existAddAp() {
+        for (Buff buff : spechialBuff) {
+            if (buff instanceof AddAP) {
+                return true;
             }
         }
         return false;
     }
 
     public void attackPower(int x, int y) {
+
+        if (existAddAp()) {
+            spechialBuff.get(0).effectBuffsOnCard(Main.getCardsCell()[x][y], Main.getCardsCell()[x][y].numberOfPlayer);
+            return;
+        }
         if (locationOfAttack) {
             setCellEffect(GameController.getLocation(this.cardID)[0], GameController.getLocation(this.cardID)[1]);
         } else {
@@ -365,10 +366,61 @@ public class Minion extends Card {
             for (Buff buff : spechialBuff) {
                 if (Main.getCardsCell()[cellEffect.get(i)[0]][cellEffect.get(i)[1]] != null) {
                     Main.getCardsCell()[cellEffect.get(i)[0]][cellEffect.get(i)[1]].addBuff(buff);
-                    buff.effectBuffsOnCard(Main.getCardsCell()[cellEffect.get(i)[0]][cellEffect.get(i)[1]], Main.getCardsCell()[cellEffect.get(i)[0]][cellEffect.get(i)[1]].numberOfPlayer);
+                    buff.effectBuffsOnCard(Main.getCardsCell()[cellEffect.get(i)[0]][cellEffect.get(i)[1]], numberOfPlayer);
                 }
             }
         }
+    }
+
+    public void spawn(int x, int y) {
+
+        setCellEffect(x, y);
+        for (int i = 0; i < cellEffect.size(); i++) {
+            int x1 = cellEffect.get(i)[0];
+            int y1 = cellEffect.get(i)[0];
+            if (Main.getCardsCell()[x1][y1] == null) {
+                continue;
+            }
+            for (Buff buff : spechialBuff) {
+                Main.getCardsCell()[x][y].addBuff(buff);
+                buff.effectBuffsOnCard(Main.getCardsCell()[x1][y1], numberOfPlayer);
+            }
+        }
+
+    }
+
+    public void deathPower(int x, int y) {
+
+        setCellEffect(x, y);
+        for (int i = 0; i < cellEffect.size(); i++) {
+            int x1 = cellEffect.get(i)[0];
+            int y1 = cellEffect.get(i)[1];
+            if (Main.getCardsCell()[x1][y1] == null) {
+                continue;
+            }
+            for (Buff buff : spechialBuff) {
+                Main.getCardsCell()[x1][y1].addBuff(buff);
+                buff.effectBuffsOnCard(Main.getCardsCell()[x1][y1], numberOfPlayer);
+            }
+        }
+
+    }
+
+    public void passivePower (int x , int y) {
+
+        setCellEffect(x, y);
+        for (int i = 0; i < cellEffect.size(); i++) {
+            int x1 = cellEffect.get(i)[0];
+            int y1 = cellEffect.get(i)[1];
+            if (Main.getCardsCell()[x1][y1] == null) {
+                continue;
+            }
+            for (Buff buff : spechialBuff) {
+                Main.getCardsCell()[x1][y1].addBuff(buff);
+                buff.effectBuffsOnCard(Main.getCardsCell()[x1][y1], numberOfPlayer);
+            }
+        }
+
     }
 
     public void defendPower(Card card) {
@@ -378,7 +430,7 @@ public class Minion extends Card {
             for (Buff buff : spechialBuff) {
                 if (Main.getCardsCell()[cellEffect.get(i)[0]][cellEffect.get(i)[1]] != null) {
                     Main.getCardsCell()[cellEffect.get(i)[0]][cellEffect.get(i)[1]].addBuff(buff);
-                    buff.effectBuffsOnCard(Main.getCardsCell()[cellEffect.get(i)[0]][cellEffect.get(i)[1]], Main.getCardsCell()[cellEffect.get(i)[0]][cellEffect.get(i)[1]].numberOfPlayer);
+                    buff.effectBuffsOnCard(Main.getCardsCell()[cellEffect.get(i)[0]][cellEffect.get(i)[1]], numberOfPlayer);
                 }
             }
         }
@@ -392,6 +444,9 @@ public class Minion extends Card {
             buffs.add(buff.copyBuff());
         }
         Minion minion = new Minion(name, clas, cost, MP, HP, AP, attackRange, buffs, timeOfSpechialPower, targetCommunity, specialPower, locationOfAttack);
+        for (Buff buff : this.buffs) {
+            minion.buffs.add(buff);
+        }
         if (cardID != null) {
             minion.setCardID(cardID);
         }
