@@ -1066,6 +1066,186 @@ public class GameController {
 
     }
 
+    public static void showCommands() {
+
+        System.out.println("1. game info");
+        System.out.println("2. show my minions");
+        System.out.println("3. show opponent minions");
+        System.out.println("4. show card info [card id]");
+        System.out.println("5. select [card id]");
+        System.out.println("6. move to ([x],[y])");
+        System.out.println("7. attack [opponent card id]");
+        System.out.println("8. attack combo [opponent card id] [my card id] [my card id] ....");
+        System.out.println("9. use special power (x,y)");
+        System.out.println("10. show hand");
+        System.out.println("11. insert [card id] in (x,y)");
+        System.out.println("12. end turn");
+        System.out.println("13. show collectables");
+        System.out.println("14. select [collectable id]");
+        System.out.println("15. show info");
+        System.out.println("16. use [x,y]");
+        System.out.println("17. enter graveyard");
+        System.out.println("18. show info [card id]");
+        System.out.println("19. show cards");
+        System.out.println("20. help");
+        System.out.println("21. end game");
+        System.out.println("22. exit");
+
+    }
+
+    public static boolean checkEmptyAroundLocation(int x, int y) {
+
+        for (int i = -1; i < 2; i++) {
+            for (int j = -1; j < 2; j++) {
+                if (i != 0 && j != 0) {
+                    continue;
+                }
+                if (Main.getCardsCell()[i][j] == null) {
+                    return true;
+                }
+            }
+        }
+        return false;
+
+    }
+
+    public static void help(ArrayList<Card> hand, Account account) {
+
+        System.out.println("You can insert cards in below :");
+        for (Card card : hand) {
+            if (card.MP < account.getMP()) {
+                System.out.printf("%d. CardID : %s", hand.indexOf(card) + 1, card.cardID);
+            }
+        }
+        System.out.println("You can move cards in below : ");
+        int counter = 1;
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 5; j++) {
+                if (Main.getCardsCell()[i][j] == null) {
+                    continue;
+                }
+                if (Main.getCardsCell()[i][j].numberOfPlayer != account.getNumberOfPlayer()) {
+                    continue;
+                }
+                if (!Main.getCardsCell()[i][j].isAttack() && !Main.getCardsCell()[i][j].isMove()) {
+                    if (checkEmptyAroundLocation(i, j)) {
+                        System.out.printf("%d. CardID : %s", counter, Main.getCardsCell()[i][j].numberOfPlayer);
+                        counter++;
+                    }
+                }
+            }
+        }
+        System.out.println("You can attack to cards in below :");
+        counter = 1;
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 5; j++) {
+                if (Main.getCardsCell()[i][j] == null) {
+                    continue;
+                }
+                if (Main.getCardsCell()[i][j].numberOfPlayer != account.getNumberOfPlayer()) {
+                    continue;
+                }
+                for (Card card : attackToTheseCard(i, j, account)) {
+                    System.out.printf("%d. CardID : %s\n", counter, card.cardID);
+                    counter++;
+                }
+            }
+        }
+
+    }
+
+    public static ArrayList<Card> attackToTheseCard(int x, int y, Account account) {
+
+        ArrayList<Card> allCardYouCanAttack = new ArrayList<Card>();
+        Card card = Main.getCardsCell()[x][y];
+
+        if (card instanceof Minion) {
+            if (((Minion) card).getClas().matches("melee")) {
+                for (int i = 0; i < 9; i++) {
+                    for (int j = 0; j < 5; j++) {
+                        if (Main.getCardsCell()[i][j] == null) {
+                            continue;
+                        }
+                        if (Main.getCardsCell()[i][j].numberOfPlayer == account.getNumberOfPlayer()) {
+                            continue;
+                        }
+                        if (Math.abs(i - x) > 1 || Math.abs(j - y) > 1) {
+                            continue;
+                        }
+                        allCardYouCanAttack.add(Main.getCardsCell()[i][j]);
+                    }
+                }
+            } else if (((Minion) card).getClas().matches("ranged")) {
+                for (int i = 0; i < 9; i++) {
+                    for (int j = 0; j < 5; j++) {
+                        if (Main.getCardsCell()[i][j] == null) {
+                            continue;
+                        }
+                        if (Main.getCardsCell()[i][j].numberOfPlayer == account.getNumberOfPlayer()) {
+                            continue;
+                        }
+                        if ((Math.abs(x - i) < 2 && Math.abs(y - j) < 2) || Math.abs(x - i) > ((Minion) card).getAttackRange() || Math.abs(y - j) > ((Minion) card).getAttackRange()) {
+                            continue;
+                        }
+                        allCardYouCanAttack.add(Main.getCardsCell()[i][j]);
+                    }
+                }
+            } else {
+                for (int i = 0; i < 9; i++) {
+                    for (int j = 0; j < 5; j++) {
+                        if (Main.getCardsCell()[i][j] == null) {
+                            continue;
+                        }
+                        if (Main.getCardsCell()[i][j].numberOfPlayer == account.getNumberOfPlayer()) {
+                            continue;
+                        }
+                        if (Math.abs(i - x) > ((Minion) card).getAttackRange() || Math.abs(j - y) > ((Minion) card).getAttackRange()) {
+                            continue;
+                        }
+                        allCardYouCanAttack.add(Main.getCardsCell()[i][j]);
+                    }
+                }
+            }
+        } else if (card instanceof Hero) {
+            if (((Hero) card).getClas().matches("melee")) {
+
+            } else if (((Hero) card).getClas().matches("ranged")) {
+                for (int i = 0; i < 9; i++) {
+                    for (int j = 0; j < 5; j++) {
+                        if (Main.getCardsCell()[i][j] == null) {
+                            continue;
+                        }
+                        if (Main.getCardsCell()[i][j].numberOfPlayer == account.getNumberOfPlayer()) {
+                            continue;
+                        }
+                        if ((Math.abs(x - i) < 2 && Math.abs(y - j) < 2) || Math.abs(x - i) > ((Hero) card).getAttackRange() || Math.abs(y - j) > ((Hero) card).getAttackRange()) {
+                            continue;
+                        }
+                        allCardYouCanAttack.add(Main.getCardsCell()[i][j]);
+                    }
+                }
+            } else {
+                for (int i = 0; i < 9; i++) {
+                    for (int j = 0; j < 5; j++) {
+                        if (Main.getCardsCell()[i][j] == null) {
+                            continue;
+                        }
+                        if (Main.getCardsCell()[i][j].numberOfPlayer == account.getNumberOfPlayer()) {
+                            continue;
+                        }
+                        if (Math.abs(i - x) > ((Hero) card).getAttackRange() || Math.abs(j - y) > ((Hero) card).getAttackRange()) {
+                            continue;
+                        }
+                        allCardYouCanAttack.add(Main.getCardsCell()[i][j]);
+                    }
+                }
+            }
+        }
+
+        return allCardYouCanAttack;
+
+    }
+
     public static void control(Account account, Account account1, String command, int mode, boolean type) {
 
         Pattern showCardInfoPat = Pattern.compile("^show card info \\[(?<cardID>\\p{all}+)]$");
@@ -1186,6 +1366,7 @@ public class GameController {
                 return;
             }
             System.out.printf("desc : %s\n", selectedItem.getDesc());
+            selectedItem = null;
         }
 
         if (command.matches("show next card")) {
@@ -1201,6 +1382,18 @@ public class GameController {
                 graveYard(graveYard1);
             } else {
                 graveYard(graveYard2);
+            }
+        }
+
+        if (command.matches("show commands")) {
+            showCommands();
+        }
+
+        if (command.matches("help")) {
+            if (account.getNumberOfPlayer() == 1) {
+                help(handPlayer1, account);
+            } else {
+                help(handPlayer2, account);
             }
         }
 
