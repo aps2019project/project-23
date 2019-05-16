@@ -1,6 +1,3 @@
-import java.util.ArrayList;
-import java.util.Random;
-
 public class KillMode extends Custom {
 
     public static boolean checkEndGame(Account account) {
@@ -59,7 +56,7 @@ public class KillMode extends Custom {
                 }
             } else if (turnPlayer2) {
                 GameController.endTurn(account1, account);
-                
+
                 turnPlayer1 = true;
                 turnPlayer2 = false;
             }
