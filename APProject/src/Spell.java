@@ -7,6 +7,7 @@ public class Spell extends Card {
     private int length;
     private int width;
     private ArrayList<Integer[]> cellEffect = new ArrayList<Integer[]>();
+    private boolean isForCell;
 
     public ArrayList<Integer[]> getCellEffect() {
         return cellEffect;
@@ -16,7 +17,7 @@ public class Spell extends Card {
         return desc;
     }
 
-    public Spell(String name, String desc, String targetCommunity, int cost, int MP, int length, int width, ArrayList<Buff> buffs) {
+    public Spell(String name, String desc, String targetCommunity, int cost, int MP, int length, int width, ArrayList<Buff> buffs, boolean isForCell) {
         super(name, cost, MP);
         this.desc = desc;
         this.targetCommunity = targetCommunity;
@@ -25,12 +26,17 @@ public class Spell extends Card {
         for (Buff buff : buffs) {
             this.buffs.add(buff);
         }
+        this.isForCell = isForCell;
     }
 
     public void setNullCellEffect() {
         for (int i = 0; i < cellEffect.size(); i++) {
             cellEffect.remove(0);
         }
+    }
+
+    public boolean isForCell() {
+        return isForCell;
     }
 
     public boolean setAroundfriendlyMinion(String[] targetCommunitys, int x, int y) {
@@ -224,7 +230,7 @@ public class Spell extends Card {
         for (Buff buff : this.buffs) {
             buffs.add(buff.copyBuff());
         }
-        Spell spell = new Spell(name, desc, targetCommunity, cost, MP, length, width, buffs);
+        Spell spell = new Spell(name, desc, targetCommunity, cost, MP, length, width, buffs,isForCell);
         if (cardID != null) {
             spell.setCardID(cardID);
         }
