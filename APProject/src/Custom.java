@@ -11,4 +11,25 @@ public class Custom {
         Custom.player2Deck = player2Deck;
     }
 
+    public static void endGame(Account account, boolean winOrLose) {
+
+        String command;
+        Match match = new Match("kill hero (single player)", false);
+        match.setWonOrLose(winOrLose);
+        account.addMatch(match);
+        if (winOrLose) {
+            account.addBudget(1000);
+            System.out.printf("%s win , you won 1000 drick", account.getUsername());
+        } else {
+            System.out.printf("%s lose :(((\n", account.getUsername());
+        }
+        while (true) {
+            command = Main.getScanner().nextLine().toLowerCase().trim();
+            if (command.matches("end game")) {
+                return;
+            }
+        }
+
+    }
+
 }

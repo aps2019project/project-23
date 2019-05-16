@@ -41,16 +41,19 @@ public class Delete extends Buff {
                             }
                         }
                         card.buffs.remove(i);
+                        i --;
                     }
                 }
             }
         } else {
-            for (int i = 0; i < card.buffs.size(); i++) {
+            for (int i = 0; i < card.getBuffs().size(); i++) {
                 if (card.buffs.get(i).positive && card.buffs.get(i).mainBuff && card.buffs.get(i).posOrNeg) {
                     if (card.buffs.get(i).continuous)
                         card.buffs.get(i).setOn(false);
-                    else
+                    else {
                         card.buffs.remove(i);
+                        i --;
+                    }
                 }
             }
         }
