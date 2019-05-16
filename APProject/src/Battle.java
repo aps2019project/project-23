@@ -22,8 +22,7 @@ public class Battle {
                 singlePlayMenuHelp();
             } else if (command.matches("exit")) {
                 return;
-            }
-            else if (command.matches("custom game")){
+            } else if (command.matches("custom game")) {
                 singleCustomGame.menu(account);
             }
 
