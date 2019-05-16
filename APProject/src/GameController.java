@@ -866,6 +866,11 @@ public class GameController {
                 }
                 return;
             }
+            if (account.getNumberOfPlayer() == 1) {
+                graveYard1.add(card);
+            } else {
+                graveYard2.add(card);
+            }
             hand.remove(card);
             account.addMP(-1 * card.MP);
             if (type) {
@@ -934,13 +939,32 @@ public class GameController {
                 Main.getCardsCell()[i][j].setMove(false);
             }
         }
+        if (account.getNumberOfPlayer() == 1) {
+            if (handPlayer1.size() == 5) {
+                return;
+            }
+            if (player1Deck.getDeckCard().size() == 0) {
+                return;
+            }
+            handPlayer1.add(player1Deck.getDeckCard().get(0));
+            player1Deck.getDeckCard().remove(0);
+        } else {
+            if (handPlayer2.size() == 5) {
+                return;
+            }
+            if (player2Deck.getDeckCard().size() == 0) {
+                return;
+            }
+            handPlayer2.add(player2Deck.getDeckCard().get(0));
+            player2Deck.getDeckCard().remove(0);
+        }
 
     }
 
     public static void showCollectable(Account account, ArrayList<Item> collectableItem) {
 
         for (Item item : collectableItem) {
-            System.out.printf("%d. cardID : %s , desc : %s\n", collectableItem.indexOf(item) + 1, item.cardID, item.getDesc());
+            System.out.printf("%d. CardID : %s , Desc : %s\n", collectableItem.indexOf(item) + 1, item.cardID, item.getDesc());
         }
 
     }
@@ -974,8 +998,69 @@ public class GameController {
         }
         Card card = deck.getDeckCard().get(0);
         if (card instanceof Minion) {
-            
-        }else if (card instanceof Spell) {
+            System.out.printf("CardID : %s , Type : Minion , AP : %d , HP : %d , MP : %d , Class : %s , Special power : %s\n", card.cardID, ((Minion) card).getAP(), ((Minion) card).getHP(), card.MP, ((Minion) card).getClas(), ((Minion) card).getSpecialPower());
+        } else if (card instanceof Spell) {
+            System.out.printf("CardID : %s , Type : Spell , MP : %d , Class : %s\n", card.cardID, card.MP, ((Spell) card).getDesc());
+        }
+
+    }
+
+    public static void showCard(Card card, boolean showInfo) {
+
+        Pattern pattern = Pattern.compile("^\\p{all}+_(?<cardName>\\w+)_\\d+$");
+        Matcher matcher = pattern.matcher(card.cardID);
+        String cardName = "";
+        if (matcher.find()) {
+            cardName = matcher.group("cardName");
+        }
+        Card card1 = Shop.getCard(cardName);
+        if (card1 instanceof Hero) {
+            if (showInfo) {
+                System.out.printf("CardID : %s , AP : %d , HP : %d , Class : %s , special power : %s\n", card.cardID, ((Hero) card1).getAP(), ((Hero) card1).getHP(), ((Hero) card1).getClas(), ((Hero) card1).getSpecialPower());
+            } else {
+                System.out.printf("CardID : %s\n", card.cardID);
+            }
+        } else if (card1 instanceof Minion) {
+            if (showInfo) {
+                System.out.printf("CardID : %s , AP : %s , HP : %d , Class : %s , Special power : %s\n", card.cardID, ((Minion) card1).getAP(), ((Minion) card1).getHP(), card1.MP, ((Minion) card1).getClas(), ((Minion) card1).getSpecialPower());
+            } else {
+                System.out.printf("CardID : %s\n", card.cardID);
+            }
+        } else if (card1 instanceof Spell) {
+            if (showInfo) {
+                System.out.printf("CardID : %s , Desc : %s\n", card.cardID, ((Spell) card1).getDesc());
+            } else {
+                System.out.printf("CardID : %s\n", card.cardID);
+            }
+        }
+
+    }
+
+    public static void graveYard(ArrayList<Card> graveYard) {
+
+        Pattern pattern = Pattern.compile("^show info \\[(?<cardID>\\p{all}+)]$");
+        Matcher matcher;
+        String command;
+        while (true) {
+
+            command = Main.getScanner().nextLine().toLowerCase().trim();
+            if (command.matches("exit")) {
+                return;
+            } else if (command.matches("show cards")) {
+                for (Card card : graveYard) {
+                    System.out.printf("%d. ", graveYard.indexOf(card) + 1);
+                    showCard(card, false);
+                }
+            }
+            matcher = pattern.matcher(command);
+            if (matcher.find()) {
+                for (Card card : graveYard) {
+                    if (card.cardID.matches(matcher.group("cardID"))) {
+                        showCard(card, true);
+                        break;
+                    }
+                }
+            }
 
         }
 
@@ -1108,6 +1193,14 @@ public class GameController {
                 showNextCard(player1Deck);
             } else {
                 showNextCard(player2Deck);
+            }
+        }
+
+        if (command.matches("enter graveyard")) {
+            if (account.getNumberOfPlayer() == 1) {
+                graveYard(graveYard1);
+            } else {
+                graveYard(graveYard2);
             }
         }
 
