@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.Random;
+import java.util.jar.Manifest;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -6,12 +8,37 @@ public class GameController {
 
     private static ArrayList<Card> handPlayer1 = new ArrayList<Card>(5);
     private static ArrayList<Card> handPlayer2 = new ArrayList<Card>(5);
-    private static ArrayList<Item> collectableItem1 = new ArrayList<>();
+    private static ArrayList<Item> collectableItem1 = new ArrayList<Item>();
+    private static ArrayList<Item> collectableItem2 = new ArrayList<Item>();
+    private static ArrayList<Card> graveYard1 = new ArrayList<Card>();
+    private static ArrayList<Card> graveYard2 = new ArrayList<Card>();
     private static Card selectedCard = null;
     protected static Deck player1Deck;
     protected static Deck player2Deck;
     private static int turnOfSpecialPower1;
     private static int turnOfSpecialPower2;
+    private static int turn;
+
+    public static void addTurn() {
+        turn++;
+    }
+
+    public static void setFirstAll() {
+
+        handPlayer2.clear();
+        handPlayer1.clear();
+        collectableItem2.clear();
+        collectableItem1.clear();
+        selectedCard = null;
+        player1Deck = null;
+        player2Deck = null;
+        turnOfSpecialPower1 = 0;
+        turnOfSpecialPower2 = 0;
+        graveYard1.clear();
+        graveYard2.clear();
+        turn = 0;
+
+    }
 
     public static ArrayList<Card> getHandPlayer2() {
         return handPlayer2;
@@ -51,7 +78,7 @@ public class GameController {
 
     }
 
-    public static void setMP(int turn, Account account, Account account1) {
+    public static void setMP(Account account, Account account1) {
 
         if (turn % 2 == 1) {
             switch (turn) {
@@ -101,6 +128,86 @@ public class GameController {
             if (turn > 12) {
                 account1.setMP(9);
             }
+        }
+
+    }
+
+    public static void death() {
+
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 5; j++) {
+                if (Main.getCardsCell()[i][j] == null) {
+                    continue;
+                }
+                if (Main.getCardsCell()[i][j] instanceof Hero) {
+                    if (((Hero) Main.getCardsCell()[i][j]).getHP() == 0) {
+                        if (Main.getCardsCell()[i][j].numberOfPlayer == 1) {
+                            graveYard1.add(Main.getCardsCell()[i][j]);
+                        } else {
+                            graveYard2.add(Main.getCardsCell()[i][j]);
+                        }
+                        Main.getCardsCell()[i][j] = null;
+                    }
+                } else if (Main.getCardsCell()[i][j] instanceof Minion) {
+                    if (((Minion) Main.getCardsCell()[i][j]).getSpecialPower().matches("death")) {
+                        ((Minion) Main.getCardsCell()[i][j]).deathPower(i, j);
+                        if (Main.getCardsCell()[i][j].numberOfPlayer == 1) {
+                            graveYard1.add(Main.getCardsCell()[i][j]);
+                        } else {
+                            graveYard2.add(Main.getCardsCell()[i][j]);
+                        }
+                    }
+                    Main.getCardsCell()[i][j] = null;
+                }
+            }
+        }
+
+    }
+
+    public static void setAccount(Deck deck, int numberOfPlayer, Account account) {
+        for (Card card : deck.getDeckCard()) {
+            card.setNumberOfPlayer(numberOfPlayer);
+        }
+        account.setMP(10);
+    }
+
+    public static void setCellCard(Deck player1Deck, Deck player2Deck) {
+
+        for (Card card : player1Deck.getDeckCard()) {
+            if (card instanceof Hero) {
+                Main.getCardsCell()[0][2] = card;
+            }
+        }
+        for (Card card : player2Deck.getDeckCard()) {
+            if (card instanceof Hero) {
+                Main.getCardsCell()[8][2] = card;
+            }
+        }
+
+    }
+
+    public static void setRandomHand(ArrayList<Card> hand, Deck deck) {
+
+        Random random = new Random();
+        int randomNumber;
+        for (int i = 0; i < 5; i++) {
+            do {
+                randomNumber = random.nextInt(deck.getDeckCard().size());
+            } while (deck.getDeckCard().get(randomNumber) instanceof Item);
+            hand.add(deck.getDeckCard().get(randomNumber));
+            deck.getDeckCard().remove(randomNumber);
+        }
+
+    }
+
+    public static void setRandomDeck(Deck deck) {
+
+        Random random = new Random();
+        int randomNumber;
+        for (int i = 0; i < 7; i++) {
+            randomNumber = random.nextInt(deck.getDeckCard().size());
+            deck.getDeckCard().add(0, deck.getDeckCard().get(randomNumber));
+            deck.getDeckCard().remove(randomNumber + 1);
         }
 
     }
@@ -283,21 +390,21 @@ public class GameController {
 
     }
 
-    public static void addCollectableItem(int x, int y, Account account) {
+    public static void addCollectableItem(int x, int y, Account account, ArrayList<Item> collectableItem) {
         String cardID;
         int counter = 0;
-        for (int i = 0; i < collectableItem1.size(); i++) {
-            if (collectableItem1.get(i).name.matches(((Item) Main.getCardsCell()[x][y]).name)) {
+        for (int i = 0; i < collectableItem.size(); i++) {
+            if (collectableItem.get(i).name.matches(((Item) Main.getCardsCell()[x][y]).name)) {
                 counter++;
             }
         }
         cardID = account.getUsername() + Main.getCardsCell()[x][y].name + counter;
         Main.getCardsCell()[x][y].setCardID(cardID);
-        collectableItem1.add(((Item) Main.getCardsCell()[x][y]));
+        collectableItem.add(((Item) Main.getCardsCell()[x][y]));
         Main.getCardsCell()[x][y] = null;
     }
 
-    public static void moveCard(int x, int y, Account account) {
+    public static void moveCard(int x, int y, Account account, boolean type) {
 
         int xOfCard = getLocation(selectedCard.cardID)[0];
         int yOfCard = getLocation(selectedCard.cardID)[1];
@@ -317,30 +424,39 @@ public class GameController {
             return;
         }
         if (selectedCard.move || selectedCard.attack) {
-            System.out.println("Can't move");
+            if (type) {
+                System.out.println("Can't move");
+            }
             selectedCard = null;
             return;
         }
         if (Main.getCardsCell()[x][y] != null && !(Main.getCardsCell()[x][y] instanceof Item)) {
-            System.out.println("Invalid target");
+            if (type) {
+                System.out.println("Invalid target");
+            }
             selectedCard = null;
             return;
         }
         if (Math.abs(x - xOfCard) + Math.abs(y - yOfCard) > 2) {
-            System.out.println("Invalid target");
+            if (type) {
+                System.out.println("Invalid target");
+            }
             selectedCard = null;
             return;
         }
         if (!checkMove(xOfCard, yOfCard, x, y)) {
-            System.out.println("Invalid target");
+            if (type) {
+                System.out.println("Invalid target");
+            }
             selectedCard = null;
             return;
         }
         if (Main.getCardsCell()[x][y] instanceof Item) {
-            addCollectableItem(x, y, account);
-        }
-        if (Main.getBuffCell()[x][y] != null) {
-            selectedCard.addBuff(Main.getBuffCell()[x][y]);
+            if (account.getNumberOfPlayer() == 1) {
+                addCollectableItem(x, y, account, collectableItem1);
+            } else {
+                addCollectableItem(x, y, account, collectableItem2);
+            }
         }
         if (Main.getBuffCell()[x][y] != null) {
             selectedCard.addBuff(Main.getBuffCell()[x][y].copyBuff());
@@ -351,12 +467,14 @@ public class GameController {
         selectedCard.setMove(true);
         Main.getCardsCell()[getLocation(selectedCard.cardID)[0]][getLocation(selectedCard.cardID)[1]] = null;
         Main.getCardsCell()[x][y] = selectedCard;
-        System.out.printf("[%s] moved to [%d] [%d]\n", selectedCard.cardID, x + 1, y + 1);
+        if (type) {
+            System.out.printf("[%s] moved to [%d] [%d]\n", selectedCard.cardID, x + 1, y + 1);
+        }
         selectedCard = null;
 
     }
 
-    public static void attack(String cardID, Account account) {
+    public static void attack(String cardID, Account account, boolean type) {
 
         int xOfAttacker = getLocation(selectedCard.cardID)[0];
         int yOfAttacker = getLocation(selectedCard.cardID)[1];
@@ -374,36 +492,48 @@ public class GameController {
         }
 
         if (selectedCard.isAttack()) {
-            System.out.printf("Card with [%s] can't attack\n", selectedCard.cardID);
+            if (type) {
+                System.out.printf("Card with [%s] can't attack\n", selectedCard.cardID);
+            }
             selectedCard = null;
             return;
         }
         if (getLocation(cardID) == null) {
-            System.out.println("Invalid card id");
+            if (type) {
+                System.out.println("Invalid card id");
+            }
             selectedCard = null;
             return;
         }
         if (Main.getCardsCell()[getLocation(cardID)[0]][getLocation(cardID)[1]].numberOfPlayer == account.getNumberOfPlayer()) {
-            System.out.println("Invalid card id");
+            if (type) {
+                System.out.println("Invalid card id");
+            }
             selectedCard = null;
             return;
         }
         if (selectedCard instanceof Minion) {
             if (((Minion) selectedCard).getClas().matches("melee")) {
                 if (Math.abs(x - xOfAttacker) > 1 || Math.abs(y - yOfAttacker) > 1) {
-                    System.out.println("opponent minion is unavailable for attack");
+                    if (type) {
+                        System.out.println("opponent minion is unavailable for attack");
+                    }
                     selectedCard = null;
                     return;
                 }
             } else if (((Minion) selectedCard).getClas().matches("ranged")) {
                 if ((Math.abs(x - xOfAttacker) < 2 && Math.abs(y - yOfAttacker) < 2) || Math.abs(x - xOfAttacker) > ((Minion) selectedCard).getAttackRange() || Math.abs(y - yOfAttacker) > ((Minion) selectedCard).getAttackRange()) {
-                    System.out.println("opponent minion is unavailable for attack");
+                    if (type) {
+                        System.out.println("opponent minion is unavailable for attack");
+                    }
                     selectedCard = null;
                     return;
                 }
             } else if (((Minion) selectedCard).getClas().matches("hybrid")) {
                 if (Math.abs(x - xOfAttacker) > ((Minion) selectedCard).getAttackRange() || Math.abs(y - yOfAttacker) > ((Minion) selectedCard).getAttackRange()) {
-                    System.out.println("opponent minion is unavailable for attack");
+                    if (type) {
+                        System.out.println("opponent minion is unavailable for attack");
+                    }
                     selectedCard = null;
                     return;
                 }
@@ -411,19 +541,25 @@ public class GameController {
         } else if (selectedCard instanceof Hero) {
             if (((Hero) selectedCard).getClas().matches("melee")) {
                 if (Math.abs(x - xOfAttacker) > 1 || Math.abs(y - yOfAttacker) > 1) {
-                    System.out.println("opponent minion is unavailable for attack");
+                    if (type) {
+                        System.out.println("opponent minion is unavailable for attack");
+                    }
                     selectedCard = null;
                     return;
                 }
             } else if (((Hero) selectedCard).getClas().matches("ranged")) {
                 if ((Math.abs(x - xOfAttacker) < 2 && Math.abs(y - yOfAttacker) < 2) || Math.abs(x - xOfAttacker) > ((Hero) selectedCard).getAttackRange() || Math.abs(y - yOfAttacker) > ((Hero) selectedCard).getAttackRange()) {
-                    System.out.println("opponent minion is unavailable for attack");
+                    if (type) {
+                        System.out.println("opponent minion is unavailable for attack");
+                    }
                     selectedCard = null;
                     return;
                 }
             } else if (((Hero) selectedCard).getClas().matches("hybrid")) {
                 if (Math.abs(x - xOfAttacker) > ((Hero) selectedCard).getAttackRange() || Math.abs(y - yOfAttacker) > ((Hero) selectedCard).getAttackRange()) {
-                    System.out.println("opponent minion is unavailable for attack");
+                    if (type) {
+                        System.out.println("opponent minion is unavailable for attack");
+                    }
                     selectedCard = null;
                     return;
                 }
@@ -569,6 +705,28 @@ public class GameController {
 
     }
 
+    public static void passive(Account account) {
+
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 5; j++) {
+                if (Main.getCardsCell()[i][j] == null) {
+                    continue;
+                }
+                if (Main.getCardsCell()[i][j].numberOfPlayer != account.getNumberOfPlayer()) {
+                    continue;
+                }
+                if (!(Main.getCardsCell()[i][j] instanceof Minion)) {
+                    continue;
+                }
+                if (!(((Minion) Main.getCardsCell()[i][j]).getSpecialPower().matches("passive"))) {
+                    continue;
+                }
+                ((Minion) Main.getCardsCell()[i][j]).passivePower(i, j);
+            }
+        }
+
+    }
+
     public static void addTurnOfSpecialPower(Account account, Account account1) {
 
         if (!getHero(account).isOnSpecialBuff()) {
@@ -611,14 +769,146 @@ public class GameController {
 
 
     }
-    
-    public static void showHand(ArrayList<Card> hand , Deck deck){
-        
-           
-        
+
+    public static void showHand(ArrayList<Card> hand, Deck deck) {
+
+        for (Card card : hand) {
+            if (card instanceof Minion) {
+                System.out.printf("%d. cardID : %s , type : Minion , AP : %d , HP : %d , MP : %d\n", hand.indexOf(card) + 1, card.cardID, ((Minion) card).getAP(), ((Minion) card).getHP(), card.MP);
+            } else if (card instanceof Spell) {
+                System.out.printf("%d. cardID : %s , type : Spell , MP : %s , desc : %s\n", hand.indexOf(card) + 1, card.cardID, card.MP, ((Spell) card).getDesc());
+            }
+        }
+        if (deck.getDeckCard().size() == 0) {
+            System.out.println("Your deck in empty");
+            return;
+        }
+        System.out.println("Last of card in deck :");
+        if (deck.getDeckCard().get(0) instanceof Minion) {
+            System.out.printf("cardID : %s , type : Minion , AP : %d , HP : %d , MP : %d\n", deck.getDeckCard().get(0).cardID, ((Minion) deck.getDeckCard().get(0)).getAP(), ((Minion) deck.getDeckCard().get(0)).getHP(), deck.getDeckCard().get(0).MP);
+        } else if (deck.getDeckCard().get(0) instanceof Spell) {
+            System.out.printf("cardID : %s , type : Spell , MP : %s , desc : %s\n", deck.getDeckCard().get(0).cardID, deck.getDeckCard().get(0).MP, ((Spell) deck.getDeckCard().get(0)).getDesc());
+        }
+
     }
 
-    public static void control(Account account, Account account1, String command, int mode) {
+    public static Card existInHand(ArrayList<Card> hand, String cardID) {
+
+        for (Card card : hand) {
+            if (card.cardID.matches(cardID)) {
+                return card;
+            }
+        }
+        return null;
+
+    }
+
+    public static boolean checkMinionInsert(int x, int y, Account account) {
+
+        if (Main.getCardsCell()[x][y] != null && !(Main.getCardsCell()[x][y] instanceof Item)) {
+            return false;
+        }
+        for (int i = -1; i < 2; i++) {
+            for (int j = -1; j < 2; j++) {
+                if (Main.getCardsCell()[x + i][y + j] instanceof Hero) {
+                    if (Main.getCardsCell()[x + i][y + j].numberOfPlayer == account.getNumberOfPlayer()) {
+                        return true;
+                    }
+                } else if (Main.getCardsCell()[x + i][y + j] instanceof Minion) {
+                    if (Main.getCardsCell()[x + i][y + j].numberOfPlayer == account.getNumberOfPlayer()) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+
+    }
+
+    public static void insertCard(ArrayList<Card> hand, int x, int y, String cardID, Account account, boolean type) {
+
+        if (existInHand(hand, cardID) == null) {
+            if (type) {
+                System.out.println("Invalid card id");
+            }
+            return;
+        }
+        if (existInHand(hand, cardID).MP > account.getMP()) {
+            if (type) {
+                System.out.println("You don't have enough mana");
+            }
+            return;
+        }
+        Card card = existInHand(hand, cardID);
+        if (card instanceof Minion) {
+            if (!checkMinionInsert(x, y, account)) {
+                if (type) {
+                    System.out.println("Invalid target");
+                }
+                return;
+            } else {
+                if (((Minion) card).getSpecialPower().matches("spawn")) {
+                    ((Minion) card).spawn(x, y);
+                }
+                Main.getCardsCell()[x][y] = card;
+                hand.remove(card);
+                account.addMP(-1 * card.MP);
+                if (type) {
+                    System.out.printf("[%s] inserted to (%d,%d)\n", cardID, x + 1, y + 1);
+                }
+            }
+        } else if (card instanceof Spell) {
+            if (!((Spell) card).setCellEffect(x, y)) {
+                if (type) {
+                    System.out.println("Invalid target");
+                }
+                return;
+            }
+            hand.remove(card);
+            account.addMP(-1 * card.MP);
+            if (type) {
+                System.out.printf("[%s] inserted to (%d,%d)\n", cardID, x + 1, y + 1);
+            }
+            if (((Spell) card).isForCell()) {
+                for (int i = 0; i < ((Spell) card).getCellEffect().size(); i++) {
+                    int x1 = ((Spell) card).getCellEffect().get(i)[0];
+                    int y1 = ((Spell) card).getCellEffect().get(i)[1];
+                    Main.getBuffCell()[x1][y1] = card.getBuffs().get(0);
+                }
+            } else {
+                for (int i = 0; i < ((Spell) card).getCellEffect().size(); i++) {
+                    int x1 = ((Spell) card).getCellEffect().get(i)[0];
+                    int y1 = ((Spell) card).getCellEffect().get(i)[1];
+                    if (Main.getCardsCell()[x1][y1] == null || Main.getCardsCell()[x1][y1] instanceof Item) {
+                        continue;
+                    }
+                    for (Buff buff : card.getBuffs()) {
+                        Main.getCardsCell()[x1][y1].addBuff(buff);
+                        buff.effectBuffsOnCard(Main.getCardsCell()[x1][y1], account.getNumberOfPlayer());
+                    }
+                }
+            }
+        }
+
+    }
+
+    public static void showMap() {
+
+        System.out.printf("\n");
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (Main.getCardsCell()[j][i] == null) {
+                    System.out.printf("%d.  null     ", j + 1);
+                    continue;
+                }
+                System.out.printf("%d.  %s , %d      ", j + 1, Main.getCardsCell()[j][i].cardID, Main.getCardsCell()[j][i].numberOfPlayer);
+            }
+            System.out.printf("\n\n");
+        }
+
+    }
+
+    public static void control(Account account, Account account1, String command, int mode, boolean type) {
 
         Pattern showCardInfoPat = Pattern.compile("^show card info \\[(?<cardID>\\p{all}+)]$");
         Pattern selectPat = Pattern.compile("^select \\[(?<cardID>\\p{all}+)]$");
@@ -626,6 +916,7 @@ public class GameController {
         Pattern attackPat = Pattern.compile("^attack \\[(?<cardID>\\p{all}+)]$");
         Pattern comboAttackPat = Pattern.compile("^attack combo \\[(?<cardID>\\p{all}+)] (\\[\\p{all}+])+$");
         Pattern useSpecialPowerPat = Pattern.compile("^use special power \\((?<x>[1-9]),(?<y>[1-5])\\)$");
+        Pattern insertPat = Pattern.compile("^insert \\[(?<cardID>\\p{all}+)] in \\((?<x>[1-9]),(?<y>[1-5])\\)$");
         Matcher matcher;
 
         if (command.matches("game info")) {
@@ -657,7 +948,7 @@ public class GameController {
                 System.out.println("Select card and try again");
                 return;
             }
-            moveCard(Integer.parseInt(matcher.group("x")) - 1, Integer.parseInt(matcher.group("y")) - 1, account);
+            moveCard(Integer.parseInt(matcher.group("x")) - 1, Integer.parseInt(matcher.group("y")) - 1, account, type);
             return;
         }
 
@@ -667,7 +958,7 @@ public class GameController {
                 System.out.println("Select card and try again");
                 return;
             }
-            attack(matcher.group("cardID"), account);
+            attack(matcher.group("cardID"), account, type);
             return;
         }
 
@@ -702,6 +993,19 @@ public class GameController {
             } else {
                 showHand(handPlayer2, player2Deck);
             }
+        }
+
+        matcher = insertPat.matcher(command);
+        if (matcher.find()) {
+            if (account.getNumberOfPlayer() == 1) {
+                insertCard(handPlayer1, Integer.parseInt(matcher.group("x")) - 1, Integer.parseInt(matcher.group("y")) - 1, matcher.group("cardID"), account, type);
+            } else {
+                insertCard(handPlayer2, Integer.parseInt(matcher.group("x")) - 1, Integer.parseInt(matcher.group("y")) - 1, matcher.group("cardID"), account, type);
+            }
+        }
+
+        if (command.matches("show")) {
+            showMap();
         }
 
     }
