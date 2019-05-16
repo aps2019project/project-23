@@ -1100,7 +1100,10 @@ public class GameController {
                 if (i != 0 && j != 0) {
                     continue;
                 }
-                if (Main.getCardsCell()[i][j] == null) {
+                if (i + x > 8 || i + x < 0 || j + y > 4 || j + y < 0) {
+                    continue;
+                }
+                if (Main.getCardsCell()[i + x][j + y] == null) {
                     return true;
                 }
             }
@@ -1111,12 +1114,18 @@ public class GameController {
 
     public static void help(ArrayList<Card> hand, Account account) {
 
+        boolean exist = false;
         System.out.println("You can insert cards in below :");
         for (Card card : hand) {
             if (card.MP < account.getMP()) {
-                System.out.printf("%d. CardID : %s", hand.indexOf(card) + 1, card.cardID);
+                System.out.printf("          %d. CardID : %s\n", hand.indexOf(card) + 1, card.cardID);
+                exist = true;
             }
         }
+        if (!exist) {
+            System.out.println("          None");
+        }
+        exist = false;
         System.out.println("You can move cards in below : ");
         int counter = 1;
         for (int i = 0; i < 9; i++) {
@@ -1129,14 +1138,20 @@ public class GameController {
                 }
                 if (!Main.getCardsCell()[i][j].isAttack() && !Main.getCardsCell()[i][j].isMove()) {
                     if (checkEmptyAroundLocation(i, j)) {
-                        System.out.printf("%d. CardID : %s", counter, Main.getCardsCell()[i][j].numberOfPlayer);
+                        System.out.printf("          %d. CardID : %s\n", counter, Main.getCardsCell()[i][j].cardID);
                         counter++;
+                        exist = true;
                     }
                 }
             }
         }
+        if (!exist) {
+            System.out.println("          None");
+        }
+        exist = false;
         System.out.println("You can attack to cards in below :");
         counter = 1;
+        ArrayList<Card> cards = new ArrayList<Card>();
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 5; j++) {
                 if (Main.getCardsCell()[i][j] == null) {
@@ -1146,10 +1161,14 @@ public class GameController {
                     continue;
                 }
                 for (Card card : attackToTheseCard(i, j, account)) {
-                    System.out.printf("%d. CardID : %s\n", counter, card.cardID);
+                    System.out.printf("          %d. CardID : %s with your card with [%s]\n", counter, card.cardID, Main.getCardsCell()[i][j].cardID);
                     counter++;
+                    exist = true;
                 }
             }
+        }
+        if (!exist) {
+            System.out.println("          None");
         }
 
     }
