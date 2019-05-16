@@ -13,11 +13,12 @@ public class GameController {
     private static ArrayList<Card> graveYard1 = new ArrayList<Card>();
     private static ArrayList<Card> graveYard2 = new ArrayList<Card>();
     private static Card selectedCard = null;
+    private static Item selectedItem = null;
     protected static Deck player1Deck;
     protected static Deck player2Deck;
     private static int turnOfSpecialPower1;
     private static int turnOfSpecialPower2;
-    private static int turn;
+    public static int turn;
 
     public static void addTurn() {
         turn++;
@@ -30,13 +31,14 @@ public class GameController {
         collectableItem2.clear();
         collectableItem1.clear();
         selectedCard = null;
+        selectedItem = null;
         player1Deck = null;
         player2Deck = null;
         turnOfSpecialPower1 = 0;
         turnOfSpecialPower2 = 0;
         graveYard1.clear();
         graveYard2.clear();
-        turn = 0;
+        turn = 1;
 
     }
 
@@ -168,7 +170,7 @@ public class GameController {
         for (Card card : deck.getDeckCard()) {
             card.setNumberOfPlayer(numberOfPlayer);
         }
-        account.setMP(10);
+        account.setMP(2);
     }
 
     public static void setCellCard(Deck player1Deck, Deck player2Deck) {
@@ -398,7 +400,7 @@ public class GameController {
                 counter++;
             }
         }
-        cardID = account.getUsername() + Main.getCardsCell()[x][y].name + counter;
+        cardID = account.getUsername() + "_" + Main.getCardsCell()[x][y].name + "_" + (counter + 1);
         Main.getCardsCell()[x][y].setCardID(cardID);
         collectableItem.add(((Item) Main.getCardsCell()[x][y]));
         Main.getCardsCell()[x][y] = null;
@@ -908,6 +910,77 @@ public class GameController {
 
     }
 
+    public static void endTurn(Account account, Account account1) {
+
+        selectedItem = null;
+        selectedCard = null;
+        addTurn();
+        if (account.getNumberOfPlayer() == 1) {
+            GameController.setMP(account, account1);
+        } else {
+            GameController.setMP(account1, account);
+        }
+        GameController.addTurnOfSpecialPower(account, account1);
+        GameController.passive(account);
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 5; j++) {
+                if (Main.getCardsCell()[i][j] == null) {
+                    continue;
+                }
+                if (Main.getCardsCell()[i][j].numberOfPlayer != account.getNumberOfPlayer()) {
+                    continue;
+                }
+                Main.getCardsCell()[i][j].setAttack(false);
+                Main.getCardsCell()[i][j].setMove(false);
+            }
+        }
+
+    }
+
+    public static void showCollectable(Account account, ArrayList<Item> collectableItem) {
+
+        for (Item item : collectableItem) {
+            System.out.printf("%d. cardID : %s , desc : %s\n", collectableItem.indexOf(item) + 1, item.cardID, item.getDesc());
+        }
+
+    }
+
+    public static Item existItem(String itemID, ArrayList<Item> collectableItem) {
+
+        for (Item item : collectableItem) {
+            if (item.cardID.matches(itemID)) {
+                return item;
+            }
+        }
+        return null;
+
+    }
+
+    public static void selectItem(String itemID, ArrayList<Item> collectableItem) {
+
+        if (existItem(itemID, collectableItem) == null) {
+            System.out.println("You don't have this item");
+            return;
+        }
+        selectedItem = existItem(itemID, collectableItem);
+
+    }
+
+    public static void showNextCard(Deck deck) {
+
+        if (deck.getDeckCard().size() == 0) {
+            System.out.println("Your deck is empty");
+            return;
+        }
+        Card card = deck.getDeckCard().get(0);
+        if (card instanceof Minion) {
+            
+        }else if (card instanceof Spell) {
+
+        }
+
+    }
+
     public static void control(Account account, Account account1, String command, int mode, boolean type) {
 
         Pattern showCardInfoPat = Pattern.compile("^show card info \\[(?<cardID>\\p{all}+)]$");
@@ -917,6 +990,7 @@ public class GameController {
         Pattern comboAttackPat = Pattern.compile("^attack combo \\[(?<cardID>\\p{all}+)] (\\[\\p{all}+])+$");
         Pattern useSpecialPowerPat = Pattern.compile("^use special power \\((?<x>[1-9]),(?<y>[1-5])\\)$");
         Pattern insertPat = Pattern.compile("^insert \\[(?<cardID>\\p{all}+)] in \\((?<x>[1-9]),(?<y>[1-5])\\)$");
+        Pattern selectItemPat = Pattern.compile("^select collectable \\[(?<itemID>\\p{all}+)]$");
         Matcher matcher;
 
         if (command.matches("game info")) {
@@ -1001,6 +1075,39 @@ public class GameController {
                 insertCard(handPlayer1, Integer.parseInt(matcher.group("x")) - 1, Integer.parseInt(matcher.group("y")) - 1, matcher.group("cardID"), account, type);
             } else {
                 insertCard(handPlayer2, Integer.parseInt(matcher.group("x")) - 1, Integer.parseInt(matcher.group("y")) - 1, matcher.group("cardID"), account, type);
+            }
+        }
+
+        if (command.matches("show collectable")) {
+            if (account.getNumberOfPlayer() == 1) {
+                showCollectable(account, collectableItem1);
+            } else {
+                showCollectable(account, collectableItem2);
+            }
+        }
+
+        matcher = selectItemPat.matcher(command);
+        if (matcher.find()) {
+            if (account.getNumberOfPlayer() == 1) {
+                selectItem(matcher.group("itemID"), collectableItem1);
+            } else {
+                selectItem(matcher.group("itemID"), collectableItem2);
+            }
+        }
+
+        if (command.matches("show info")) {
+            if (selectedItem == null) {
+                System.out.println("Select item and try again");
+                return;
+            }
+            System.out.printf("desc : %s\n", selectedItem.getDesc());
+        }
+
+        if (command.matches("show next card")) {
+            if (account.getNumberOfPlayer() == 1) {
+                showNextCard(player1Deck);
+            } else {
+                showNextCard(player2Deck);
             }
         }
 
