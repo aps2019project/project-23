@@ -17,6 +17,7 @@ public class Hero extends Card {
     private ArrayList<Integer[]> cellEffect = new ArrayList<Integer[]>();
     private boolean onAttack;
     private boolean haveBuff;
+    private boolean onSpecialBuff;
 
     public Hero(String name, String clas, int cost, int MP, int HP, int AP, int attackRange, int cooldown, String specialPower, ArrayList<Buff> buffs, String targetCommunity, boolean usable, boolean onAttack, boolean haveBuff) {
         super(name, cost, MP);
@@ -42,9 +43,21 @@ public class Hero extends Card {
         this.onAttack = onAttack;
         this.haveBuff = haveBuff;
         this.canCounterAttack = true;
+        onSpecialBuff = true;
 
     }
 
+<<<<<<< Updated upstream
+=======
+    public boolean isOnSpecialBuff() {
+        return onSpecialBuff;
+    }
+
+    public void setOnSpecialBuff(boolean onSpecialBuff) {
+        this.onSpecialBuff = onSpecialBuff;
+    }
+
+>>>>>>> Stashed changes
     public int getCooldown() {
         return cooldown;
     }
@@ -111,6 +124,9 @@ public class Hero extends Card {
         if (cardID != null) {
             hero.setCardID(cardID);
         }
+        for (Buff buff : this.buffs) {
+            hero.addBuff(buff);
+        }
         return hero;
 
     }
@@ -126,6 +142,9 @@ public class Hero extends Card {
         if (targetCommunities[1].matches("enemy")) {
             for (int i = 0; i < 9; i++) {
                 for (int j = 0; j < 5; j++) {
+                    if (Main.getCardsCell()[i][j] == null){
+                        continue;
+                    }
                     if (Main.getCardsCell()[i][j].numberOfPlayer != this.numberOfPlayer) {
                         Integer[] cell = {i, j};
                         cellEffect.add(cell);
@@ -140,7 +159,7 @@ public class Hero extends Card {
     public boolean oneOf(String[] targetCommunities, int x, int y) {
 
         if (targetCommunities[1].matches("enemy")) {
-            if (Main.getCardsCell()[x][y].numberOfPlayer != this.numberOfPlayer) {
+            if (Main.getCardsCell()[x][y] != null && Main.getCardsCell()[x][y].numberOfPlayer != this.numberOfPlayer) {
                 Integer[] cell = {x, y};
                 cellEffect.add(cell);
                 return true;
@@ -289,6 +308,33 @@ public class Hero extends Card {
                 setHP(0);
             } else {
                 addHP(-1 * ((Hero) card).getAP() + counterOfHoly);
+<<<<<<< Updated upstream
+=======
+            }
+        }
+
+    }
+
+    public void useSpecialPower(int x, int y) {
+
+        if (!setCellEffect(x, y)) {
+            System.out.println("Invalid target");
+            return;
+        }
+        setCellEffect(x,y);
+        if (targetCommunity.matches("cell")) {
+            for (int i = 0 ; i < cellEffect.size() ; i ++ ) {
+                for (Buff buff:specialBuff) {
+                    Main.getBuffCell()[cellEffect.get(i)[0]][cellEffect.get(i)[1]] = buff;
+                }
+            }
+        }else {
+            for (int i = 0 ; i < cellEffect.size() ; i ++ ) {
+                for (Buff buff:specialBuff) {
+                    Main.getCardsCell()[cellEffect.get(i)[0]][cellEffect.get(i)[1]].addBuff(buff);
+                    buff.effectBuffsOnCard(Main.getCardsCell()[cellEffect.get(i)[0]][cellEffect.get(i)[1]],numberOfPlayer);
+                }
+>>>>>>> Stashed changes
             }
         }
 
