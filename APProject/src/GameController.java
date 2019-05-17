@@ -918,6 +918,9 @@ public class GameController {
         }
         for (int i = -1; i < 2; i++) {
             for (int j = -1; j < 2; j++) {
+                if (x + i > 8 || x + i < 0 || y + j > 4 || y + j < 0) {
+                    continue;
+                }
                 if (Main.getCardsCell()[x + i][y + j] instanceof Hero) {
                     if (Main.getCardsCell()[x + i][y + j].numberOfPlayer == account.getNumberOfPlayer()) {
                         return true;
@@ -930,6 +933,135 @@ public class GameController {
             }
         }
         return false;
+
+    }
+
+    public static void checkBuff(Buff buff, Card card) {
+
+        if (buff.allTurnEffect) {
+            buff.effectBuffsOnCard(card, card.numberOfPlayer);
+        }
+        if (buff.continuous && !buff.isOn) {
+            buff.setOn(true);
+        }
+        if (!buff.allTurn) {
+            buff.turn--;
+        }
+        if (buff.turn == 0) {
+            if (buff instanceof Poison) {
+                if (((Poison) buff).getAddHealth() == -1) {
+                    if (card instanceof Minion) {
+                        ((Minion) card).addHP(1);
+                    } else if (card instanceof Hero) {
+                        ((Hero) card).addHP(1);
+                    }
+                }
+            } else if (buff instanceof Power) {
+                if (((Power) buff).getAddAP() == 1) {
+                    if (card instanceof Minion) {
+                        ((Minion) card).addAP(-1);
+                    } else if (card instanceof Hero) {
+                        ((Hero) card).addAP(-1);
+                    }
+                } else if (((Power) buff).getAddHealth() == 1) {
+                    if (card instanceof Minion) {
+                        ((Minion) card).addHP(-1);
+                    } else if (card instanceof Hero) {
+                        ((Hero) card).addHP(-1);
+                    }
+                }
+            } else if (buff instanceof Weakness) {
+                if (((Weakness) buff).getAddHealth() == -1) {
+                    if (card instanceof Minion) {
+                        ((Minion) card).addHP(1);
+                    } else if (card instanceof Hero) {
+                        ((Hero) card).addHP(1);
+                    }
+                } else if (((Weakness) buff).getAddAP() == -1) {
+                    if (card instanceof Minion) {
+                        ((Minion) card).addAP(1);
+                    } else if (card instanceof Hero) {
+                        ((Hero) card).addAP(1);
+                    }
+                }
+            }
+            card.getBuffs().remove(buff);
+        }
+        if (buff instanceof Delete) {
+            card.getBuffs().remove(buff);
+        }
+
+    }
+
+    public static void checkBuffInTheEndOfTurn() {
+
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 5; j++) {
+                if (Main.getCardsCell()[i][j] == null) {
+                    continue;
+                }
+                if (Main.getCardsCell()[i][j] instanceof Item) {
+                    continue;
+                }
+                if (Main.getCardsCell()[i][j].getBuffs() == null) {
+                    continue;
+                }
+                for (Buff buff : Main.getCardsCell()[i][j].getBuffs()) {
+                    checkBuff(buff, Main.getCardsCell()[i][j]);
+                }
+            }
+        }
+
+    }
+
+    public static boolean existStun(ArrayList<Buff> buffs) {
+
+        for (Buff buff : buffs) {
+            if (buff instanceof Stun) {
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+    public static boolean existDisarm(ArrayList<Buff> buffs) {
+
+        for (Buff buff : buffs) {
+            if (buff instanceof Disarm) {
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+    public static void checkStunAndDisarm() {
+
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 5; j++) {
+                if (Main.getCardsCell()[i][j] == null) {
+                    continue;
+                }
+                if (Main.getCardsCell()[i][j] instanceof Item) {
+                    continue;
+                }
+                if (!existDisarm(Main.getCardsCell()[i][j].getBuffs())) {
+                    if (Main.getCardsCell()[i][j] instanceof Minion) {
+                        ((Minion) Main.getCardsCell()[i][j]).setCanCounterAttack(true);
+                    } else if (Main.getCardsCell()[i][j] instanceof Hero) {
+                        ((Hero) Main.getCardsCell()[i][j]).setCanCounterAttack(true);
+                    }
+                }
+                if (!existStun(Main.getCardsCell()[i][j].getBuffs())) {
+                    if (Main.getCardsCell()[i][j] instanceof Hero) {
+                        ((Hero) Main.getCardsCell()[i][j]).setOnOrOf(true);
+                    } else if (Main.getCardsCell()[i][j] instanceof Minion) {
+                        ((Minion) Main.getCardsCell()[i][j]).setOnOrOf(true);
+                    }
+                }
+            }
+        }
 
     }
 
@@ -957,6 +1089,17 @@ public class GameController {
             } else {
                 if (((Minion) card).getSpecialPower().matches("spawn")) {
                     ((Minion) card).spawn(x, y);
+                }
+                if (Main.getCardsCell()[x][y] instanceof Item) {
+                    if (card.numberOfPlayer == 1) {
+                        collectableItem1.add(((Item) Main.getCardsCell()[x][y]));
+                    } else {
+                        collectableItem2.add(((Item) Main.getCardsCell()[x][y]));
+                    }
+                    if (((Item) Main.getCardsCell()[x][y]).name.matches("flag")) {
+                        card.addFlag(((Item) Main.getCardsCell()[x][y]));
+                    }
+                    Main.getCardsCell()[x][y] = null;
                 }
                 Main.getCardsCell()[x][y] = card;
                 hand.remove(card);
