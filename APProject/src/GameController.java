@@ -18,7 +18,15 @@ public class GameController {
     protected static Deck player2Deck;
     private static int turnOfSpecialPower1;
     private static int turnOfSpecialPower2;
-    public static int turn;
+    private static int turn;
+
+    public static ArrayList<Item> getCollectableItem1() {
+        return collectableItem1;
+    }
+
+    public static ArrayList<Item> getCollectableItem2() {
+        return collectableItem2;
+    }
 
     public static void addTurn() {
         turn++;
@@ -58,6 +66,38 @@ public class GameController {
         GameController.player1Deck = player1Deck;
     }
 
+    public static void showFlag() {
+
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 5; j++) {
+                if (Main.getCardsCell()[i][j] instanceof Item) {
+                    if (((Item) Main.getCardsCell()[i][j]).name.matches("flag")) {
+                        System.out.printf("Flag is in location (%d,%d) and dose not belong to anyone\n", i + 1, j + 1);
+                        return;
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 5; j++) {
+                if (Main.getCardsCell()[i][j] == null) {
+                    continue;
+                }
+                if (Main.getCardsCell()[i][j] instanceof Item) {
+                    continue;
+                }
+                if (Main.getCardsCell()[i][j].getFlags().size() > 0) {
+                    if (Main.getCardsCell()[i][j].numberOfPlayer == 1) {
+                        System.out.printf("Flag belong to player 1 in location (%d,%d) with card [%s]\n", i + 1, j + 1, Main.getCardsCell()[i][j].cardID);
+                    } else {
+                        System.out.printf("Flag belong to player 2 in location (%d,%d) with card [%s]\n", i + 1, j + 1, Main.getCardsCell()[i][j].cardID);
+                    }
+                }
+            }
+        }
+
+    }
+
     public static void gameInfo(int mode, Deck player1Deck, Deck player2Deck) {
 
         if (mode == 1) {
@@ -73,7 +113,7 @@ public class GameController {
                 }
             }
         } else if (mode == 2) {
-
+            showFlag();
         } else {
 
         }
@@ -134,6 +174,30 @@ public class GameController {
 
     }
 
+    public static void setFlagInCell(int x, int y, Card card) {
+
+        Random random = new Random();
+        int x1, y1;
+        for (Item item : card.getFlags()) {
+            if (card.numberOfPlayer == 1) {
+                collectableItem1.remove(item);
+            } else {
+                collectableItem2.remove(item);
+            }
+        }
+        Main.getCardsCell()[x][y] = card.getFlags().get(0);
+        card.getFlags().remove(0);
+        for (Item item : card.getFlags()) {
+            do {
+                x1 = random.nextInt(9);
+                y1 = random.nextInt(5);
+            } while (Main.getCardsCell()[x1][y1] != null);
+            Main.getCardsCell()[x1][y1] = item;
+        }
+        card.getFlags().clear();
+
+    }
+
     public static void death() {
 
         for (int i = 0; i < 9; i++) {
@@ -145,21 +209,29 @@ public class GameController {
                     if (((Hero) Main.getCardsCell()[i][j]).getHP() == 0) {
                         if (Main.getCardsCell()[i][j].numberOfPlayer == 1) {
                             graveYard1.add(Main.getCardsCell()[i][j]);
+                            Main.getCardsCell()[i][j] = null;
                         } else {
+                            Main.getCardsCell()[i][j] = null;
                             graveYard2.add(Main.getCardsCell()[i][j]);
                         }
-                        Main.getCardsCell()[i][j] = null;
+                        if (Main.getCardsCell()[i][j].getFlags().size() > 0) {
+                            setFlagInCell(i, j, Main.getCardsCell()[i][j]);
+                        }
                     }
                 } else if (Main.getCardsCell()[i][j] instanceof Minion) {
                     if (((Minion) Main.getCardsCell()[i][j]).getSpecialPower().matches("death")) {
                         ((Minion) Main.getCardsCell()[i][j]).deathPower(i, j);
                         if (Main.getCardsCell()[i][j].numberOfPlayer == 1) {
+                            Main.getCardsCell()[i][j] = null;
                             graveYard1.add(Main.getCardsCell()[i][j]);
                         } else {
+                            Main.getCardsCell()[i][j] = null;
                             graveYard2.add(Main.getCardsCell()[i][j]);
                         }
+                        if (Main.getCardsCell()[i][j].getFlags().size() > 0) {
+                            setFlagInCell(i, j, Main.getCardsCell()[i][j]);
+                        }
                     }
-                    Main.getCardsCell()[i][j] = null;
                 }
             }
         }
@@ -454,6 +526,9 @@ public class GameController {
             return;
         }
         if (Main.getCardsCell()[x][y] instanceof Item) {
+            if (Main.getCardsCell()[x][y].name.matches("flag")) {
+                selectedCard.addFlag(((Item) Main.getCardsCell()[x][y]));
+            }
             if (account.getNumberOfPlayer() == 1) {
                 addCollectableItem(x, y, account, collectableItem1);
             } else {
@@ -964,6 +1039,9 @@ public class GameController {
     public static void showCollectable(Account account, ArrayList<Item> collectableItem) {
 
         for (Item item : collectableItem) {
+            if (item.name.matches("flag")) {
+                continue;
+            }
             System.out.printf("%d. CardID : %s , Desc : %s\n", collectableItem.indexOf(item) + 1, item.cardID, item.getDesc());
         }
 
