@@ -47,8 +47,6 @@ public class Hero extends Card {
 
     }
 
-<<<<<<< Updated upstream
-=======
     public boolean isOnSpecialBuff() {
         return onSpecialBuff;
     }
@@ -57,7 +55,6 @@ public class Hero extends Card {
         this.onSpecialBuff = onSpecialBuff;
     }
 
->>>>>>> Stashed changes
     public int getCooldown() {
         return cooldown;
     }
@@ -308,8 +305,6 @@ public class Hero extends Card {
                 setHP(0);
             } else {
                 addHP(-1 * ((Hero) card).getAP() + counterOfHoly);
-<<<<<<< Updated upstream
-=======
             }
         }
 
@@ -334,15 +329,8 @@ public class Hero extends Card {
                     Main.getCardsCell()[cellEffect.get(i)[0]][cellEffect.get(i)[1]].addBuff(buff);
                     buff.effectBuffsOnCard(Main.getCardsCell()[cellEffect.get(i)[0]][cellEffect.get(i)[1]],numberOfPlayer);
                 }
->>>>>>> Stashed changes
             }
         }
-
-    }
-
-    public void useSpecialPower(int x , int y) {
-
-        
 
     }
 
