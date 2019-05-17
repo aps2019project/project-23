@@ -98,6 +98,37 @@ public class GameController {
 
     }
 
+    public static void showAllFlag() {
+
+        int counter = 1;
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 5; j++) {
+                if (Main.getCardsCell()[i][j] == null) {
+                    continue;
+                }
+                if (Main.getCardsCell()[i][j] instanceof Item) {
+                    if (Main.getCardsCell()[i][j].name.matches("flag")) {
+                        System.out.printf("%d. Flah in cell with location (%d,%d)\n", counter, i + 1, j + 1);
+                        counter++;
+                    }
+                    continue;
+                }
+                if (Main.getCardsCell()[i][j].getFlags().size() == 0) {
+                    continue;
+                }
+                if (Main.getCardsCell()[i][j].numberOfPlayer == 1) {
+                    System.out.printf("%d. [%s] from player 1 has %d flag in location (%d,%d)\n", counter, Main.getCardsCell()[i][j].cardID, Main.getCardsCell()[i][j].getFlags().size(), i + 1, j + 1);
+                    counter++;
+                } else {
+                    System.out.printf("%d. [%s] from player 2 has %d flag in location (%d,%d)\n", counter, Main.getCardsCell()[i][j].cardID, Main.getCardsCell()[i][j].getFlags().size(), i + 1, j + 1);
+                    counter++;
+                }
+
+            }
+        }
+
+    }
+
     public static void gameInfo(int mode, Deck player1Deck, Deck player2Deck) {
 
         if (mode == 1) {
@@ -115,7 +146,7 @@ public class GameController {
         } else if (mode == 2) {
             showFlag();
         } else {
-
+            showAllFlag();
         }
 
     }
