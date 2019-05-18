@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.util.ArrayList;
 
 public class Item extends Card {
@@ -5,7 +6,12 @@ public class Item extends Card {
     private String desc;
     private boolean collectable;
     private static ArrayList<Item> collectableItems = new ArrayList<Item>();
+    private ArrayList<Integer[]> cellEffect = new ArrayList<Integer[]>();
     private String effect;
+
+    public ArrayList<Integer[]> getCellEffect() {
+        return cellEffect;
+    }
 
     public static ArrayList<Item> getCollectableItems() {
         return collectableItems;
@@ -20,10 +26,119 @@ public class Item extends Card {
         super(name, cost, MP);
         this.desc = desc;
         this.collectable = collectable;
+        this.effect = effect;
+        if (buffs == null) {
+            return;
+        }
         for (Buff buff : buffs) {
             this.buffs.add(buff);
         }
-        this.effect = effect;
+
+    }
+
+    public void setNullCellEffect() {
+
+        for (int i = 0; i < cellEffect.size(); i++) {
+            cellEffect.remove(0);
+            i = 0;
+        }
+
+    }
+
+    public void setRandomCell(String[] commands) {
+
+        if (commands[1].matches("M")) {
+            for (int i = 0; i < 9; i++) {
+                for (int j = 0; j < 5; j++) {
+                    if (Main.getCardsCell()[i][j] instanceof Minion) {
+                        if (Main.getCardsCell()[i][j].numberOfPlayer == numberOfPlayer) {
+                            Integer[] cell = {i, j};
+                            cellEffect.add(cell);
+                            return;
+                        }
+                    }
+                }
+            }
+        } else if (commands[1].matches("MH")) {
+            for (int i = 0; i < 9; i++) {
+                for (int j = 0; j < 5; j++) {
+                    if (Main.getCardsCell()[i][j] instanceof Minion || Main.getCardsCell()[i][j] instanceof Hero) {
+                        if (Main.getCardsCell()[i][j].numberOfPlayer == numberOfPlayer) {
+                            Integer[] cell = {i, j};
+                            cellEffect.add(cell);
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    public void setAllMelee() {
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 5; j++) {
+                if (Main.getCardsCell()[i][j] == null || Main.getCardsCell()[i][j] instanceof Item) {
+                    continue;
+                }
+                if (Main.getCardsCell()[i][j].numberOfPlayer != numberOfPlayer) {
+                    continue;
+                }
+                if (Main.getCardsCell()[i][j] instanceof Minion) {
+                    if (((Minion) Main.getCardsCell()[i][j]).getClas().matches("melee")) {
+                        Integer[] cell = {i, j};
+                        cellEffect.add(cell);
+                    }
+                } else if (Main.getCardsCell()[i][j] instanceof Hero) {
+                    if (((Hero) Main.getCardsCell()[i][j]).getClas().matches("melee")) {
+                        Integer[] cell = {i, j};
+                        cellEffect.add(cell);
+                    }
+                }
+            }
+        }
+    }
+
+    public void setNotMelee(String[] commands) {
+
+        if (commands[1].matches("MH")) {
+            for (int i = 0; i < 9; i++) {
+                for (int j = 0; j < 5; j++) {
+                    if (Main.getCardsCell()[i][j] == null || Main.getCardsCell()[i][j] instanceof Item) {
+                        continue;
+                    }
+                    if (Main.getCardsCell()[i][j].numberOfPlayer != numberOfPlayer) {
+                        continue;
+                    }
+                    if (Main.getCardsCell()[i][j] instanceof Hero) {
+                        if (!((Hero) Main.getCardsCell()[i][j]).getClas().matches("melee")) {
+                            Integer[] cell = {i, j};
+                            cellEffect.add(cell);
+                        }
+                    } else if (Main.getCardsCell()[i][j] instanceof Minion) {
+                        if (!((Minion) Main.getCardsCell()[i][j]).getClas().matches("melee")) {
+                            Integer[] cell = {i, j};
+                            cellEffect.add(cell);
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    public void setCellEffect(int x, int y) {
+
+        setNullCellEffect();
+        String[] commands = effect.split(" ");
+        if (commands[0].matches("random")) {
+            setRandomCell(commands);
+        }
+        if (effect.matches("all melee")) {
+            setAllMelee();
+        }
+        if (commands[0].matches("rangedHybrid")) {
+            setNotMelee(commands);
+        }
 
     }
 
