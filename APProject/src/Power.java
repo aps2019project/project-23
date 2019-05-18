@@ -25,6 +25,14 @@ public class Power extends Buff {
         }
     }
 
+    public int getAddHealth() {
+        return addHealth;
+    }
+
+    public int getAddAP() {
+        return addAP;
+    }
+
     public void effectBuffsOnCard(Card card, int numberOfPlayer) {
         if (card instanceof Hero) {
             if (addHealth != 0) {
