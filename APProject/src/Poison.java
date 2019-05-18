@@ -7,6 +7,10 @@ public class Poison extends Buff {
     private int addHealth;
     private int turnInCell;
 
+    public int getAddHealth() {
+        return addHealth;
+    }
+
     public Poison(boolean mainBuff, boolean allTurnEffect, boolean allTurn, boolean continuous, boolean isKnock, boolean isCell, int turn, int turnInCell, int addHealth) {
         super(mainBuff, allTurnEffect, allTurn, continuous, turn);
         this.addHealth = addHealth;
