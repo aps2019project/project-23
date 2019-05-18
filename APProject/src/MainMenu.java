@@ -19,6 +19,10 @@ public class MainMenu {
         Main.setScannerUser();
     }
 
+    public static ArrayList<Account> getAccounts() {
+        return accounts;
+    }
+
     public static void rankAccounts() {
         for (int i = accounts.size() - 1; i > 0; i--) {
             for (int j = 0; j < accounts.size() - 1; j++) {
@@ -110,6 +114,9 @@ public class MainMenu {
                 showLeaderboard();
             else if (command.matches("help"))
                 help();
+            else if (command.matches("exit")) {
+                System.exit(0);
+            }
         }
     }
 
