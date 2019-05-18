@@ -10,6 +10,15 @@ abstract public class Card {
     protected ArrayList<Buff> buffs = new ArrayList<Buff>();
     protected boolean move = false;
     protected boolean attack = false;
+    private ArrayList<Item> flags = new ArrayList<Item>();
+
+    public ArrayList<Item> getFlags() {
+        return flags;
+    }
+
+    public void addFlag(Item item) {
+        flags.add(item);
+    }
 
     public boolean isAttack() {
         return attack;
