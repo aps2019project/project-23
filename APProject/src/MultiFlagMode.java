@@ -24,7 +24,7 @@ public class MultiFlagMode extends Custom {
 
     }
 
-    public static void game(Account account, Account account1, int numberOfFlag) {
+    public static void game(Account account, Account account1, int numberOfFlag , String singlePlayer , boolean single) {
 
         boolean turnPlayer1 = true;
         boolean turnPlayer2 = false;
@@ -54,21 +54,40 @@ public class MultiFlagMode extends Custom {
                 } else if (command.matches("end turn")) {
                     turnPlayer1 = false;
                     turnPlayer2 = true;
+                    GameController.checkBuffInTheEndOfTurn();
                     GameController.endTurn(account, account1);
                 } else {
                     GameController.control(account, account1, command, 3, true);
                 }
             } else if (turnPlayer2) {
-                GameController.endTurn(account1, account);
-                turnPlayer1 = true;
-                turnPlayer2 = false;
+                if (single) {
+                    GameController.AIForsinglePlayer(account1);
+                    GameController.checkBuffInTheEndOfTurn();
+                    GameController.endTurn(account1, account);
+                    turnPlayer1 = true;
+                    turnPlayer2 = false;
+                }else {
+                    command = Main.getScanner().nextLine().toLowerCase().trim();
+                    if (command.matches("exit")) {
+                        System.out.println("Cancel game");
+                        return;
+                    } else if (command.matches("end turn")) {
+                        turnPlayer1 = true;
+                        turnPlayer2 = false;
+                        GameController.checkBuffInTheEndOfTurn();
+                        GameController.endTurn(account1, account);
+                    } else {
+                        GameController.control(account1, account, command, 3, true);
+                    }
+                }
             }
+            GameController.checkStunAndDisarm();
             GameController.death();
             if (checkFlag(numberOfFlag) == 1) {
-                endGame(account, true, 3);
+                endGame(account,account1, true, 3,singlePlayer);
                 return;
             } else if (checkFlag(numberOfFlag) == 2) {
-                endGame(account, false, 3);
+                endGame(account, account1,false, 3,singlePlayer);
                 return;
             }
 
