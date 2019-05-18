@@ -1,3 +1,5 @@
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,19 +23,20 @@ public class SingleCustomGame {
     }
 
     public static void help() {
-        System.out.println("start game [deck name] [mode] [number of flag (for mode 3)]");
+        System.out.println("1. start game [deck name] [mode] [number of flag (for mode 3)]");
+        System.out.println("2. show decks");
+        System.out.println("3. exit");
     }
 
     public static void setFlagInCell() {
 
         Item item = new Item("flag", 0, 0, "", false, null, "");
         Random random = new Random();
-        int x, y;
+        int y;
         do {
-            x = random.nextInt(9);
             y = random.nextInt(5);
-        } while ((x == 0 && y == 2) || (x == 8 && y == 2) || (x == 4 && y == 0) || (x == 4 && y == 4) || (x == 5 && y == 2));
-        Main.getCardsCell()[x][y] = item;
+        } while (y == 0 || y == 4 || y == 2);
+        Main.getCardsCell()[4][y] = item;
 
     }
 
@@ -42,14 +45,34 @@ public class SingleCustomGame {
         Item item;
         Random random = new Random();
         int x, y;
+        boolean number = false;
+        if (numberOfFlag % 2 == 1) {
+            number = true;
+            numberOfFlag--;
+        }
+        numberOfFlag = numberOfFlag / 2;
+        ArrayList<Integer[]> cell = new ArrayList<Integer[]>();
         while (numberOfFlag > 0) {
             do {
-                x = random.nextInt(9);
+                x = random.nextInt(4);
                 y = random.nextInt(5);
-            } while ((x == 0 && y == 2) || (x == 8 && y == 2) || (x == 4 && y == 0) || (x == 4 && y == 4) || (x == 5 && y == 2) || Main.getCardsCell()[x][y] != null);
+            } while ((x == 0 && y == 2) || (x == 8 && y == 2) || (x == 4 && y == 0) || (x == 4 && y == 4) || (x == 5 && y == 2) || (x == 3 && y == 2) || Main.getCardsCell()[x][y] != null);
             item = new Item("flag", 0, 0, "", false, null, "");
+            Integer[] integers = {x, y};
+            cell.add(integers);
             Main.getCardsCell()[x][y] = item;
             numberOfFlag--;
+        }
+        for (int i = 0; i < cell.size(); i++) {
+            int x1 = 8 - cell.get(i)[0];
+            int y1 = cell.get(i)[1];
+            item = new Item("flag", 0, 0, "", false, null, "");
+            Main.getCardsCell()[x1][y1] = item;
+        }
+        if (number) {
+            int y1 = random.nextInt(5);
+            item = new Item("flag", 0, 0, "", false, null, "");
+            Main.getCardsCell()[4][y1] = item;
         }
 
     }
@@ -62,8 +85,8 @@ public class SingleCustomGame {
         if (!account.getCollection().validate(deckName)) {
             return;
         }
-        if (mode > 3 || mode < 0) {
-            System.out.println("Enter correct mode");
+        if (mode > 3 || mode < 1) {
+            System.out.println("Enter correct mode between 1 and 3");
             return;
         }
         if (mode == 3 && (numberOfFlag > 45 || numberOfFlag < 1)) {
@@ -79,13 +102,13 @@ public class SingleCustomGame {
         Main.setNullCardsCell();
         Main.setNullBuffsCell();
         if (mode == 1) {
-            KillMode.game(account, account1 , "custom");
+            KillMode.game(account, account1, "custom", true);
         } else if (mode == 2) {
             setFlagInCell();
-            OneFlagMode.game(account, account1 , "custom");
+            OneFlagMode.game(account, account1, "custom", true);
         } else {
             setAllFlagInCell(numberOfFlag);
-            MultiFlagMode.game(account, account1, numberOfFlag , "custom");
+            MultiFlagMode.game(account, account1, numberOfFlag, "custom", true);
         }
 
     }
@@ -96,7 +119,6 @@ public class SingleCustomGame {
         System.out.println("    1. Kill hero");
         System.out.println("    2. Collect flag for 6 turn");
         System.out.println("    3. Collect 1/2 of all flag\n");
-        account.getCollection().showAllDecks();
         String command;
         Matcher matcher;
         Pattern startGamePat = Pattern.compile("^start game \\[(?<deckName>\\p{all}+)] \\[(?<mode>[0-9])]$");
@@ -108,6 +130,8 @@ public class SingleCustomGame {
                 help();
             } else if (command.matches("exit")) {
                 return;
+            } else if (command.matches("show decks")) {
+                account.getCollection().showAllDecks();
             }
 
             matcher = startGameMode3.matcher(command);
