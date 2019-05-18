@@ -12,8 +12,8 @@ public class GameController {
     private static ArrayList<Item> collectableItem2 = new ArrayList<Item>();
     private static ArrayList<Card> graveYard1 = new ArrayList<Card>();
     private static ArrayList<Card> graveYard2 = new ArrayList<Card>();
-    private static Card selectedCard = null;
-    private static Item selectedItem = null;
+    private static Card selectedCard;
+    private static Item selectedItem;
     protected static Deck player1Deck;
     protected static Deck player2Deck;
     private static int turnOfSpecialPower1;
@@ -480,6 +480,7 @@ public class GameController {
     }
 
     public static int[] getLocation(String cardID) {
+
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 5; j++) {
                 if (Main.getCardsCell()[i][j] == null) {
@@ -561,8 +562,10 @@ public class GameController {
                 selectedCard.addFlag(((Item) Main.getCardsCell()[x][y]));
             }
             if (account.getNumberOfPlayer() == 1) {
+                Main.getCardsCell()[x][y].setNumberOfPlayer(1);
                 addCollectableItem(x, y, account, collectableItem1);
             } else {
+                Main.getCardsCell()[x][y].setNumberOfPlayer(2);
                 addCollectableItem(x, y, account, collectableItem2);
             }
         }
@@ -947,7 +950,7 @@ public class GameController {
         if (!buff.allTurn) {
             buff.turn--;
         }
-        if (buff.turn == 0) {
+        if (buff.turn == 0 && !buff.allTurn) {
             if (buff instanceof Poison) {
                 if (((Poison) buff).getAddHealth() == -1) {
                     if (card instanceof Minion) {
@@ -1066,7 +1069,6 @@ public class GameController {
     }
 
     public static void insertCard(ArrayList<Card> hand, int x, int y, String cardID, Account account, boolean type) {
-
         if (existInHand(hand, cardID) == null) {
             if (type) {
                 System.out.println("Invalid card id");
@@ -1092,8 +1094,10 @@ public class GameController {
                 }
                 if (Main.getCardsCell()[x][y] instanceof Item) {
                     if (card.numberOfPlayer == 1) {
+                        Main.getCardsCell()[x][y].setNumberOfPlayer(1);
                         collectableItem1.add(((Item) Main.getCardsCell()[x][y]));
                     } else {
+                        Main.getCardsCell()[x][y].setNumberOfPlayer(2);
                         collectableItem2.add(((Item) Main.getCardsCell()[x][y]));
                     }
                     if (((Item) Main.getCardsCell()[x][y]).name.matches("flag")) {
@@ -1414,8 +1418,11 @@ public class GameController {
                 if (Main.getCardsCell()[i][j].numberOfPlayer != account.getNumberOfPlayer()) {
                     continue;
                 }
+                if (Main.getCardsCell()[i][j].isAttack()) {
+                    continue;
+                }
                 for (Card card : attackToTheseCard(i, j, account)) {
-                    System.out.printf("          %d. CardID : %s with your card with [%s]\n", counter, card.cardID, Main.getCardsCell()[i][j].cardID);
+                    System.out.printf("          %d. CardID : [%s] with your card with [%s]\n", counter, card.cardID, Main.getCardsCell()[i][j].cardID);
                     counter++;
                     exist = true;
                 }
@@ -1481,7 +1488,20 @@ public class GameController {
             }
         } else if (card instanceof Hero) {
             if (((Hero) card).getClas().matches("melee")) {
-
+                for (int i = 0; i < 9; i++) {
+                    for (int j = 0; j < 5; j++) {
+                        if (Main.getCardsCell()[i][j] == null) {
+                            continue;
+                        }
+                        if (Main.getCardsCell()[i][j].numberOfPlayer == account.getNumberOfPlayer()) {
+                            continue;
+                        }
+                        if (Math.abs(i - x) > 1 || Math.abs(j - y) > 1) {
+                            continue;
+                        }
+                        allCardYouCanAttack.add(Main.getCardsCell()[i][j]);
+                    }
+                }
             } else if (((Hero) card).getClas().matches("ranged")) {
                 for (int i = 0; i < 9; i++) {
                     for (int j = 0; j < 5; j++) {
@@ -1519,6 +1539,37 @@ public class GameController {
 
     }
 
+    public static void AIForsinglePlayer(Account account1) {
+
+        for (int i = 0; i < handPlayer2.size(); i++) {
+            for (int k = 0; k < 9; k++) {
+                for (int j = 0; j < 5; j++) {
+                    if (i > handPlayer2.size() - 1) {
+                        i--;
+                    }
+                    insertCard(handPlayer2, k, j, handPlayer2.get(i).cardID, account1, false);
+                }
+            }
+        }
+
+    }
+
+    public static void useCollectableItem(int x, int y, Item item) {
+
+        item.setCellEffect(x, y);
+        if (item.getCellEffect().size() == 0) {
+            System.out.println("Can't use in this location");
+            return;
+        }
+        for (int i = 0; i < item.getCellEffect().size(); i++) {
+            for (Buff buff : item.getBuffs()) {
+                Main.getCardsCell()[item.getCellEffect().get(i)[0]][item.getCellEffect().get(i)[1]].addBuff(buff);
+                buff.effectBuffsOnCard(Main.getCardsCell()[item.getCellEffect().get(i)[0]][item.getCellEffect().get(i)[1]], item.numberOfPlayer);
+            }
+        }
+
+    }
+
     public static void control(Account account, Account account1, String command, int mode, boolean type) {
 
         Pattern showCardInfoPat = Pattern.compile("^show card info \\[(?<cardID>\\p{all}+)]$");
@@ -1529,6 +1580,7 @@ public class GameController {
         Pattern useSpecialPowerPat = Pattern.compile("^use special power \\((?<x>[1-9]),(?<y>[1-5])\\)$");
         Pattern insertPat = Pattern.compile("^insert \\[(?<cardID>\\p{all}+)] in \\((?<x>[1-9]),(?<y>[1-5])\\)$");
         Pattern selectItemPat = Pattern.compile("^select collectable \\[(?<itemID>\\p{all}+)]$");
+        Pattern useItemPat = Pattern.compile("^use \\[(?<x>[1-9]),(?<y>[1-5])]$");
         Matcher matcher;
 
         if (command.matches("game info")) {
@@ -1616,7 +1668,7 @@ public class GameController {
             }
         }
 
-        if (command.matches("show collectable")) {
+        if (command.matches("show collectables")) {
             if (account.getNumberOfPlayer() == 1) {
                 showCollectable(account, collectableItem1);
             } else {
@@ -1668,6 +1720,16 @@ public class GameController {
             } else {
                 help(handPlayer2, account);
             }
+        }
+
+        matcher = useItemPat.matcher(command);
+        if (matcher.find()) {
+            if (selectedItem == null) {
+                System.out.println("Select item and try again");
+                return;
+            }
+            useCollectableItem(Integer.parseInt(matcher.group("x")) - 1, Integer.parseInt(matcher.group("y")) - 1, selectedItem);
+            selectedItem = null;
         }
 
         if (command.matches("show")) {
