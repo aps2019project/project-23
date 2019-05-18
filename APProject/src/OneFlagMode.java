@@ -37,7 +37,7 @@ public class OneFlagMode extends Custom {
 
     }
 
-    public static void game(Account account, Account account1) {
+    public static void game(Account account, Account account1, String singlePlayer, boolean single) {
 
         turnOfFlagInPlayer1 = 0;
         turnOfFlagInPlayer2 = 0;
@@ -69,31 +69,58 @@ public class OneFlagMode extends Custom {
                 } else if (command.matches("end turn")) {
                     int checkEndGame = checkFlag();
                     if (checkEndGame == 1) {
-                        endGame(account, true);
+                        endGame(account, account1, true, 2, singlePlayer);
                         return;
                     } else if (checkEndGame == 2) {
-                        endGame(account, false);
+                        endGame(account, account1, false, 2, singlePlayer);
                         return;
                     }
                     turnPlayer2 = true;
                     turnPlayer1 = false;
+                    GameController.checkBuffInTheEndOfTurn();
                     GameController.endTurn(account, account1);
                 } else {
                     GameController.control(account, account1, command, 2, true);
                 }
             } else if (turnPlayer2) {
-                int checkEndGame = checkFlag();
-                if (checkEndGame == 1) {
-                    endGame(account, true);
-                    return;
-                } else if (checkEndGame == 2) {
-                    endGame(account, false);
-                    return;
+                if (single) {
+                    int checkEndGame = checkFlag();
+                    if (checkEndGame == 1) {
+                        endGame(account, account1, true, 2, singlePlayer);
+                        return;
+                    } else if (checkEndGame == 2) {
+                        endGame(account, account1, false, 2, singlePlayer);
+                        return;
+                    }
+                    GameController.AIForsinglePlayer(account1);
+                    GameController.checkBuffInTheEndOfTurn();
+                    GameController.endTurn(account1, account1);
+                    turnPlayer1 = true;
+                    turnPlayer2 = false;
+                } else {
+                    command = Main.getScanner().nextLine().trim().toLowerCase();
+                    if (command.matches("exit")) {
+                        System.out.println("Cancel game");
+                        return;
+                    } else if (command.matches("end turn")) {
+                        int checkEndGame = checkFlag();
+                        if (checkEndGame == 1) {
+                            endGame(account, account1, true, 2, singlePlayer);
+                            return;
+                        } else if (checkEndGame == 2) {
+                            endGame(account, account1, false, 2, singlePlayer);
+                            return;
+                        }
+                        turnPlayer2 = true;
+                        turnPlayer1 = false;
+                        GameController.checkBuffInTheEndOfTurn();
+                        GameController.endTurn(account, account1);
+                    } else {
+                        GameController.control(account, account1, command, 2, true);
+                    }
                 }
-                GameController.endTurn(account1, account1);
-                turnPlayer1 = true;
-                turnPlayer2 = false;
             }
+            GameController.checkStunAndDisarm();
             GameController.death();
 
         }
