@@ -23,7 +23,9 @@ public class Battle {
             } else if (command.matches("exit")) {
                 return;
             } else if (command.matches("custom game")) {
-                singleCustomGame.menu(account);
+                SingleCustomGame.menu(account);
+            } else if (command.matches("story")) {
+                SingleStoryGame.menu(account);
             }
 
         }
@@ -39,7 +41,7 @@ public class Battle {
             if (command.matches("single player")) {
                 singlePlayMenu(account);
             } else if (command.matches("multi player")) {
-
+                MultiPlayer.menu(account);
             } else if (command.matches("exit")) {
                 return;
             } else if (command.matches("help")) {
