@@ -241,19 +241,19 @@ public class SingleStoryGame {
             Custom.setPlayer2Deck(deckForStage1.copyOfDeck());
             account1.getCollection().setMainDeck(Custom.player2Deck);
             System.out.println("start game in mode 1 with hero Div Sefid");
-            KillMode.game(account, account1, "story");
+            KillMode.game(account, account1, "story",true);
         } else if (command.matches("stage 2")) {
             Custom.setPlayer2Deck(deckForStage2.copyOfDeck());
             account1.getCollection().setMainDeck(Custom.player2Deck);
             SingleCustomGame.setFlagInCell();
             System.out.println("start game in mode 2 with hero Zahak");
-            OneFlagMode.game(account, account1, "story");
+            OneFlagMode.game(account, account1, "story",true);
         } else if (command.matches("stage 3")) {
             Custom.setPlayer2Deck(deckForStage3.copyOfDeck());
             account1.getCollection().setMainDeck(Custom.player2Deck);
             SingleCustomGame.setAllFlagInCell(8);
             System.out.println("start game in mode 3 with hero Arash");
-            MultiFlagMode.game(account, account1, 8, "story");
+            MultiFlagMode.game(account, account1, 8, "story",true);
         }
 
     }
