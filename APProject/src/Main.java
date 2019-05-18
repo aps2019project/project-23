@@ -34,7 +34,7 @@ public class Main {
         int collectable3 = random.nextInt(Item.getCollectableItems().size());
 
         cardsCell[4][0] = Item.getCollectableItems().get(collectable1).copyOfCard();
-        cardsCell[5][2] = Item.getCollectableItems().get(4).copyOfCard();
+        cardsCell[5][2] = Item.getCollectableItems().get(collectable2).copyOfCard();
         cardsCell[4][4] = Item.getCollectableItems().get(collectable3).copyOfCard();
 
     }
