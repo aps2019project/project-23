@@ -11,17 +11,42 @@ public class Custom {
         Custom.player2Deck = player2Deck;
     }
 
-    public static void endGame(Account account, boolean winOrLose) {
+    public static void endGame(Account account, Account account1, boolean winOrLose, int mode, String singlePlayer) {
 
         String command;
-        Match match = new Match("kill hero (single player)", false);
+        Match match = new Match("None", false);
+        if (mode == 1) {
+            match = new Match("kill hero mode with hero [ " + GameController.getHero(account1).name + "]", false);
+        } else if (mode == 2) {
+            match = new Match("one flag collect mode with hero [ " + GameController.getHero(account1).name + "]", false);
+        } else if (mode == 3) {
+            match = new Match("collect 1/2 of all flags mode with hero [" + GameController.getHero(account1).name + "]", false);
+        }
         match.setWonOrLose(winOrLose);
         account.addMatch(match);
+        int drick = 0;
+        if (singlePlayer.matches("custom")) {
+            drick = 1000;
+        } else if (singlePlayer.matches("story")) {
+            if (mode == 1) {
+                drick = 500;
+            } else if (mode == 2) {
+                drick = 1000;
+            } else {
+                drick = 1500;
+            }
+        }
         if (winOrLose) {
-            account.addBudget(1000);
-            System.out.printf("%s win , you won 1000 drick", account.getUsername());
+            account.addBudget(drick);
+            System.out.printf("%s win , Won %d drick\n", account.getUsername(), drick);
         } else {
-            System.out.printf("%s lose :(((\n", account.getUsername());
+            System.out.printf("%s win", account.getUsername());
+            if (!account1.getUsername().matches("computer")) {
+                System.out.printf(" , Won %d drick", drick);
+            } else {
+                System.out.println();
+            }
+            account1.addBudget(drick);
         }
         while (true) {
             command = Main.getScanner().nextLine().toLowerCase().trim();
