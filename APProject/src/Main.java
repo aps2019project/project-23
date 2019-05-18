@@ -34,7 +34,7 @@ public class Main {
         int collectable3 = random.nextInt(Item.getCollectableItems().size());
 
         cardsCell[4][0] = Item.getCollectableItems().get(collectable1).copyOfCard();
-        cardsCell[5][2] = Item.getCollectableItems().get(collectable2).copyOfCard();
+        cardsCell[5][2] = Item.getCollectableItems().get(4).copyOfCard();
         cardsCell[4][4] = Item.getCollectableItems().get(collectable3).copyOfCard();
 
     }
@@ -88,64 +88,64 @@ public class Main {
         ArrayList<Buff> buffs = new ArrayList<Buff>();
         Disarm disarm = new Disarm(true, false, true, false, 0);
         buffs.add(disarm);
-        Spell spell = new Spell("totaldisarm", "Disarm selected card until end", "rectangle enemy MH", 1000, 0, 1, 1, buffs,false);
+        Spell spell = new Spell("totaldisarm", "Disarm selected card until end", "rectangle enemy MH", 1000, 0, 1, 1, buffs, false);
         Shop.addAllCards(spell);
         setNullArray(buffs);
         Delete delete = new Delete(false, false, true, false, 1);
         buffs.add(delete);
-        spell = new Spell("areadispel", "Destroy all positive and negative buff", "rectangle notallcell", 1500, 2, 2, 2, buffs,false);
+        spell = new Spell("areadispel", "Destroy all positive and negative buff", "rectangle notallcell", 1500, 2, 2, 2, buffs, false);
         Shop.addAllCards(spell);
         setNullArray(buffs);
-        Power power = new Power(false, false, true, false, 1, 2, 0);
+        Power power = new Power(false, false, true, false, 0, 2, 0);
         buffs.add(power);
-        spell = new Spell("empower", "Add 2 AP to selected card", "rectangle friendly MH", 250, 1, 1, 1, buffs,false);
+        spell = new Spell("empower", "Add 2 AP to selected card", "rectangle friendly MH", 250, 1, 1, 1, buffs, false);
         Shop.addAllCards(spell);
         setNullArray(buffs);
         Poison poison = new Poison(false, false, true, false, true, false, 1, 0, -4);
         buffs.add(poison);
-        spell = new Spell("fireball", "Knock 4 to selected card", "rectangle enemy MH", 400, 1, 1, 1, buffs,false);
+        spell = new Spell("fireball", "Knock 4 to selected card", "rectangle enemy MH", 400, 1, 1, 1, buffs, false);
         Shop.addAllCards(spell);
         setNullArray(buffs);
         power = new Power(false, false, true, false, 1, 4, 0);
         buffs.add(power);
-        spell = new Spell("godstrenght", "Add 4 AP to own hero", "rectangle friendly H", 450, 2, 1, 1, buffs,false);
+        spell = new Spell("godstrenght", "Add 4 AP to own hero", "rectangle friendly H", 450, 2, 1, 1, buffs, false);
         Shop.addAllCards(spell);
         setNullArray(buffs);
         Fire fire = new Fire(false, false, true, false, 1, 2, -2);
         buffs.add(fire);
-        spell = new Spell("hellfire", "Create fire cell for 2 turn", "rectangle allcell", 600, 3, 2, 2, buffs,true);
+        spell = new Spell("hellfire", "Create fire cell for 2 turn", "rectangle allcell", 600, 3, 2, 2, buffs, true);
         Shop.addAllCards(spell);
         setNullArray(buffs);
         poison = new Poison(false, false, true, false, true, false, 1, 0, -8);
         buffs.add(poison);
-        spell = new Spell("lightingbolt", "Knock 8 to enemy Hero", "rectangle enemy H", 1250, 2, 1, 1, buffs,false);
+        spell = new Spell("lightingbolt", "Knock 8 to enemy Hero", "rectangle enemy H", 1250, 2, 1, 1, buffs, false);
         Shop.addAllCards(spell);
         setNullArray(buffs);
         poison = new Poison(true, false, true, false, false, true, 1, 1, -1);
         buffs.add(poison);
-        spell = new Spell("poisonlake", "Create poison cell for 1 turn", "rectangle allcell", 900, 5, 3, 3, buffs,true);
+        spell = new Spell("poisonlake", "Create poison cell for 1 turn", "rectangle allcell", 900, 5, 3, 3, buffs, true);
         Shop.addAllCards(spell);
         setNullArray(buffs);
         power = new Power(false, false, false, false, 3, 4, 0);
         buffs.add(power);
         disarm = new Disarm(true, false, false, false, 3);
         buffs.add(disarm);
-        spell = new Spell("mandess", "Add 3 AP to selected card but disarm", "rectangle friendly MH", 650, 0, 1, 1, buffs,false);
+        spell = new Spell("mandess", "Add 3 AP to selected card but disarm", "rectangle friendly MH", 650, 0, 1, 1, buffs, false);
         Shop.addAllCards(spell);
         setNullArray(buffs);
         disarm = new Disarm(true, false, false, false, 1);
         buffs.add(disarm);
-        spell = new Spell("alldisarm", "Disarm all of enemy", "allcell enemy MH", 2000, 9, 0, 0, buffs,false);
+        spell = new Spell("alldisarm", "Disarm all of enemy", "allcell enemy MH", 2000, 9, 0, 0, buffs, false);
         Shop.addAllCards(spell);
         setNullArray(buffs);
         poison = new Poison(true, true, true, false, false, false, 4, 0, -1);
         buffs.add(poison);
-        spell = new Spell("allpoison", "Poison all enemy for 4 turn", "allcell enemy MH", 1500, 8, 0, 0, buffs,false);
+        spell = new Spell("allpoison", "Poison all enemy for 4 turn", "allcell enemy MH", 1500, 8, 0, 0, buffs, false);
         Shop.addAllCards(spell);
         setNullArray(buffs);
         delete = new Delete(false, false, true, false, 1);
         buffs.add(delete);
-        spell = new Spell("dispel", "Destroy positive and negative buff", "rectangle FE MH", 2100, 0, 1, 1, buffs,false);
+        spell = new Spell("dispel", "Destroy positive and negative buff", "rectangle FE MH", 2100, 0, 1, 1, buffs, false);
         Shop.addAllCards(spell);
         setNullArray(buffs);
         Weakness weakness = new Weakness(true, false, false, false, 1, -6, 0);
@@ -153,44 +153,44 @@ public class Main {
         Holy holy = new Holy(true, true, false, false, 3);
         buffs.add(holy);
         buffs.add(holy);
-        spell = new Spell("healthwithprofit", "Give weakness buff with 6 and 2 holy buff for 3 turn ", "rectangle friendly MH", 2250, 0, 1, 1, buffs,false);
+        spell = new Spell("healthwithprofit", "Give weakness buff with 6 and 2 holy buff for 3 turn ", "rectangle friendly MH", 2250, 0, 1, 1, buffs, false);
         Shop.addAllCards(spell);
         setNullArray(buffs);
         power = new Power(true, false, true, false, 1, 2, 0);
         buffs.add(power);
-        spell = new Spell("powerup", "Give power buff with 6 AP", "rectangle friendly MH", 2500, 4, 1, 1, buffs,false);
+        spell = new Spell("powerup", "Give power buff with 6 AP", "rectangle friendly MH", 2500, 4, 1, 1, buffs, false);
         Shop.addAllCards(spell);
         setNullArray(buffs);
         power = new Power(true, false, true, false, 1, 2, 0);
         buffs.add(power);
-        spell = new Spell("allpower", "Give a power buff with 2 AP to all frienly", "allcell friendly MH", 2000, 4, 0, 0, buffs,false);
+        spell = new Spell("allpower", "Give a power buff with 2 AP to all frienly", "allcell friendly MH", 2000, 4, 0, 0, buffs, false);
         Shop.addAllCards(spell);
         setNullArray(buffs);
         poison = new Poison(false, false, true, false, true, false, 1, 0, -6);
         buffs.add(poison);
-        spell = new Spell("allattack", "Knock 6 to all enemy in one column", "generalcell enemy MH", 1500, 4, 1, 5, buffs,false);
+        spell = new Spell("allattack", "Knock 6 to all enemy in one column", "generalcell enemy MH", 1500, 4, 1, 5, buffs, false);
         Shop.addAllCards(spell);
         setNullArray(buffs);
         weakness = new Weakness(true, false, true, false, 1, 0, -4);
         buffs.add(weakness);
-        spell = new Spell("weakening", "Give weakness with 4 AP to minion", "rectangle enemy M", 1000, 1, 1, 1, buffs,false);
+        spell = new Spell("weakening", "Give weakness with 4 AP to minion", "rectangle enemy M", 1000, 1, 1, 1, buffs, false);
         Shop.addAllCards(spell);
         setNullArray(buffs);
         weakness = new Weakness(true, false, true, false, 1, -6, 0);
         buffs.add(weakness);
         power = new Power(true, false, true, false, 1, 8, 0);
         buffs.add(power);
-        spell = new Spell("sacrifice", "Give weakness buff with 6 AP and power buff with 8 AP", "rectangle friendly M", 1600, 2, 1, 1, buffs,false);
+        spell = new Spell("sacrifice", "Give weakness buff with 6 AP and power buff with 8 AP", "rectangle friendly M", 1600, 2, 1, 1, buffs, false);
         Shop.addAllCards(spell);
         setNullArray(buffs);
         Kill kill = new Kill();
         buffs.add(kill);
-        spell = new Spell("kingsguard", "Kill Minion", "around H friendly M enemy", 1750, 9, 0, 0, buffs,false);
+        spell = new Spell("kingsguard", "Kill Minion", "around H friendly M enemy", 1750, 9, 0, 0, buffs, false);
         Shop.addAllCards(spell);
         setNullArray(buffs);
         Stun stun = new Stun(true, false, false, false, 2);
         buffs.add(stun);
-        spell = new Spell("shock", "stun for 2 turn", "rectangle enemy MH", 1200, 1, 1, 1, buffs,false);
+        spell = new Spell("shock", "stun for 2 turn", "rectangle enemy MH", 1200, 1, 1, 1, buffs, false);
         Shop.addAllCards(spell);
     }
 
@@ -368,6 +368,7 @@ public class Main {
         Shop.addAllCards(hero);
         setNullArray(buffs);
         stun = new Stun(true, false, false, false, 1);
+        buffs.add(stun);
         hero = new Hero("rakhsh", "melee", 8000, 1, 50, 4, 1, 2, "Stun one of enemy for one turn", buffs, "one enemy", true, false, false);
         Shop.addAllCards(hero);
         setNullArray(buffs);
@@ -376,7 +377,7 @@ public class Main {
         hero = new Hero("zahak", "melee", 10000, 0, 50, 2, 1, 0, "Poison enemy for 3 turn", buffs, "", false, true, false);
         Shop.addAllCards(hero);
         setNullArray(buffs);
-        Holy holy = new Holy(true,false,false,false,1);
+        Holy holy = new Holy(true, false, false, false, 1);
         buffs.add(holy);
         hero = new Hero("kave", "melee", 8000, 1, 50, 4, 1, 3, "Holy Cell for 3 turn", buffs, "cell", true, false, false);
         Shop.addAllCards(hero);
@@ -429,12 +430,12 @@ public class Main {
         setNullArray(buffs);
         Power power = new Power(false, false, true, false, 0, 0, 6);
         buffs.add(power);
-        item = new Item("nushdaru", 0, 0, "Add 6 HP", true, buffs, "collect");
+        item = new Item("nushdaru", 0, 0, "Add 6 HP", true, buffs, "random MH");
         Item.addCollectableItem(item);
         setNullArray(buffs);
         power = new Power(false, false, true, false, 0, 2, 0);
         buffs.add(power);
-        item = new Item("tirdoshakh", 0, 0, "Add 2 AP", true, buffs, "collect");
+        item = new Item("tirdoshakh", 0, 0, "Add 2 AP", true, buffs, "rangedHybrid MH");
         Item.addCollectableItem(item);
         setNullArray(buffs);
         power = new Power(false, false, true, false, 0, -2, 0);
@@ -446,7 +447,7 @@ public class Main {
         buffs.add(power);
         Power power1 = new Power(true, false, true, false, 0, 3, 0);
         buffs.add(power);
-        item = new Item("eksir", 0, 0, "Add 3 HP and Give power buff with 3 AP", true, buffs, "collect");
+        item = new Item("eksir", 0, 0, "Add 3 HP and Give power buff with 3 AP", true, buffs, "random M");
         Item.addCollectableItem(item);
         setNullArray(buffs);
         integers = new ArrayList<Integer>();
@@ -461,7 +462,7 @@ public class Main {
         for (int i = 0; i < 10; i++) {
             buffs.add(holy);
         }
-        item = new Item("majunruyintani", 0, 0, "Give 10 holy buff for 2 turn", true, buffs, "collect");
+        item = new Item("majunruyintani", 0, 0, "Give 10 holy buff for 2 turn", true, buffs, "random MH");
         Item.addCollectableItem(item);
         setNullArray(buffs);
         Poison poison = new Poison(false, false, true, false, true, false, 0, 0, -8);
@@ -471,12 +472,12 @@ public class Main {
         setNullArray(buffs);
         power = new Power(false, false, true, false, 0, 2, 0);
         buffs.add(power);
-        item = new Item("randomdamage", 0, 0, "Add 2 AP", true, buffs, "collect");
+        item = new Item("randomdamage", 0, 0, "Add 2 AP", true, buffs, "random MH");
         Item.addCollectableItem(item);
         setNullArray(buffs);
         Weakness weakness = new Weakness(true, false, false, false, 1, 0, -2);
         buffs.add(weakness);
-        item = new Item("terrorhood", 5000, 0, "Give weakness with -2 AP", false, buffs, "attack MH");
+        item = new Item("terrorhood", 5000, 0, "Give weakness with -2 AP", false, buffs, "random MH");
         Shop.addAllCards(item);
         setNullArray(buffs);
         power = new Power(false, false, true, false, 0, 6, 0);
@@ -518,24 +519,27 @@ public class Main {
         setNullArray(buffs);
         power = new Power(false, false, true, false, 0, 5, 0);
         buffs.add(power);
-        item = new Item("shamshirchini", 0, 0, "Add 5 AP to melee", true, buffs, "first");
+        item = new Item("shamshirchini", 0, 0, "Add 5 AP to melee", true, buffs, "all melee");
         Item.addCollectableItem(item);
 
     }
 
     public static void main(String[] args) {
 
-        //try {
+        try {
             setScannerUser();
             setShopSpell();
             setShopMinion();
             setShopHero();
             setShopItem();
+            SingleStoryGame.setDeckForStage1();
+            SingleStoryGame.setDeckFroStage2();
+            SingleStoryGame.setDeckForStage3();
             MainMenu.loadAccounts();
             MainMenu.menu();
-        //} catch (Exception e) {
-          //  System.out.println("Error!!");
-        //}
+        } catch (Exception e) {
+            System.out.println("Error!!");
+        }
 
     }
 
