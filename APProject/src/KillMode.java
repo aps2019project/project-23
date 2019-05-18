@@ -10,12 +10,10 @@ public class KillMode extends Custom {
 
     }
 
-    public static void game(Account account, Account account1) {
+    public static void game(Account account, Account account1, String singlePlayer, boolean single) {
 
         boolean turnPlayer1 = true;
         boolean turnPlayer2 = false;
-        Main.setNullCardsCell();
-        Main.setNullBuffsCell();
         GameController.setAccount(player1Deck, 1, account);
         GameController.setAccount(player2Deck, 2, account1);
         GameController.setCellCard(player1Deck, player2Deck);
@@ -42,25 +40,43 @@ public class KillMode extends Custom {
                 } else if (command.matches("end turn")) {
                     turnPlayer1 = false;
                     turnPlayer2 = true;
+                    GameController.checkBuffInTheEndOfTurn();
                     GameController.endTurn(account, account1);
                 } else {
                     GameController.control(account, account1, command, 1, true);
                 }
-                if (checkEndGame(account)) {
-                    endGame(account, false);
-                    return;
-                }
-                if (checkEndGame(account1)) {
-                    endGame(account, true);
-                    return;
-                }
             } else if (turnPlayer2) {
-                GameController.endTurn(account1, account);
-
-                turnPlayer1 = true;
-                turnPlayer2 = false;
+                if (single) {
+                    GameController.AIForsinglePlayer(account1);
+                    GameController.checkBuffInTheEndOfTurn();
+                    GameController.endTurn(account1, account);
+                    turnPlayer1 = true;
+                    turnPlayer2 = false;
+                } else {
+                    command = Main.getScanner().nextLine().toLowerCase().trim();
+                    if (command.matches("exit")) {
+                        System.out.println("Cancel game");
+                        return;
+                    } else if (command.matches("end turn")) {
+                        turnPlayer1 = false;
+                        turnPlayer2 = true;
+                        GameController.checkBuffInTheEndOfTurn();
+                        GameController.endTurn(account, account1);
+                    } else {
+                        GameController.control(account, account1, command, 1, true);
+                    }
+                }
             }
+            GameController.checkStunAndDisarm();
             GameController.death();
+            if (checkEndGame(account)) {
+                endGame(account, account1, false, 1, singlePlayer);
+                return;
+            }
+            if (checkEndGame(account1)) {
+                endGame(account, account1, true, 1, singlePlayer);
+                return;
+            }
         }
 
     }
