@@ -20,11 +20,6 @@ public class Holy extends Buff {
     }
 
     public void effectBuffsOnCard(Card card, int numberOfPlayer) {
-        if (card instanceof Hero) {
-            ((Hero) card).addHP(1);
-        } else if (card instanceof Minion) {
-            ((Minion) card).addHP(1);
-        }
     }
 
 }
