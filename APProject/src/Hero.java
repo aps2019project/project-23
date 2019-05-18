@@ -131,6 +131,7 @@ public class Hero extends Card {
     public void setNullEffect() {
         for (int i = 0; i < cellEffect.size(); i++) {
             cellEffect.remove(0);
+            i = 0;
         }
     }
 
@@ -139,7 +140,7 @@ public class Hero extends Card {
         if (targetCommunities[1].matches("enemy")) {
             for (int i = 0; i < 9; i++) {
                 for (int j = 0; j < 5; j++) {
-                    if (Main.getCardsCell()[i][j] == null){
+                    if (Main.getCardsCell()[i][j] == null) {
                         continue;
                     }
                     if (Main.getCardsCell()[i][j].numberOfPlayer != this.numberOfPlayer) {
@@ -223,17 +224,20 @@ public class Hero extends Card {
                 counterOfHoly++;
             }
         }
-        if (card instanceof Hero) {
-            if (((Hero) card).getHP() <= this.AP - counterOfHoly) {
-                ((Hero) card).setHP(0);
-            } else {
-                ((Hero) card).addHP(-1 * this.AP + counterOfHoly);
-            }
-        } else if (card instanceof Minion) {
-            if (((Minion) card).getHP() <= this.AP - counterOfHoly) {
-                ((Minion) card).setHP(0);
-            } else {
-                ((Minion) card).addHP(-1 * this.AP + counterOfHoly);
+        int FAP = this.AP - counterOfHoly;
+        if (FAP > 0) {
+            if (card instanceof Hero) {
+                if (((Hero) card).getHP() <= this.AP - counterOfHoly) {
+                    ((Hero) card).setHP(0);
+                } else {
+                    ((Hero) card).addHP(-1 * this.AP + counterOfHoly);
+                }
+            } else if (card instanceof Minion) {
+                if (((Minion) card).getHP() <= this.AP - counterOfHoly) {
+                    ((Minion) card).setHP(0);
+                } else {
+                    ((Minion) card).addHP(-1 * this.AP + counterOfHoly);
+                }
             }
         }
 
@@ -295,16 +299,22 @@ public class Hero extends Card {
             if (((Minion) card).getTimeOfSpechialPower().matches("defend")) {
                 ((Minion) card).defendPower(this);
             }
-            if (HP <= ((Minion) card).getAP() + counterOfHoly) {
-                setHP(0);
-            } else {
-                addHP(-1 * ((Minion) card).getAP() + counterOfHoly);
+            FAP = ((Minion) card).getAP() - counterOfHoly;
+            if (FAP > 0) {
+                if (HP <= ((Minion) card).getAP() - counterOfHoly) {
+                    setHP(0);
+                } else {
+                    addHP(-1 * ((Minion) card).getAP() + counterOfHoly);
+                }
             }
         } else if (card instanceof Hero) {
-            if (HP <= ((Hero) card).getAP() + counterOfHoly) {
-                setHP(0);
-            } else {
-                addHP(-1 * ((Hero) card).getAP() + counterOfHoly);
+            FAP = ((Hero) card).getAP() - counterOfHoly;
+            if (FAP > 0) {
+                if (HP <= ((Hero) card).getAP() - counterOfHoly) {
+                    setHP(0);
+                } else {
+                    addHP(-1 * ((Hero) card).getAP() + counterOfHoly);
+                }
             }
         }
 
@@ -316,18 +326,18 @@ public class Hero extends Card {
             System.out.println("Invalid target");
             return;
         }
-        setCellEffect(x,y);
+        setCellEffect(x, y);
         if (targetCommunity.matches("cell")) {
-            for (int i = 0 ; i < cellEffect.size() ; i ++ ) {
-                for (Buff buff:specialBuff) {
+            for (int i = 0; i < cellEffect.size(); i++) {
+                for (Buff buff : specialBuff) {
                     Main.getBuffCell()[cellEffect.get(i)[0]][cellEffect.get(i)[1]] = buff;
                 }
             }
-        }else {
-            for (int i = 0 ; i < cellEffect.size() ; i ++ ) {
-                for (Buff buff:specialBuff) {
+        } else {
+            for (int i = 0; i < cellEffect.size(); i++) {
+                for (Buff buff : specialBuff) {
                     Main.getCardsCell()[cellEffect.get(i)[0]][cellEffect.get(i)[1]].addBuff(buff);
-                    buff.effectBuffsOnCard(Main.getCardsCell()[cellEffect.get(i)[0]][cellEffect.get(i)[1]],numberOfPlayer);
+                    buff.effectBuffsOnCard(Main.getCardsCell()[cellEffect.get(i)[0]][cellEffect.get(i)[1]], numberOfPlayer);
                 }
             }
         }
