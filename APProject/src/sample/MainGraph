@@ -1,1 +1,1129 @@
+package sample;
 
+import com.sun.org.apache.bcel.internal.generic.LADD;
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.geometry.Pos;
+import javafx.scene.*;
+import javafx.scene.effect.BlendMode;
+import javafx.scene.effect.BoxBlur;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.layout.*;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.stage.Stage;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Observable;
+
+import javafx.animation.*;
+import javafx.scene.Group;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.*;
+import javafx.util.Duration;
+import javafx.animation.AnimationTimer;
+import javafx.event.EventHandler;
+import javafx.scene.control.Label;
+import javafx.scene.shape.Circle;
+import sun.plugin.util.UIUtil;
+
+import static java.lang.Math.log;
+import static java.lang.Math.random;
+
+
+public class MainGraph extends Application {
+
+    private static Group root = new Group();
+    private static Scene scene = new Scene(root, 0, 0);
+    private static AnimationTimer animationTimer;
+    private static MediaPlayer audioPlayerForStartMenu;
+    private static MediaPlayer audioPlayerForFlipPage;
+    private static Polygon triangle;
+    private static String password;
+    private static String command;
+    private static StackPane stackPane;
+    private static Account account;
+    private static ImageView loadingImage;
+    private static Rectangle backGroundRectLoading = new Rectangle(2000, 2000);
+    private static Label backGroundLableLoading = new Label("LOADING");
+    private static ImageView mainMenuBackgroundView;
+    private static MediaPlayer backGroundAudioStartInAccount;
+    private static AnimationTimer animationTimerForBackGroundMusic;
+    private static Integer page = 1;
+
+    public static String getPassword() {
+        return password;
+    }
+
+    public static String getCommand() {
+        return command;
+    }
+
+    static {
+        File audioFile = new File("sound.mp3");
+        Media audio = new Media(audioFile.toURI().toString());
+        audioPlayerForStartMenu = new MediaPlayer(audio);
+    }
+
+    static {
+        try {
+            Image image = new Image(new FileInputStream("src/sample/startMenuAttack.gif"));
+            loadingImage = new ImageView(image);
+        } catch (Exception e) {
+
+        }
+    }
+
+    public void setLoading() {
+
+        try {
+
+            Font font = Font.loadFont(new FileInputStream("src/sample/font.ttf"), 15);
+            backGroundLableLoading.setScaleX(3);
+            backGroundLableLoading.setScaleY(2);
+            backGroundLableLoading.relocate(1100, 390);
+            backGroundLableLoading.setStyle("-fx-font-weight: bold;");
+            backGroundLableLoading.setFont(font);
+            backGroundLableLoading.setTextFill(Color.WHITE);
+            loadingImage.relocate(1070, 200);
+            root.getChildren().addAll(loadingImage, backGroundLableLoading);
+
+        } catch (Exception e) {
+        }
+
+    }
+
+    public void deleteLoading() {
+        root.getChildren().removeAll(backGroundRectLoading, loadingImage, backGroundLableLoading);
+    }
+
+    public void setSoundForFlipPage() {
+        File audioFile = new File("pageFlip.mp3");
+        Media audio = new Media(audioFile.toURI().toString());
+        audioPlayerForFlipPage = new MediaPlayer(audio);
+    }
+
+    public void startGameEnviroment() throws Exception {
+
+        setCircleEffectInStartMenu();
+
+        scene.setFill(Color.BLACK);
+        Image duelystLogo = new Image(new FileInputStream("src/sample/DuelystLogo.png"));
+        ImageView duelystView = new ImageView(duelystLogo);
+        duelystView.setX(532);
+        duelystView.setY(170);
+        root.getChildren().add(duelystView);
+
+        putGifInStartMenu();
+        setLoadingLable();
+
+        setMouse();
+
+        audioPlayerForStartMenu.play();
+
+        PauseTransition delay = new PauseTransition(Duration.millis(300));
+        delay.setOnFinished(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                try {
+                    root.getChildren().clear();
+                    animationTimer.stop();
+                    audioPlayerForStartMenu.stop();
+                    setMainMenuBackGround();
+                } catch (Exception e) {
+
+                }
+            }
+        });
+        delay.play();
+
+    }
+
+    public void setLoadingLable() {
+
+        Label label = new Label("LOADING");
+        label.setScaleX(5);
+        label.setScaleY(4);
+        label.relocate(650, 520);
+        label.setStyle("font-weight: bold;");
+        label.setTextFill(Color.rgb(255, 255, 255, 0.15));
+
+        Label label1 = new Label("This may take a moment");
+        label1.setScaleX(2);
+        label1.setScaleY(2);
+        label1.relocate(570, 585);
+        label1.setStyle("font-weight: bold;");
+        label1.setTextFill(Color.rgb(255, 255, 255, 0.4));
+
+        Label label2 = new Label(".");
+        label2.setScaleX(2);
+        label2.setScaleY(2);
+        label2.setStyle("font-weight: bold;");
+        label2.relocate(830, 585);
+        label2.setTextFill(Color.rgb(255, 255, 255, 0.4));
+
+        Label label4 = new Label(".");
+        label4.setScaleX(2);
+        label4.setScaleY(2);
+        label4.setStyle("font-weight: bold;");
+        label4.relocate(850, 585);
+        label4.setTextFill(Color.rgb(255, 255, 255, 0.4));
+
+        Label label3 = new Label(".");
+        label3.setScaleX(2);
+        label3.setScaleY(2);
+        label3.setStyle("font-weight: bold;");
+        label3.relocate(870, 585);
+        label3.setTextFill(Color.rgb(255, 255, 255, 0.4));
+
+        root.getChildren().addAll(label, label1);
+
+        animationTimer = new AnimationTimer() {
+            private long lastTime;
+            private int loop;
+
+            @Override
+            public void handle(long now) {
+                if (lastTime == 0) {
+                    lastTime = now;
+                }
+                if (now - lastTime > 800000000) {
+                    lastTime = now;
+                    if (loop % 4 == 0) {
+                        root.getChildren().removeAll(label2, label3, label4);
+                    } else if (loop % 4 == 1) {
+                        root.getChildren().removeAll(label2, label3, label4);
+                        root.getChildren().addAll(label2);
+                    } else if (loop % 4 == 2) {
+                        root.getChildren().removeAll(label2, label3, label4);
+                        root.getChildren().addAll(label2, label4);
+                    } else {
+                        root.getChildren().removeAll(label2, label3, label4);
+                        root.getChildren().addAll(label2, label3, label4);
+                    }
+                    loop++;
+                }
+            }
+        };
+        animationTimer.start();
+
+    }
+
+    public void putGifInStartMenu() throws Exception {
+        Image startMenuGif = new Image(new FileInputStream("src/sample/startMenuAttack.gif"));
+        ImageView startMenuView = new ImageView(startMenuGif);
+        startMenuView.setX(510);
+        startMenuView.setY(200);
+        startMenuView.setFitWidth(360);
+        startMenuView.setFitHeight(290);
+        root.getChildren().add(startMenuView);
+    }
+
+    public void setCircleEffectInStartMenu() {
+        Group circles = new Group();
+        for (int i = 0; i < 30; i++) {
+            Circle circle = new Circle(150, Color.web("white", 0.05));
+            circle.setStrokeType(StrokeType.OUTSIDE);
+            circle.setStroke(Color.web("white", 0.16));
+            circle.setStrokeWidth(4);
+            circles.getChildren().add(circle);
+        }
+        Rectangle colors = new Rectangle(1500, 1200,
+                new LinearGradient(0f, 1f, 1f, 0f, true, CycleMethod.NO_CYCLE, new Stop[]{
+                        new Stop(0, Color.web("#f8bd55")),
+                        new Stop(0.14, Color.web("#c0fe56")),
+                        new Stop(0.28, Color.web("#5dfbc1")),
+                        new Stop(0.43, Color.web("#64c2f8")),
+                        new Stop(0.57, Color.web("#be4af7")),
+                        new Stop(0.71, Color.web("#ed5fc2")),
+                        new Stop(0.85, Color.web("#ef504c")),
+                        new Stop(1, Color.web("#f2660f")),}));
+        Group blendModeGroup =
+                new Group(new Group(new Rectangle(scene.getWidth(), scene.getHeight(),
+                        Color.BLACK), circles), colors);
+        colors.setBlendMode(BlendMode.OVERLAY);
+        root.getChildren().add(blendModeGroup);
+        circles.setEffect(new BoxBlur(10, 10, 3));
+        Timeline timeline = new Timeline();
+        for (Node circle : circles.getChildren()) {
+            timeline.getKeyFrames().addAll(
+                    new KeyFrame(Duration.ZERO,
+                            new KeyValue(circle.translateXProperty(), random() * 1300),
+                            new KeyValue(circle.translateYProperty(), random() * 1000)),
+                    new KeyFrame(new Duration(40000),
+                            new KeyValue(circle.translateXProperty(), random() * 1300),
+                            new KeyValue(circle.translateYProperty(), random() * 1000)));
+        }
+        timeline.play();
+    }
+
+    public void setSoundOfMouse() {
+        File audioFile = new File("mouseSound.mp3");
+        Media audio = new Media(audioFile.toURI().toString());
+        audioPlayerForStartMenu = new MediaPlayer(audio);
+        audioPlayerForStartMenu.play();
+    }
+
+    public void setMainMenuBackGround() throws Exception {
+
+        Image mainMenuBackGround = new Image(new FileInputStream("src/sample/MainMenuBackGround.jpg"));
+        mainMenuBackgroundView = new ImageView(mainMenuBackGround);
+        mainMenuBackgroundView.setFitHeight(768);
+        mainMenuBackgroundView.setFitWidth(1366);
+        root.getChildren().add(mainMenuBackgroundView);
+
+        Rectangle loginBox = new Rectangle(380, 480);
+        loginBox.setFill(Color.rgb(105, 105, 104, 0.93));
+        loginBox.relocate(940, 90);
+        root.getChildren().add(loginBox);
+
+        Label loginLable = new Label("LOG IN");
+        loginLable.setTextFill(Color.WHITE);
+        loginLable.relocate(1060, 148);
+        loginLable.setScaleX(1.25);
+        loginLable.setScaleY(1.25);
+        root.getChildren().add(loginLable);
+
+        Label signUpLable = new Label("SIGN UP");
+        signUpLable.setTextFill(Color.WHITE);
+        signUpLable.setOpacity(0.7);
+        signUpLable.relocate(1160, 148);
+        signUpLable.setScaleX(1.25);
+        signUpLable.setScaleY(1.25);
+        root.getChildren().add(signUpLable);
+
+        TextField useNameForLoginField = new TextField();
+        useNameForLoginField.setPromptText("Username");
+        useNameForLoginField.setFocusTraversable(false);
+        useNameForLoginField.setScaleX(1.92);
+        useNameForLoginField.setScaleY(1.58);
+        useNameForLoginField.setStyle("-fx-control-inner-background: #8C8484");
+        useNameForLoginField.relocate(1046, 230);
+        root.getChildren().add(useNameForLoginField);
+
+        PasswordField passwordForLoginField = new PasswordField();
+        passwordForLoginField.setPromptText("Password");
+        passwordForLoginField.setFocusTraversable(false);
+        passwordForLoginField.setScaleX(1.92);
+        passwordForLoginField.setScaleY(1.58);
+        passwordForLoginField.setStyle("-fx-control-inner-background: #8C8484");
+        passwordForLoginField.relocate(1046, 310);
+        root.getChildren().add(passwordForLoginField);
+
+        Button loginButton = new Button("LOG IN");
+        loginButton.setTextFill(Color.WHITE);
+        loginButton.setStyle("-fx-background-color: #FE7809");
+        loginButton.setScaleX(5);
+        loginButton.setScaleY(1.8);
+        loginButton.relocate(1100, 490);
+        root.getChildren().add(loginButton);
+
+        setTriangleAsCursor(0);
+
+        signUpLable.setOnMouseEntered(event -> {
+            signUpLable.setOpacity(1);
+        });
+
+        signUpLable.setOnMouseExited(event -> {
+            if (loginLable.getOpacity() == 1) {
+                signUpLable.setOpacity(0.7);
+            }
+        });
+
+        loginLable.setOnMouseEntered(event -> {
+            loginLable.setOpacity(1);
+        });
+
+        loginLable.setOnMouseExited(event -> {
+            if (signUpLable.getOpacity() == 1) {
+                loginLable.setOpacity(0.7);
+            }
+        });
+
+        loginButton.setOnMouseEntered(event -> {
+            loginButton.setStyle("-fx-background-color: #FE0104");
+        });
+
+        loginButton.setOnMouseExited(event -> {
+            loginButton.setStyle("-fx-background-color: #FE7809");
+        });
+
+        signUpLable.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                setSoundForFlipPage();
+                audioPlayerForFlipPage.play();
+                loginLable.setOpacity(0.7);
+                signUpLable.setOpacity(1);
+                setTriangleAsCursor(1);
+                loginButton.setText("SIGN UP");
+                loginButton.setScaleX(4.4);
+                loginButton.relocate(1095, 490);
+                passwordForLoginField.clear();
+                useNameForLoginField.clear();
+                root.getChildren().remove(stackPane);
+            }
+        });
+
+        loginLable.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                setSoundForFlipPage();
+                audioPlayerForFlipPage.play();
+                loginLable.setOpacity(1);
+                signUpLable.setOpacity(0.7);
+                setTriangleAsCursor(0);
+                loginButton.setText("LOG IN");
+                loginButton.setScaleX(5);
+                loginButton.relocate(1100, 490);
+                passwordForLoginField.clear();
+                useNameForLoginField.clear();
+                root.getChildren().remove(stackPane);
+            }
+        });
+
+        loginButton.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                setSoundOfMouse();
+                if (loginButton.getText().matches("SIGN UP")) {
+                    command = "create account [" + useNameForLoginField.getText() + "]";
+                    password = passwordForLoginField.getText();
+                    boolean createAccount = MainMenu.menu();
+                    if (!createAccount) {
+                        if (stackPane == null || stackPane.getChildren().size() == 0) {
+                            errorForSameUserName("Choose another username");
+                        }
+                    } else {
+                        useNameForLoginField.clear();
+                        passwordForLoginField.clear();
+                    }
+                } else {
+                    command = "login [" + useNameForLoginField.getText() + "]";
+                    boolean loginAccount = MainMenu.menu();
+                    if (loginAccount) {
+
+                        root.getChildren().removeAll(passwordForLoginField, useNameForLoginField, loginButton, stackPane);
+                        setLoading();
+                        PauseTransition delay = new PauseTransition(Duration.millis(1800));
+                        delay.setOnFinished(new EventHandler<ActionEvent>() {
+                            @Override
+                            public void handle(ActionEvent event) {
+                                try {
+                                    deleteLoading();
+                                    inAccount();
+                                } catch (Exception e) {
+
+                                }
+                            }
+                        });
+                        delay.play();
+                        account = MainMenu.getAccounts().get(MainMenu.indexOfAccount(useNameForLoginField.getText()));
+                    } else {
+                        errorForSameUserName("User or pass is invalid");
+                    }
+                }
+            }
+        });
+
+    }
+
+    public void errorForSameUserName(String errorString) {
+
+        stackPane = new StackPane();
+        Rectangle rectangle = new Rectangle(210, 32);
+        rectangle.setFill(Color.RED);
+        rectangle.setArcHeight(30);
+        rectangle.setArcWidth(30);
+        Label label = new Label(errorString);
+        label.setTextFill(Color.WHITE);
+        stackPane.relocate(700, 227);
+        stackPane.getChildren().addAll(rectangle, label);
+        root.getChildren().remove(stackPane);
+        stackPane.setScaleY(0.1);
+        stackPane.setScaleX(0.1);
+        root.getChildren().add(stackPane);
+
+        ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(350), stackPane);
+        scaleTransition.setByX(1.1);
+        scaleTransition.setByY(1.1);
+        scaleTransition.setAutoReverse(true);
+
+        scaleTransition.play();
+
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(1800);
+                } catch (Exception e) {
+                }
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        stackPane.getChildren().clear();
+                    }
+                });
+            }
+        });
+        thread.start();
+
+    }
+
+    public void setBackGroundMusic() {
+
+        File audioFile = new File("BackGroundMusic.mp3");
+        Media audio = new Media(audioFile.toURI().toString());
+        backGroundAudioStartInAccount = new MediaPlayer(audio);
+        backGroundAudioStartInAccount.setVolume(0.35);
+        backGroundAudioStartInAccount.play();
+
+        animationTimerForBackGroundMusic = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+
+                backGroundAudioStartInAccount.setOnEndOfMedia(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        backGroundAudioStartInAccount = new MediaPlayer(audio);
+                        backGroundAudioStartInAccount.play();
+
+                    }
+                });
+
+            }
+        };
+        animationTimerForBackGroundMusic.start();
+
+    }
+
+    public void animationForLable(int x, int y) {
+
+        animationTimer = new AnimationTimer() {
+            private int i;
+            private ImageView imageView;
+            private long lastTime;
+
+            @Override
+            public void handle(long now) {
+
+                if (lastTime == 0) {
+                    lastTime = now;
+                }
+
+                if (now - lastTime > 150000000) {
+                    try {
+                        root.getChildren().remove(imageView);
+                        Image image2 = new Image(new FileInputStream("src/sample/" + (i + 1) + ".png"));
+                        imageView = new ImageView(image2);
+                        imageView.relocate(x, y);
+                        root.getChildren().add(imageView);
+                    } catch (Exception e) {
+
+                    }
+
+                    if (i == 25) {
+                        i = 0;
+                    } else {
+                        i++;
+                    }
+                    lastTime = now;
+                }
+
+            }
+        };
+        animationTimer.start();
+
+    }
+
+    public void inAccount() throws Exception {
+
+        for (int i = 0; i < root.getChildren().size(); i++) {
+            if (root.getChildren().get(i).equals(mainMenuBackgroundView)) {
+                continue;
+            } else {
+                root.getChildren().remove(i);
+                i--;
+            }
+        }
+
+        setBackGroundMusic();
+
+
+        Image image = new Image(new FileInputStream("src/sample/backgroundCoin.png"));
+        ImageView backGroundCoinView = new ImageView(image);
+        backGroundCoinView.setScaleX(2.1);
+        backGroundCoinView.setScaleY(1.3);
+        backGroundCoinView.relocate(670, 625);
+        root.getChildren().add(backGroundCoinView);
+
+        Image image1 = new Image(new FileInputStream("src/sample/CoinGif.gif"));
+        ImageView coinView = new ImageView(image1);
+        coinView.setScaleX(0.2);
+        coinView.setScaleY(0.2);
+        coinView.relocate(-20, 300);
+        root.getChildren().add(coinView);
+
+        Label budgetLable = new Label(Integer.toString(account.getBudget()));
+        budgetLable.setTextFill(Color.WHITE);
+        budgetLable.relocate(720, 627);
+        budgetLable.setScaleX(2.5);
+        budgetLable.setScaleY(1.8);
+        Font font = Font.loadFont(new FileInputStream("src/sample/font.ttf"), 20);
+        budgetLable.setStyle("font-weight: bold;");
+        budgetLable.setFont(font);
+        root.getChildren().add(budgetLable);
+
+        Label playLable = new Label("Play");
+        playLable.setStyle("font-weight: bold;");
+        playLable.setFont(font);
+        playLable.relocate(330, 305);
+        playLable.setTextFill(Color.WHITE);
+        playLable.setScaleX(2.4);
+        playLable.setScaleY(1.4);
+        playLable.setOpacity(0.8);
+        root.getChildren().add(playLable);
+
+        Label collectionLable = new Label("Collection");
+        collectionLable.setStyle("font-weight: bold;");
+        collectionLable.setFont(font);
+        collectionLable.relocate(357, 405);
+        collectionLable.setTextFill(Color.WHITE);
+        collectionLable.setScaleX(2.4);
+        collectionLable.setScaleY(1.4);
+        collectionLable.setOpacity(0.8);
+        root.getChildren().add(collectionLable);
+
+        Image image2 = new Image(new FileInputStream("src/sample/1.png"));
+        ImageView imageView = new ImageView(image2);
+        imageView.relocate(250, 300);
+        root.getChildren().add(imageView);
+
+        ImageView imageView1 = new ImageView(image2);
+        imageView1.relocate(250, 400);
+        root.getChildren().add(imageView1);
+
+        Image image3 = new Image(new FileInputStream("src/sample/profile.png"));
+        ImageView imageView2 = new ImageView(image3);
+        imageView2.relocate(920, 608);
+        imageView2.setOpacity(0.8);
+        root.getChildren().add(imageView2);
+
+        Image image4 = new Image(new FileInputStream("src/sample/shop.png"));
+        ImageView imageView3 = new ImageView(image4);
+        imageView3.relocate(1080, 628);
+        imageView3.setOpacity(0.8);
+        root.getChildren().add(imageView3);
+
+        Label matchHistoryLable = new Label("Match History");
+        matchHistoryLable.setTextFill(Color.WHITE);
+        matchHistoryLable.setFont(font);
+        matchHistoryLable.setScaleY(1.2);
+        matchHistoryLable.setScaleY(1.2);
+        matchHistoryLable.relocate(911, 700);
+        root.getChildren().add(matchHistoryLable);
+
+        Label shopLable = new Label("Shop");
+        shopLable.setTextFill(Color.WHITE);
+        shopLable.setScaleY(1.2);
+        shopLable.setScaleX(1.2);
+        shopLable.setFont(font);
+        shopLable.relocate(1088, 700);
+        root.getChildren().add(shopLable);
+
+        Image image5 = new Image(new FileInputStream("src/sample/logout.png"));
+        ImageView imageView4 = new ImageView(image5);
+        imageView4.relocate(1190, 630);
+        root.getChildren().add(imageView4);
+
+        Label logoutLable = new Label("Logout");
+        logoutLable.setFont(font);
+        logoutLable.setTextFill(Color.WHITE);
+        logoutLable.setScaleX(1.3);
+        logoutLable.setScaleY(1.25);
+        logoutLable.relocate(1250, 638);
+        root.getChildren().add(logoutLable);
+
+        imageView4.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                setSoundOfMouse();
+                animationTimerForBackGroundMusic.stop();
+                backGroundAudioStartInAccount.stop();
+                root.getChildren().clear();
+                try {
+                    setMainMenuBackGround();
+                } catch (Exception e) {
+
+                }
+            }
+        });
+
+        logoutLable.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                setSoundOfMouse();
+                animationTimerForBackGroundMusic.stop();
+                backGroundAudioStartInAccount.stop();
+                root.getChildren().clear();
+                try {
+                    setMainMenuBackGround();
+                } catch (Exception e) {
+
+                }
+            }
+        });
+
+        playLable.setOnMouseEntered(event -> {
+            deleteImageFromLable(250.0, 300.0);
+            animationForLable(250, 300);
+            playLable.setOpacity(1);
+        });
+
+        playLable.setOnMouseExited(event -> {
+            animationTimer.stop();
+            playLable.setOpacity(0.8);
+        });
+
+        collectionLable.setOnMouseEntered(event -> {
+            deleteImageFromLable(250.0, 400.0);
+            animationForLable(250, 400);
+            collectionLable.setOpacity(1);
+        });
+
+        collectionLable.setOnMouseExited(event -> {
+            animationTimer.stop();
+            collectionLable.setOpacity(0.8);
+        });
+
+        imageView2.setOnMouseEntered(event -> {
+            imageView2.setOpacity(1);
+        });
+
+        imageView2.setOnMouseExited(event -> {
+            imageView2.setOpacity(0.8);
+        });
+
+        imageView3.setOnMouseEntered(event -> {
+            imageView3.setOpacity(1);
+        });
+
+        imageView3.setOnMouseExited(event -> {
+            imageView3.setOpacity(0.8);
+        });
+
+        imageView3.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                try {
+                    clear();
+                    setSoundOfMouse();
+                    shop();
+                } catch (Exception e) {
+
+                }
+            }
+        });
+
+    }
+
+    public void clear() {
+        for (int i = 1; i < root.getChildren().size(); i++) {
+            root.getChildren().remove(i);
+            i--;
+        }
+    }
+
+    public void shop() throws Exception {
+
+        Font font = Font.loadFont(new FileInputStream("src/sample/font.ttf"), 20);
+
+        Image backgroundShop = new Image(new FileInputStream("src/sample/shopBackGround.png"));
+        ImageView backgroundShopView = new ImageView(backgroundShop);
+        backgroundShopView.setFitWidth(1366);
+        backgroundShopView.setFitHeight(768);
+        root.getChildren().add(backgroundShopView);
+
+        Image backButton = new Image(new FileInputStream("src/sample/backButton.png"));
+        ImageView backButtonView = new ImageView(backButton);
+        root.getChildren().add(backButtonView);
+
+        TextField searchBox = new TextField();
+        searchBox.setPromptText("Search");
+        searchBox.setFocusTraversable(false);
+        searchBox.setStyle("-fx-control-inner-background: #B1A7A7");
+        searchBox.setScaleX(1.4);
+        searchBox.relocate(150, 10);
+        root.getChildren().add(searchBox);
+
+        Image searchIcon = new Image(new FileInputStream("src/sample/search.png"));
+        ImageView searchIconView = new ImageView(searchIcon);
+        searchIconView.setScaleX(0.04);
+        searchIconView.setScaleY(0.04);
+        searchIconView.relocate(80, -232);
+        root.getChildren().add(searchIconView);
+
+        Image changePageButton = new Image(new FileInputStream("src/sample/changePageButton.png"));
+        ImageView changePageRightView = new ImageView(changePageButton);
+        changePageRightView.relocate(876, 640);
+        changePageRightView.setScaleX(0.7);
+        changePageRightView.setScaleY(0.7);
+        root.getChildren().add(changePageRightView);
+
+        ImageView changePageLeftView = new ImageView(changePageButton);
+        changePageLeftView.relocate(350, 640);
+        changePageLeftView.setScaleX(0.7);
+        changePageLeftView.setScaleY(0.7);
+        root.getChildren().add(changePageLeftView);
+
+        Label goRight = new Label(">>");
+        goRight.setScaleX(1.5);
+        goRight.setScaleY(3.5);
+        goRight.setStyle("font-weight: bold;");
+        goRight.relocate(944, 706);
+        goRight.setTextFill(Color.BLACK);
+        root.getChildren().add(goRight);
+
+        Label goLeft = new Label("<<");
+        goLeft.setScaleY(3.5);
+        goLeft.setScaleX(1.5);
+        goLeft.setStyle("font-weight: bold;");
+        goLeft.relocate(415, 706);
+        goLeft.setTextFill(Color.BLACK);
+        root.getChildren().add(goLeft);
+
+        Image customButton = new Image(new FileInputStream("src/sample/logout.png"));
+        ImageView customButtonView = new ImageView(customButton);
+        customButtonView.relocate(603, 690);
+        root.getChildren().add(customButtonView);
+
+        Label customLable = new Label("Custom Card");
+        customLable.setTextFill(Color.WHITE);
+        customLable.setFont(font);
+        customLable.relocate(640, 700);
+        root.getChildren().add(customLable);
+
+
+        ArrayList<Group> allCardShow = new ArrayList<Group>();
+        setCardInShow(allCardShow, page);
+
+        changePageRightView.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                setSoundOfMouse();
+                deleteGroup(allCardShow);
+                allCardShow.clear();
+                if (page * 8 >= Shop.getAllCards().size()) {
+                    page = 1;
+                } else {
+                    page++;
+                }
+                setCardInShow(allCardShow, page);
+            }
+        });
+
+        goRight.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                setSoundOfMouse();
+                deleteGroup(allCardShow);
+                allCardShow.clear();
+                if (page * 8 >= Shop.getAllCards().size()) {
+                    page = 1;
+                } else {
+                    page++;
+                }
+                setCardInShow(allCardShow, page);
+            }
+        });
+
+        changePageLeftView.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                setSoundOfMouse();
+                deleteGroup(allCardShow);
+                allCardShow.clear();
+                if (page > 1) {
+                    page--;
+                } else {
+                    if (Shop.getAllCards().size() % 8 == 0) {
+                        page = Shop.getAllCards().size() / 8;
+                    } else {
+                        page = Shop.getAllCards().size() / 8 + 1;
+                    }
+                }
+                setCardInShow(allCardShow, page);
+            }
+        });
+
+        goLeft.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                setSoundOfMouse();
+                deleteGroup(allCardShow);
+                allCardShow.clear();
+                if (page > 1) {
+                    page--;
+                } else {
+                    if (Shop.getAllCards().size() % 8 == 0) {
+                        page = Shop.getAllCards().size() / 8;
+                    } else {
+                        page = Shop.getAllCards().size() / 8 + 1;
+                    }
+                }
+                setCardInShow(allCardShow, page);
+            }
+        });
+
+        changePageRightView.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                setSoundOfMouse();
+                try {
+                    inAccount();
+                } catch (Exception e) {
+
+                }
+            }
+        });
+
+    }
+
+    public void deleteGroup(ArrayList<Group> groups) {
+        for (Group group : groups) {
+            root.getChildren().remove(group);
+        }
+    }
+
+    public void setCardInShow(ArrayList<Group> groups, int page) {
+
+        for (int i = 0; i < 4; i++) {
+
+            for (int j = 0; j < 2; j++) {
+
+                if ((page - 1) * 8 + i * 2 + j + 1 == Shop.getAllCards().size()) {
+                    return;
+                }
+                Card card = Shop.getAllCards().get((page - 1) * 8 + i * 2 + j);
+                if (card instanceof Spell) {
+                    Group group = getCardForMinion(115 + i * 300, 65 + j * 320, 0, 0, card.MP, ((Spell) card).getDesc(), card.name, "1.gif", "Spell", "");
+                    groups.add(group);
+                    root.getChildren().add(group);
+                } else if (card instanceof Minion) {
+                    Group group = getCardForMinion(115 + i * 300, 65 + j * 320, ((Minion) card).getAP(), ((Minion) card).getHP(), card.MP, ((Minion) card).getSpecialPower(), card.name, "1.gif", "Minion", ((Minion) card).getClas());
+                    groups.add(group);
+                    root.getChildren().add(group);
+                } else if (card instanceof Hero) {
+                    Group group = getCardForMinion(115 + i * 300, 65 + j * 320, ((Hero) card).getAP(), ((Hero) card).getHP(), card.MP, ((Hero) card).getSpecialPower(), card.name, "1.gif", "Hero", ((Hero) card).getClas());
+                    groups.add(group);
+                    root.getChildren().add(group);
+                } else {
+                    Group group = getCardForMinion(115 + i * 300, 65 + j * 320, 0, 0, 0, ((Item) card).getDesc(), card.name, "1.gif", "Item", "");
+                    groups.add(group);
+                    root.getChildren().add(group);
+                }
+
+            }
+
+        }
+
+    }
+
+    public void deleteImageFromLable(double x, double y) {
+        for (int i = 0; i < root.getChildren().size(); i++) {
+            if (root.getChildren().get(i) instanceof ImageView) {
+                if (((ImageView) root.getChildren().get(i)).getLayoutX() == x && ((ImageView) root.getChildren().get(i)).getLayoutY() == y) {
+                    root.getChildren().remove(i);
+                    i--;
+                }
+            }
+        }
+    }
+
+    public void setTriangleAsCursor(int x) {
+
+        root.getChildren().remove(triangle);
+
+        if (x == 0) {
+            triangle = new Polygon();
+            triangle.getPoints().addAll(1075.0, 120.0, 1090.0, 120.0, 1082.5, 133.0);
+            triangle.setFill(Color.YELLOW);
+        } else {
+            triangle = new Polygon();
+            triangle.getPoints().addAll(1179.0, 120.0, 1194.0, 120.0, 1186.5, 133.0);
+            triangle.setFill(Color.YELLOW);
+        }
+        root.getChildren().add(triangle);
+
+    }
+
+    public void setMouse() throws Exception {
+        Image mouse = new Image(new FileInputStream("src/sample/Mouse.png"));
+        ImageCursor cursor = new ImageCursor(mouse);
+        scene.setCursor(cursor);
+    }
+
+    public Group getCardForMinion(int x, int y, int AP, int HP, int MP, String desc, String name, String imageName, String type, String typeAttack) {
+
+        Group group = new Group();
+
+        try {
+
+            Image image = new Image(new FileInputStream("src/sample/cardBackGround" + type + ".png"));
+            ImageView backGroundCard = new ImageView(image);
+            backGroundCard.relocate(x, y);
+            group.getChildren().add(backGroundCard);
+
+            if (!(type.matches("Hero")) && !(type.matches("Item"))) {
+                Image image1 = new Image(new FileInputStream("src/sample/mana.png"));
+                ImageView manaView = new ImageView(image1);
+                Label manaLable = new Label(Integer.toString(MP));
+                manaLable.setScaleX(1.3);
+                manaLable.setScaleY(1.3);
+                manaLable.setTextFill(Color.DARKBLUE);
+                manaLable.setStyle("-fx-font-weight: bold");
+                StackPane stackPane = new StackPane();
+                stackPane.getChildren().addAll(manaView, manaLable);
+                stackPane.relocate(x - 26, y - 30);
+                group.getChildren().add(stackPane);
+            }
+
+            Label minionLable = new Label(type.toUpperCase());
+            if (type.matches("Minion")) {
+                minionLable.relocate(x + 90, y + 135);
+            } else if (type.matches("Spell")) {
+                minionLable.relocate(x + 94, y + 135);
+            } else if (type.matches("Hero")) {
+                minionLable.relocate(x + 94, y + 135);
+            } else {
+                minionLable.relocate(x + 94, y + 135);
+            }
+            minionLable.setTextFill(Color.LIGHTBLUE);
+            group.getChildren().add(minionLable);
+
+            StackPane stackPane1 = new StackPane();
+            Rectangle rectangle = new Rectangle(226, 0);
+            stackPane1.relocate(x, y + 115);
+            Label nameLable = new Label(name);
+            nameLable.setTextFill(Color.WHITE);
+            nameLable.setScaleY(1.2);
+            nameLable.setScaleX(1.2);
+            stackPane1.getChildren().addAll(rectangle, nameLable);
+            group.getChildren().add(stackPane1);
+
+            if (!(type.matches("Spell")) && !(type.matches("Item"))) {
+
+                StackPane stackPane2 = new StackPane();
+                Rectangle rectangle1 = new Rectangle(25, 0);
+                stackPane2.relocate(x + 40, y + 170);
+                Label APLable = new Label(Integer.toString(AP));
+                APLable.setTextFill(Color.YELLOW);
+                APLable.setScaleX(1.2);
+                APLable.setScaleY(1.2);
+                stackPane2.getChildren().addAll(rectangle1, APLable);
+                group.getChildren().add(stackPane2);
+
+                StackPane stackPane3 = new StackPane();
+                Rectangle rectangle2 = new Rectangle(25, 0);
+                group.getChildren().addAll(stackPane3);
+                stackPane3.relocate(x + 160, y + 170);
+                Label label = new Label(Integer.toString(HP));
+                label.setTextFill(Color.RED);
+                label.setScaleX(1.2);
+                label.setScaleY(1.2);
+                stackPane3.getChildren().addAll(rectangle2, label);
+
+                StackPane stackPane7 = new StackPane();
+                Rectangle rectangle6 = new Rectangle(226, 0);
+                Label typeAttackLable = new Label(typeAttack);
+                typeAttackLable.setTextFill(Color.GRAY);
+                stackPane7.getChildren().addAll(rectangle6, typeAttackLable);
+                stackPane7.relocate(x, y + 250);
+                group.getChildren().add(stackPane7);
+
+            }
+
+            StackPane stackPane4 = new StackPane();
+            StackPane stackPane5 = new StackPane();
+            Rectangle rectangle3 = new Rectangle(226, 0);
+            Rectangle rectangle4 = new Rectangle(226, 0);
+            Label line1 = new Label(getDescForCard(desc).get(0));
+            Label line2 = new Label();
+            line1.setTextFill(Color.LIGHTSKYBLUE);
+            line2.setTextFill(Color.LIGHTSKYBLUE);
+            if (getDescForCard(desc).size() == 2) {
+                line2.setText(getDescForCard(desc).get(1));
+                group.getChildren().add(stackPane5);
+            }
+            stackPane4.relocate(x, y + 212);
+            stackPane5.relocate(x, y + 230);
+            stackPane4.getChildren().addAll(rectangle3, line1);
+            stackPane5.getChildren().addAll(rectangle4, line2);
+            group.getChildren().add(stackPane4);
+
+            StackPane stackPane6 = new StackPane();
+            Rectangle rectangle5 = new Rectangle(226, 0);
+            Image image2 = new Image(new FileInputStream("src/image/" + type + "/" + imageName));
+            ImageView imageView = new ImageView(image2);
+            imageView.setFitWidth(100);
+            imageView.setFitHeight(100);
+            stackPane6.getChildren().addAll(rectangle5, imageView);
+            stackPane6.relocate(x, y + 15);
+            imageView.setScaleX(1.2);
+            imageView.setScaleY(1.2);
+            group.getChildren().add(stackPane6);
+
+        } catch (Exception e) {
+
+        }
+
+        return group;
+    }
+
+    public static ArrayList<String> getDescForCard(String desc) {
+
+        ArrayList<String> strings = new ArrayList<String>();
+        if (desc.length() <= 25) {
+            strings.add(desc);
+        } else {
+            String string = "";
+            String string1 = "";
+            for (int i = 0; i < 10; i++) {
+                if (desc.charAt(24 - i) == ' ') {
+                    string = desc.substring(0, 24 - i);
+                    string1 = desc.substring(24 - i + 1, desc.length());
+                    break;
+                }
+            }
+            strings.add(string);
+            strings.add(string1);
+        }
+
+        return strings;
+    }
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+
+        primaryStage.setFullScreen(true);
+        primaryStage.setScene(scene);
+        primaryStage.show();
+
+
+        startGameEnviroment();
+
+
+    }
+
+    public static void main(String[] args) {
+        Main.fisrt();
+        launch(args);
+        //MainMenu.saveAccounts();
+    }
+
+}
