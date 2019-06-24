@@ -1100,6 +1100,18 @@ public class MainGraph extends Application {
             }
         });
 
+        label2.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                setSoundOfMouse();
+                clear(1);
+                try {
+                    createSpell();
+                } catch (Exception e) {
+
+                }
+            }
+        });
+
         backButton.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.PRIMARY) {
                 setSoundOfMouse();
@@ -1111,6 +1123,170 @@ public class MainGraph extends Application {
                 }
             }
         });
+
+    }
+
+    public void createSpell() throws Exception {
+
+
+        Font font = Font.loadFont(new FileInputStream("src/sample/font.ttf"), 20);
+        ArrayList<TextField> textFields = new ArrayList<>();
+
+        Image image = new Image(new FileInputStream("src/sample/shopBackGround.png"));
+        ImageView backGround = new ImageView(image);
+        backGround.setFitWidth(1366);
+        backGround.setFitHeight(768);
+        root.getChildren().add(backGround);
+
+        Image image1 = new Image(new FileInputStream("src/sample/backButton.png"));
+        ImageView backButton = new ImageView(image1);
+        root.getChildren().add(backButton);
+
+        group = getCardForMinion(310, 250, 0, 0, 0, "", "", "", "Spell", "", "");
+        root.getChildren().add(group);
+
+
+        Image image2 = new Image(new FileInputStream("src/sample/logout.png"));
+        ImageView next = new ImageView(image2);
+        next.setOpacity(0.8);
+        next.relocate(580, 490);
+        root.getChildren().add(next);
+
+        Label label = new Label("Next");
+        label.setTextFill(Color.WHITE);
+        label.setFont(font);
+        label.setScaleX(1.5);
+        label.setScaleY(1.5);
+        label.relocate(640, 497);
+        root.getChildren().add(label);
+
+        TextField name = new TextField();
+        name.setPromptText("Name");
+        name.setFocusTraversable(false);
+        name.relocate(580, 250);
+        name.setStyle("-fx-control-inner-background: #8C8484");
+        root.getChildren().add(name);
+        textFields.add(name);
+
+        TextField cost = new TextField();
+        cost.setPromptText("Cost");
+        cost.setFocusTraversable(false);
+        cost.relocate(580, 310);
+        cost.setStyle("-fx-control-inner-background: #8C8484");
+        root.getChildren().add(cost);
+        textFields.add(cost);
+
+        TextField buffs = new TextField();
+        buffs.setPromptText("Buffs");
+        buffs.setFocusTraversable(false);
+        buffs.relocate(580, 370);
+        buffs.setStyle("-fx-control-inner-background: #8C8484");
+        root.getChildren().add(buffs);
+        textFields.add(buffs);
+
+        TextField MP = new TextField();
+        MP.setPromptText("MP");
+        MP.setFocusTraversable(false);
+        MP.relocate(580, 430);
+        MP.setStyle("-fx-control-inner-background: #8C8484");
+        root.getChildren().add(MP);
+        textFields.add(MP);
+
+        for (TextField textField : textFields) {
+            textField.setOnKeyPressed(event -> {
+                root.getChildren().remove(group);
+                group = getCardForMinion(310, 250, 0, 0, MP.getText().matches("[\\d]+") ? Integer.parseInt(MP.getText()) : 0, "", name.getText(), "", "Spell", "", "");
+                root.getChildren().add(group);
+            });
+        }
+
+        next.setOnMouseEntered(event -> {
+            next.setOpacity(1);
+        });
+
+        next.setOnMouseExited(event -> {
+            next.setOpacity(0.8);
+        });
+
+        label.setOnMouseEntered(event -> {
+            next.setOpacity(1);
+        });
+
+        backButton.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                setSoundOfMouse();
+                clear(1);
+                try {
+                    customCardCreate();
+                } catch (Exception e) {
+
+                }
+            }
+        });
+
+        next.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                setSoundOfMouse();
+                root.getChildren().removeAll(backButton, next, label, name, cost, MP, buffs);
+                try {
+                    finalCreateSpell(name.getText(), cost.getText().matches("[\\d]+") ? Integer.parseInt(cost.getText()) : 0, MP.getText().matches("[\\d]+") ? Integer.parseInt(MP.getText()) : 0, buffs.getText());
+                } catch (Exception e) {
+
+                }
+            }
+        });
+
+        label.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                setSoundOfMouse();
+                root.getChildren().removeAll(backButton, next, label, name, cost, MP, buffs);
+                try {
+                    finalCreateSpell(name.getText(), cost.getText().matches("[\\d]+") ? Integer.parseInt(cost.getText()) : 0, MP.getText().matches("[\\d]+") ? Integer.parseInt(MP.getText()) : 0, buffs.getText());
+                } catch (Exception e) {
+
+                }
+            }
+        });
+
+
+    }
+
+    public void finalCreateSpell(String name, int cost, int MP, String buffs) throws Exception {
+
+        Font font = Font.loadFont(new FileInputStream("src/sample/font.ttf"), 20);
+
+        Image image1 = new Image(new FileInputStream("src/sample/backButton.png"));
+        ImageView backButton = new ImageView(image1);
+        root.getChildren().add(backButton);
+
+        Image image2 = new Image(new FileInputStream("src/sample/logout.png"));
+        ImageView next = new ImageView(image2);
+        next.setOpacity(0.8);
+        next.relocate(820, 490);
+        root.getChildren().add(next);
+
+        Label label1 = new Label("Create");
+        label1.setTextFill(Color.WHITE);
+        label1.setFont(font);
+        label1.setScaleY(1.5);
+        label1.setScaleX(1.5);
+        label1.relocate(880, 497);
+        root.getChildren().add(label1);
+
+        
+
+        backButton.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                setSoundOfMouse();
+                try {
+                    clear(1);
+                    createSpell();
+                } catch (Exception e) {
+
+                }
+            }
+        });
+
 
     }
 
