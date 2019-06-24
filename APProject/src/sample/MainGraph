@@ -1230,6 +1230,42 @@ public class MainGraph extends Application {
             next.setOpacity(1);
         });
 
+        for (TextField textField : textFields) {
+            textField.setOnKeyPressed(event -> {
+                root.getChildren().remove(group);
+                if (Shop.getCard(specialPower.getText()) instanceof Spell) {
+                    group = getCardForMinion(310, 250, AP.getText().matches("[\\d]+") ? Integer.parseInt(AP.getText()) : 0, HP.getText().matches("[\\d]+") ? Integer.parseInt(HP.getText()) : 0, MP.getText().matches("[\\d]+") ? Integer.parseInt(MP.getText()) : 0, ((Spell) Shop.getCard(specialPower.getText())).getDesc(), name.getText(), "", "Minion", typeAttack.getText(), "");
+                } else {
+                    group = getCardForMinion(310, 250, AP.getText().matches("[\\d]+") ? Integer.parseInt(AP.getText()) : 0, HP.getText().matches("[\\d]+") ? Integer.parseInt(HP.getText()) : 0, MP.getText().matches("[\\d]+") ? Integer.parseInt(MP.getText()) : 0, "", name.getText(), "", "Minion", typeAttack.getText(), "");
+                }
+                root.getChildren().add(group);
+            });
+        }
+
+        next.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                setSoundOfMouse();
+                root.getChildren().removeAll(backButton, next, label, name, cost, HP, MP, AP, activation, specialPower, attackRange, typeAttack);
+                try {
+                    finalCreateMinion(name.getText(), cost.getText().matches("[\\d]+") ? Integer.parseInt(cost.getText()) : 0, HP.getText().matches("[\\d]+") ? Integer.parseInt(HP.getText()) : 0, AP.getText().matches("[\\d]+") ? Integer.parseInt(AP.getText()) : 0, typeAttack.getText(), attackRange.getText().matches("[\\d]+") ? Integer.parseInt(attackRange.getText()) : 0, specialPower.getText(), MP.getText().matches("[\\d]+") ? Integer.parseInt(MP.getText()) : 0, activation.getText());
+                } catch (Exception e) {
+
+                }
+            }
+        });
+
+        label.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                setSoundOfMouse();
+                root.getChildren().removeAll(backButton, next, label, name, cost, HP, MP, AP, activation, specialPower, attackRange, typeAttack);
+                try {
+                    finalCreateMinion(name.getText(), cost.getText().matches("[\\d]+") ? Integer.parseInt(cost.getText()) : 0, HP.getText().matches("[\\d]+") ? Integer.parseInt(HP.getText()) : 0, AP.getText().matches("[\\d]+") ? Integer.parseInt(AP.getText()) : 0, typeAttack.getText(), attackRange.getText().matches("[\\d]+") ? Integer.parseInt(attackRange.getText()) : 0, specialPower.getText(), MP.getText().matches("[\\d]+") ? Integer.parseInt(MP.getText()) : 0, activation.getText());
+                } catch (Exception e) {
+
+                }
+            }
+        });
+
         backButton.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.PRIMARY) {
                 setSoundOfMouse();
@@ -1410,6 +1446,228 @@ public class MainGraph extends Application {
 
 
     }
+
+    public void finalCreateMinion(String name, int cost, int HP, int AP, String attackType, int attackRange, String specialPower, int MP, String activation) throws Exception {
+
+        Font font = Font.loadFont(new FileInputStream("src/sample/font.ttf"), 20);
+
+        Image image1 = new Image(new FileInputStream("src/sample/backButton.png"));
+        ImageView backButton = new ImageView(image1);
+        root.getChildren().add(backButton);
+
+        Image image2 = new Image(new FileInputStream("src/sample/logout.png"));
+        ImageView next = new ImageView(image2);
+        next.setOpacity(0.8);
+        next.relocate(820, 490);
+        root.getChildren().add(next);
+
+        Label label1 = new Label("Create");
+        label1.setTextFill(Color.WHITE);
+        label1.setFont(font);
+        label1.setScaleY(1.5);
+        label1.setScaleX(1.5);
+        label1.relocate(880, 497);
+        root.getChildren().add(label1);
+
+        Image image = new Image(new FileInputStream("src/image/Minion/custom1/idle.gif"));
+        ImageView imageView = new ImageView(image);
+        imageView.relocate(530, 260);
+        imageView.setScaleX(2);
+        imageView.setScaleY(2);
+        imageView.setOpacity(0.7);
+        root.getChildren().add(imageView);
+
+        Image image3 = new Image(new FileInputStream("src/image/Minion/custom2/idle.gif"));
+        ImageView imageView1 = new ImageView(image3);
+        imageView1.relocate(740, 335);
+        imageView1.setScaleY(2);
+        imageView1.setScaleX(2);
+        imageView1.setOpacity(0.7);
+        root.getChildren().add(imageView1);
+
+        Image image4 = new Image(new FileInputStream("src/image/Minion/custom3/idle.gif"));
+        ImageView imageView2 = new ImageView(image4);
+        imageView2.relocate(880, 260);
+        imageView2.setScaleX(2);
+        imageView2.setScaleY(2);
+        imageView2.setOpacity(0.7);
+        root.getChildren().add(imageView2);
+
+        Image image5 = new Image(new FileInputStream("src/image/Minion/custom4/idle.gif"));
+        ImageView imageView3 = new ImageView(image5);
+        imageView3.relocate(1060, 250);
+        imageView3.setScaleY(2);
+        imageView3.setScaleX(2);
+        imageView3.setOpacity(0.7);
+        root.getChildren().add(imageView3);
+
+        Image image6 = new Image(new FileInputStream("src/image/Minion/custom5/idle.gif"));
+        ImageView imageView4 = new ImageView(image6);
+        imageView4.relocate(1200, 300);
+        imageView4.setScaleX(2);
+        imageView4.setScaleY(2);
+        imageView4.setOpacity(0.7);
+        root.getChildren().add(imageView4);
+
+        label1.setOnMouseEntered(event -> {
+            next.setOpacity(1);
+        });
+
+        next.setOnMouseEntered(event -> {
+            next.setOpacity(1);
+        });
+
+        next.setOnMouseExited(event -> {
+            next.setOpacity(0.8);
+        });
+
+        imageView.setOnMouseExited(event -> {
+            imageView.setOpacity(0.7);
+        });
+
+        imageView.setOnMouseEntered(event -> {
+            imageView.setOpacity(1);
+        });
+
+        imageView1.setOnMouseExited(event -> {
+            imageView1.setOpacity(0.7);
+        });
+
+        imageView1.setOnMouseEntered(event -> {
+            imageView1.setOpacity(1);
+        });
+
+        imageView2.setOnMouseExited(event -> {
+            imageView2.setOpacity(0.7);
+        });
+
+        imageView2.setOnMouseEntered(event -> {
+            imageView2.setOpacity(1);
+        });
+
+        imageView3.setOnMouseExited(event -> {
+            imageView3.setOpacity(0.7);
+        });
+
+        imageView3.setOnMouseEntered(event -> {
+            imageView3.setOpacity(1);
+        });
+
+        imageView4.setOnMouseExited(event -> {
+            imageView4.setOpacity(0.7);
+        });
+
+        imageView4.setOnMouseEntered(event -> {
+            imageView4.setOpacity(1);
+        });
+
+
+        imageView.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                setSoundOfMouse();
+                root.getChildren().remove(group);
+                group = getCardForMinion(310, 250, AP, HP, MP, Shop.getCard(specialPower) instanceof Spell ? ((Spell) Shop.getCard(specialPower)).getDesc() : "", name, "/idle.gif", "Minion", attackType, "custom1");
+                root.getChildren().add(group);
+                imageFolder = "custom1";
+            }
+        });
+
+        imageView1.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                setSoundOfMouse();
+                root.getChildren().remove(group);
+                group = getCardForMinion(310, 250, AP, HP, MP, Shop.getCard(specialPower) instanceof Spell ? ((Spell) Shop.getCard(specialPower)).getDesc() : "", name, "/idle.gif", "Minion", attackType, "custom2");
+                root.getChildren().add(group);
+                imageFolder = "custom2";
+            }
+        });
+
+        imageView2.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                setSoundOfMouse();
+                root.getChildren().remove(group);
+                group = getCardForMinion(310, 250, AP, HP, MP, Shop.getCard(specialPower) instanceof Spell ? ((Spell) Shop.getCard(specialPower)).getDesc() : "", name, "/idle.gif", "Minion", attackType, "custom3");
+                root.getChildren().add(group);
+                imageFolder = "custom3";
+            }
+        });
+
+        imageView3.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                setSoundOfMouse();
+                root.getChildren().remove(group);
+                group = getCardForMinion(310, 250, AP, HP, MP, Shop.getCard(specialPower) instanceof Spell ? ((Spell) Shop.getCard(specialPower)).getDesc() : "", name, "/idle.gif", "Minion", attackType, "custom4");
+                root.getChildren().add(group);
+                imageFolder = "custom4";
+            }
+        });
+
+        imageView4.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                setSoundOfMouse();
+                root.getChildren().remove(group);
+                group = getCardForMinion(310, 250, AP, HP, MP, Shop.getCard(specialPower) instanceof Spell ? ((Spell) Shop.getCard(specialPower)).getDesc() : "", name, "/idle.gif", "Minion", attackType, "custom5");
+                root.getChildren().add(group);
+                imageFolder = "custom5";
+            }
+        });
+
+
+        next.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                setSoundOfMouse();
+                clear(1);
+                ArrayList<Buff> buffs = new ArrayList<>();
+                if (Shop.getCard(specialPower) instanceof Spell) {
+                    for (Buff buff : Shop.getCard(specialPower).getBuffs()) {
+                        buffs.add(buff.copyBuff());
+                    }
+                }
+                Minion minion = new Minion(name, attackType, cost, MP, HP, AP, attackRange, buffs, activation, "attackCell MH", specialPower, false, imageFolder);
+                Shop.getAllCards().add(minion);
+                try {
+                    customCardCreate();
+                } catch (Exception e) {
+
+                }
+            }
+        });
+
+        label1.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                setSoundOfMouse();
+                clear(1);
+                ArrayList<Buff> buffs = new ArrayList<>();
+                if (Shop.getCard(specialPower) instanceof Spell) {
+                    for (Buff buff : Shop.getCard(specialPower).getBuffs()) {
+                        buffs.add(buff.copyBuff());
+                    }
+                }
+                Minion minion = new Minion(name, attackType, cost, MP, HP, AP, attackRange, buffs, activation, "attackCell MH", specialPower, false, imageFolder);
+                Shop.getAllCards().add(minion);
+                try {
+                    customCardCreate();
+                } catch (Exception e) {
+
+                }
+            }
+        });
+
+
+        backButton.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                setSoundOfMouse();
+                try {
+                    clear(1);
+                    createMinion();
+                } catch (Exception e) {
+
+                }
+            }
+        });
+
+    }
+
 
     public void finalCreateHero(String name, int cost, int HP, int AP, String attackType, int attackRange, String specialPower, int MP, int cooldown) throws Exception {
 
@@ -1681,7 +1939,6 @@ public class MainGraph extends Application {
     }
 
     public void setCardInShow(ArrayList<Group> groups, int page) {
-        System.out.println(Shop.getAllCards().size());
         for (int i = 0; i < 4; i++) {
 
             for (int j = 0; j < 2; j++) {
