@@ -41,8 +41,7 @@ import javafx.scene.control.Label;
 import javafx.scene.shape.Circle;
 import sun.plugin.util.UIUtil;
 
-import static java.lang.Math.log;
-import static java.lang.Math.random;
+import static java.lang.Math.*;
 
 
 public class MainGraph extends Application {
@@ -64,6 +63,8 @@ public class MainGraph extends Application {
     private static MediaPlayer backGroundAudioStartInAccount;
     private static AnimationTimer animationTimerForBackGroundMusic;
     private static Integer page = 1;
+    private static Group group;
+    private static String imageFolder;
 
     public static String getPassword() {
         return password;
@@ -403,7 +404,7 @@ public class MainGraph extends Application {
                     boolean createAccount = MainMenu.menu();
                     if (!createAccount) {
                         if (stackPane == null || stackPane.getChildren().size() == 0) {
-                            errorForSameUserName("Choose another username");
+                            errorForSameUserName("Choose another username", false, 700, 227, 1, 1, 1800);
                         }
                     } else {
                         useNameForLoginField.clear();
@@ -431,7 +432,7 @@ public class MainGraph extends Application {
                         delay.play();
                         account = MainMenu.getAccounts().get(MainMenu.indexOfAccount(useNameForLoginField.getText()));
                     } else {
-                        errorForSameUserName("User or pass is invalid");
+                        errorForSameUserName("User or pass is invalid", false, 700, 227, 1, 1, 1800);
                     }
                 }
             }
@@ -439,46 +440,60 @@ public class MainGraph extends Application {
 
     }
 
-    public void errorForSameUserName(String errorString) {
+    public void errorForSameUserName(String errorString, boolean font, int x, int y, double scaleX, double scaleY, int time) {
 
-        stackPane = new StackPane();
-        Rectangle rectangle = new Rectangle(210, 32);
-        rectangle.setFill(Color.RED);
-        rectangle.setArcHeight(30);
-        rectangle.setArcWidth(30);
-        Label label = new Label(errorString);
-        label.setTextFill(Color.WHITE);
-        stackPane.relocate(700, 227);
-        stackPane.getChildren().addAll(rectangle, label);
-        root.getChildren().remove(stackPane);
-        stackPane.setScaleY(0.1);
-        stackPane.setScaleX(0.1);
-        root.getChildren().add(stackPane);
+        try {
 
-        ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(350), stackPane);
-        scaleTransition.setByX(1.1);
-        scaleTransition.setByY(1.1);
-        scaleTransition.setAutoReverse(true);
-
-        scaleTransition.play();
-
-
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(1800);
-                } catch (Exception e) {
-                }
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        stackPane.getChildren().clear();
-                    }
-                });
+            Font font1 = Font.loadFont(new FileInputStream("src/sample/font.ttf"), 20);
+            stackPane = new StackPane();
+            Rectangle rectangle = new Rectangle(210, 32);
+            rectangle.setFill(Color.RED);
+            rectangle.setArcHeight(30);
+            rectangle.setArcWidth(30);
+            Label label = new Label(errorString);
+            label.setScaleX(scaleX);
+            label.setScaleY(scaleY);
+            label.setTextFill(Color.WHITE);
+            stackPane.relocate(x, y);
+            if (!font) {
+                stackPane.getChildren().add(rectangle);
+            } else {
+                label.setFont(font1);
             }
-        });
-        thread.start();
+            stackPane.getChildren().add(label);
+            root.getChildren().remove(stackPane);
+            stackPane.setScaleY(0.1);
+            stackPane.setScaleX(0.1);
+            root.getChildren().add(stackPane);
+
+            ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(350), stackPane);
+            scaleTransition.setByX(1.1);
+            scaleTransition.setByY(1.1);
+            scaleTransition.setAutoReverse(true);
+
+            scaleTransition.play();
+
+
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(time);
+                    } catch (Exception e) {
+                    }
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            stackPane.getChildren().clear();
+                        }
+                    });
+                }
+            });
+            thread.start();
+
+        } catch (Exception e) {
+
+        }
 
     }
 
@@ -535,7 +550,7 @@ public class MainGraph extends Application {
 
                     }
 
-                    if (i == 25) {
+                    if (i == 29) {
                         i = 0;
                     } else {
                         i++;
@@ -647,6 +662,7 @@ public class MainGraph extends Application {
         Image image5 = new Image(new FileInputStream("src/sample/logout.png"));
         ImageView imageView4 = new ImageView(image5);
         imageView4.relocate(1190, 630);
+        imageView4.setOpacity(0.7);
         root.getChildren().add(imageView4);
 
         Label logoutLable = new Label("Logout");
@@ -669,6 +685,18 @@ public class MainGraph extends Application {
 
                 }
             }
+        });
+
+        imageView4.setOnMouseEntered(event -> {
+            imageView4.setOpacity(1);
+        });
+
+        imageView4.setOnMouseExited(event -> {
+            imageView4.setOpacity(0.7);
+        });
+
+        logoutLable.setOnMouseEntered(event -> {
+            imageView4.setOpacity(1);
         });
 
         logoutLable.setOnMouseClicked(event -> {
@@ -726,7 +754,7 @@ public class MainGraph extends Application {
         imageView3.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.PRIMARY) {
                 try {
-                    clear();
+                    clear(1);
                     setSoundOfMouse();
                     shop();
                 } catch (Exception e) {
@@ -737,8 +765,8 @@ public class MainGraph extends Application {
 
     }
 
-    public void clear() {
-        for (int i = 1; i < root.getChildren().size(); i++) {
+    public void clear(int a) {
+        for (int i = a; i < root.getChildren().size(); i++) {
             root.getChildren().remove(i);
             i--;
         }
@@ -773,6 +801,12 @@ public class MainGraph extends Application {
         searchIconView.relocate(80, -232);
         root.getChildren().add(searchIconView);
 
+        Image closeIcon = new Image(new FileInputStream("src/sample/closeIcon.png"));
+        ImageView closeIconView = new ImageView(closeIcon);
+        closeIconView.setScaleY(0.08);
+        closeIconView.setScaleX(0.08);
+        closeIconView.relocate(30, -283);
+
         Image changePageButton = new Image(new FileInputStream("src/sample/changePageButton.png"));
         ImageView changePageRightView = new ImageView(changePageButton);
         changePageRightView.relocate(876, 640);
@@ -805,6 +839,7 @@ public class MainGraph extends Application {
         Image customButton = new Image(new FileInputStream("src/sample/logout.png"));
         ImageView customButtonView = new ImageView(customButton);
         customButtonView.relocate(603, 690);
+        customButtonView.setOpacity(0.7);
         root.getChildren().add(customButtonView);
 
         Label customLable = new Label("Custom Card");
@@ -813,13 +848,27 @@ public class MainGraph extends Application {
         customLable.relocate(640, 700);
         root.getChildren().add(customLable);
 
+        customButtonView.setOnMouseExited(event -> {
+            customButtonView.setOpacity(0.7);
+        });
+
+        customButtonView.setOnMouseEntered(event -> {
+            customButtonView.setOpacity(1);
+        });
+
+        customLable.setOnMouseEntered(event -> {
+            customButtonView.setOpacity(1);
+        });
 
         ArrayList<Group> allCardShow = new ArrayList<Group>();
         setCardInShow(allCardShow, page);
+        setOpacityOfGroups(allCardShow);
+        setBuyOrSellCardInShop(allCardShow);
 
         changePageRightView.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.PRIMARY) {
-                setSoundOfMouse();
+                setSoundForFlipPage();
+                audioPlayerForFlipPage.play();
                 deleteGroup(allCardShow);
                 allCardShow.clear();
                 if (page * 8 >= Shop.getAllCards().size()) {
@@ -828,12 +877,15 @@ public class MainGraph extends Application {
                     page++;
                 }
                 setCardInShow(allCardShow, page);
+                setOpacityOfGroups(allCardShow);
+                setBuyOrSellCardInShop(allCardShow);
             }
         });
 
         goRight.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.PRIMARY) {
-                setSoundOfMouse();
+                setSoundForFlipPage();
+                audioPlayerForFlipPage.play();
                 deleteGroup(allCardShow);
                 allCardShow.clear();
                 if (page * 8 >= Shop.getAllCards().size()) {
@@ -842,12 +894,15 @@ public class MainGraph extends Application {
                     page++;
                 }
                 setCardInShow(allCardShow, page);
+                setOpacityOfGroups(allCardShow);
+                setBuyOrSellCardInShop(allCardShow);
             }
         });
 
         changePageLeftView.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.PRIMARY) {
-                setSoundOfMouse();
+                setSoundForFlipPage();
+                audioPlayerForFlipPage.play();
                 deleteGroup(allCardShow);
                 allCardShow.clear();
                 if (page > 1) {
@@ -860,12 +915,15 @@ public class MainGraph extends Application {
                     }
                 }
                 setCardInShow(allCardShow, page);
+                setOpacityOfGroups(allCardShow);
+                setBuyOrSellCardInShop(allCardShow);
             }
         });
 
         goLeft.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.PRIMARY) {
-                setSoundOfMouse();
+                setSoundForFlipPage();
+                audioPlayerForFlipPage.play();
                 deleteGroup(allCardShow);
                 allCardShow.clear();
                 if (page > 1) {
@@ -878,10 +936,60 @@ public class MainGraph extends Application {
                     }
                 }
                 setCardInShow(allCardShow, page);
+                setOpacityOfGroups(allCardShow);
+                setBuyOrSellCardInShop(allCardShow);
             }
         });
 
-        changePageRightView.setOnMouseClicked(event -> {
+        searchIconView.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                root.getChildren().remove(searchIconView);
+                root.getChildren().add(closeIconView);
+                deleteGroup(allCardShow);
+                allCardShow.clear();
+                setSearchCard(allCardShow, searchBox.getText());
+                setOpacityOfGroups(allCardShow);
+                setBuyOrSellCardInShop(allCardShow);
+            }
+        });
+
+        closeIconView.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                root.getChildren().remove(closeIconView);
+                root.getChildren().add(searchIconView);
+                deleteGroup(allCardShow);
+                allCardShow.clear();
+                setCardInShow(allCardShow, page);
+                setOpacityOfGroups(allCardShow);
+                setBuyOrSellCardInShop(allCardShow);
+            }
+        });
+
+        customButtonView.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                try {
+                    setSoundOfMouse();
+                    deleteGroup(allCardShow);
+                    customCardCreate();
+                } catch (Exception e) {
+
+                }
+            }
+        });
+
+        customLable.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                try {
+                    setSoundOfMouse();
+                    deleteGroup(allCardShow);
+                    customCardCreate();
+                } catch (Exception e) {
+
+                }
+            }
+        });
+
+        backButtonView.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.PRIMARY) {
                 setSoundOfMouse();
                 try {
@@ -894,6 +1002,678 @@ public class MainGraph extends Application {
 
     }
 
+    public void customCardCreate() throws Exception {
+
+        Font font = Font.loadFont(new FileInputStream("src/sample/font.ttf"), 20);
+
+        clear(1);
+        Image image = new Image(new FileInputStream("src/sample/shopBackGround.png"));
+        ImageView backGround = new ImageView(image);
+        backGround.setFitWidth(1366);
+        backGround.setFitHeight(768);
+        root.getChildren().add(backGround);
+
+        Image image1 = new Image(new FileInputStream("src/sample/backButton.png"));
+        ImageView backButton = new ImageView(image1);
+        root.getChildren().add(backButton);
+
+        Label label3 = new Label("What card do you want to create");
+        label3.setTextFill(Color.WHITE);
+        label3.setScaleY(2.5);
+        label3.setScaleX(2.5);
+        label3.relocate(450, 150);
+        label3.setFont(font);
+        root.getChildren().add(label3);
+
+        Label label = new Label("Hero");
+        label.setFont(font);
+        label.setTextFill(Color.WHITE);
+        label.setOpacity(0.7);
+        label.setScaleX(2.5);
+        label.setScaleY(2);
+        label.relocate(350, 300);
+        root.getChildren().add(label);
+
+        Label label1 = new Label("Minion");
+        label1.setFont(font);
+        label1.setTextFill(Color.WHITE);
+        label1.setOpacity(0.7);
+        label1.setScaleX(2.5);
+        label1.setScaleY(2);
+        label1.relocate(350, 400);
+        root.getChildren().add(label1);
+
+        Label label2 = new Label("Spell");
+        label2.setFont(font);
+        label2.setTextFill(Color.WHITE);
+        label2.setOpacity(0.7);
+        label2.setScaleX(2.5);
+        label2.setScaleY(2);
+        label2.relocate(350, 500);
+        root.getChildren().add(label2);
+
+        label.setOnMouseEntered(event -> {
+            label.setOpacity(1);
+        });
+
+        label.setOnMouseExited(event -> {
+            label.setOpacity(0.7);
+        });
+
+        label1.setOnMouseEntered(event -> {
+            label1.setOpacity(1);
+        });
+
+        label1.setOnMouseExited(event -> {
+            label1.setOpacity(0.7);
+        });
+
+        label2.setOnMouseEntered(event -> {
+            label2.setOpacity(1);
+        });
+
+        label2.setOnMouseExited(event -> {
+            label2.setOpacity(0.7);
+        });
+
+        label.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                setSoundOfMouse();
+                clear(1);
+                try {
+                    createHero();
+                } catch (Exception e) {
+
+                }
+            }
+        });
+
+        label1.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                setSoundOfMouse();
+                clear(1);
+                try {
+                    createMinion();
+                } catch (Exception e) {
+
+                }
+            }
+        });
+
+        backButton.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                setSoundOfMouse();
+                clear(1);
+                try {
+                    shop();
+                } catch (Exception e) {
+
+                }
+            }
+        });
+
+    }
+
+    public void createMinion() throws Exception {
+
+        Font font = Font.loadFont(new FileInputStream("src/sample/font.ttf"), 20);
+        ArrayList<TextField> textFields = new ArrayList<>();
+
+        Image image = new Image(new FileInputStream("src/sample/shopBackGround.png"));
+        ImageView backGround = new ImageView(image);
+        backGround.setFitWidth(1366);
+        backGround.setFitHeight(768);
+        root.getChildren().add(backGround);
+
+        Image image1 = new Image(new FileInputStream("src/sample/backButton.png"));
+        ImageView backButton = new ImageView(image1);
+        root.getChildren().add(backButton);
+
+        group = getCardForMinion(310, 250, 0, 0, 0, "", "", "", "Minion", "", "");
+        root.getChildren().add(group);
+
+        Image image2 = new Image(new FileInputStream("src/sample/logout.png"));
+        ImageView next = new ImageView(image2);
+        next.setOpacity(0.8);
+        next.relocate(820, 490);
+        root.getChildren().add(next);
+
+        Label label = new Label("Next");
+        label.setTextFill(Color.WHITE);
+        label.setFont(font);
+        label.setScaleX(1.5);
+        label.setScaleY(1.5);
+        label.relocate(883, 497);
+        root.getChildren().add(label);
+
+        TextField name = new TextField();
+        name.setPromptText("Name");
+        name.setFocusTraversable(false);
+        name.relocate(580, 250);
+        name.setStyle("-fx-control-inner-background: #8C8484");
+        root.getChildren().add(name);
+        textFields.add(name);
+
+        TextField cost = new TextField();
+        cost.setPromptText("Cost");
+        cost.setFocusTraversable(false);
+        cost.relocate(580, 310);
+        cost.setStyle("-fx-control-inner-background: #8C8484");
+        root.getChildren().add(cost);
+        textFields.add(cost);
+
+        TextField HP = new TextField();
+        HP.setPromptText("HP");
+        HP.setFocusTraversable(false);
+        HP.relocate(580, 370);
+        HP.setStyle("-fx-control-inner-background: #8C8484");
+        root.getChildren().add(HP);
+        textFields.add(HP);
+
+        TextField AP = new TextField();
+        AP.setPromptText("AP");
+        AP.setFocusTraversable(false);
+        AP.relocate(580, 430);
+        AP.setStyle("-fx-control-inner-background: #8C8484");
+        root.getChildren().add(AP);
+        textFields.add(AP);
+
+        TextField typeAttack = new TextField();
+        typeAttack.setPromptText("Type attack");
+        typeAttack.setFocusTraversable(false);
+        typeAttack.relocate(580, 490);
+        typeAttack.setStyle("-fx-control-inner-background: #8C8484");
+        root.getChildren().add(typeAttack);
+        textFields.add(typeAttack);
+
+        TextField attackRange = new TextField();
+        attackRange.setPromptText("Attack range");
+        attackRange.setFocusTraversable(false);
+        attackRange.relocate(820, 250);
+        attackRange.setStyle("-fx-control-inner-background: #8C8484");
+        root.getChildren().add(attackRange);
+        textFields.add(attackRange);
+
+        TextField specialPower = new TextField();
+        specialPower.setPromptText("Special power");
+        specialPower.setFocusTraversable(false);
+        specialPower.relocate(820, 310);
+        specialPower.setStyle("-fx-control-inner-background: #8C8484");
+        root.getChildren().add(specialPower);
+        textFields.add(specialPower);
+
+        TextField MP = new TextField();
+        MP.setPromptText("MP");
+        MP.setFocusTraversable(false);
+        MP.relocate(820, 370);
+        MP.setStyle("-fx-control-inner-background: #8C8484");
+        root.getChildren().add(MP);
+        textFields.add(MP);
+
+        TextField activation = new TextField();
+        activation.setPromptText("activation");
+        activation.setFocusTraversable(false);
+        activation.relocate(820, 430);
+        activation.setStyle("-fx-control-inner-background: #8C8484");
+        root.getChildren().add(activation);
+        textFields.add(activation);
+
+        next.setOnMouseEntered(event -> {
+            next.setOpacity(1);
+        });
+
+        next.setOnMouseExited(event -> {
+            next.setOpacity(0.8);
+        });
+
+        label.setOnMouseEntered(event -> {
+            next.setOpacity(1);
+        });
+
+        backButton.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                setSoundOfMouse();
+                clear(1);
+                try {
+                    customCardCreate();
+                } catch (Exception e) {
+
+                }
+            }
+        });
+
+    }
+
+    public void createHero() throws Exception {
+
+        Font font = Font.loadFont(new FileInputStream("src/sample/font.ttf"), 20);
+        ArrayList<TextField> textFields = new ArrayList<>();
+
+        Image image = new Image(new FileInputStream("src/sample/shopBackGround.png"));
+        ImageView backGround = new ImageView(image);
+        backGround.setFitWidth(1366);
+        backGround.setFitHeight(768);
+        root.getChildren().add(backGround);
+
+        Image image1 = new Image(new FileInputStream("src/sample/backButton.png"));
+        ImageView backButton = new ImageView(image1);
+        root.getChildren().add(backButton);
+
+        Image image2 = new Image(new FileInputStream("src/sample/logout.png"));
+        ImageView next = new ImageView(image2);
+        next.setOpacity(0.8);
+        next.relocate(820, 490);
+        root.getChildren().add(next);
+
+        Label label = new Label("Next");
+        label.setTextFill(Color.WHITE);
+        label.setFont(font);
+        label.setScaleX(1.5);
+        label.setScaleY(1.5);
+        label.relocate(883, 497);
+        root.getChildren().add(label);
+
+        TextField name = new TextField();
+        name.setPromptText("Name");
+        name.setFocusTraversable(false);
+        name.relocate(580, 250);
+        name.setStyle("-fx-control-inner-background: #8C8484");
+        root.getChildren().add(name);
+        textFields.add(name);
+
+        TextField cost = new TextField();
+        cost.setPromptText("Cost");
+        cost.setFocusTraversable(false);
+        cost.relocate(580, 310);
+        cost.setStyle("-fx-control-inner-background: #8C8484");
+        root.getChildren().add(cost);
+        textFields.add(cost);
+
+        TextField HP = new TextField();
+        HP.setPromptText("HP");
+        HP.setFocusTraversable(false);
+        HP.relocate(580, 370);
+        HP.setStyle("-fx-control-inner-background: #8C8484");
+        root.getChildren().add(HP);
+        textFields.add(HP);
+
+        TextField AP = new TextField();
+        AP.setPromptText("AP");
+        AP.setFocusTraversable(false);
+        AP.relocate(580, 430);
+        AP.setStyle("-fx-control-inner-background: #8C8484");
+        root.getChildren().add(AP);
+        textFields.add(AP);
+
+        TextField typeAttack = new TextField();
+        typeAttack.setPromptText("Type attack");
+        typeAttack.setFocusTraversable(false);
+        typeAttack.relocate(580, 490);
+        typeAttack.setStyle("-fx-control-inner-background: #8C8484");
+        root.getChildren().add(typeAttack);
+        textFields.add(typeAttack);
+
+        TextField attackRange = new TextField();
+        attackRange.setPromptText("Attack range");
+        attackRange.setFocusTraversable(false);
+        attackRange.relocate(820, 250);
+        attackRange.setStyle("-fx-control-inner-background: #8C8484");
+        root.getChildren().add(attackRange);
+        textFields.add(attackRange);
+
+        TextField specialPower = new TextField();
+        specialPower.setPromptText("Special power");
+        specialPower.setFocusTraversable(false);
+        specialPower.relocate(820, 310);
+        specialPower.setStyle("-fx-control-inner-background: #8C8484");
+        root.getChildren().add(specialPower);
+        textFields.add(specialPower);
+
+        TextField MP = new TextField();
+        MP.setPromptText("MP");
+        MP.setFocusTraversable(false);
+        MP.relocate(820, 370);
+        MP.setStyle("-fx-control-inner-background: #8C8484");
+        root.getChildren().add(MP);
+        textFields.add(MP);
+
+        TextField cooldown = new TextField();
+        cooldown.setPromptText("cooldown");
+        cooldown.setFocusTraversable(false);
+        cooldown.relocate(820, 430);
+        cooldown.setStyle("-fx-control-inner-background: #8C8484");
+        root.getChildren().add(cooldown);
+        textFields.add(cooldown);
+
+        group = getCardForMinion(310, 250, 0, 0, 0, "", "", "", "Hero", "", "");
+        root.getChildren().add(group);
+
+        next.setOnMouseEntered(event -> {
+            next.setOpacity(1);
+        });
+
+        next.setOnMouseExited(event -> {
+            next.setOpacity(0.8);
+        });
+
+        label.setOnMouseEntered(event -> {
+            next.setOpacity(1);
+        });
+
+        for (TextField textField : textFields) {
+            textField.setOnKeyPressed(event -> {
+                root.getChildren().remove(group);
+                if (Shop.getCard(specialPower.getText()) instanceof Spell) {
+                    group = getCardForMinion(310, 250, AP.getText().matches("[\\d]+") ? Integer.parseInt(AP.getText()) : 0, HP.getText().matches("[\\d]+") ? Integer.parseInt(HP.getText()) : 0, 0, ((Spell) Shop.getCard(specialPower.getText())).getDesc(), name.getText(), "", "Hero", typeAttack.getText(), "");
+                } else {
+                    group = getCardForMinion(310, 250, AP.getText().matches("[\\d]+") ? Integer.parseInt(AP.getText()) : 0, HP.getText().matches("[\\d]+") ? Integer.parseInt(HP.getText()) : 0, 0, "", name.getText(), "", "Hero", typeAttack.getText(), "");
+                }
+                root.getChildren().add(group);
+            });
+        }
+
+        next.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                setSoundOfMouse();
+                root.getChildren().removeAll(backButton, next, label, name, cost, HP, MP, AP, cooldown, specialPower, attackRange, typeAttack);
+                try {
+                    finalCreateHero(name.getText(), cost.getText().matches("[\\d]+") ? Integer.parseInt(cost.getText()) : 0, HP.getText().matches("[\\d]+") ? Integer.parseInt(HP.getText()) : 0, AP.getText().matches("[\\d]+") ? Integer.parseInt(AP.getText()) : 0, typeAttack.getText(), attackRange.getText().matches("[\\d]+") ? Integer.parseInt(attackRange.getText()) : 0, specialPower.getText(), MP.getText().matches("[\\d]+") ? Integer.parseInt(MP.getText()) : 0, cooldown.getText().matches("[\\d]+") ? Integer.parseInt(cooldown.getText()) : 0);
+                } catch (Exception e) {
+
+                }
+            }
+        });
+
+        label.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                setSoundOfMouse();
+                root.getChildren().removeAll(backButton, next, label, name, cost, HP, MP, AP, cooldown, specialPower, attackRange, typeAttack);
+                try {
+                    finalCreateHero(name.getText(), cost.getText().matches("[\\d]+") ? Integer.parseInt(cost.getText()) : 0, HP.getText().matches("[\\d]+") ? Integer.parseInt(HP.getText()) : 0, AP.getText().matches("[\\d]+") ? Integer.parseInt(AP.getText()) : 0, typeAttack.getText(), attackRange.getText().matches("[\\d]+") ? Integer.parseInt(attackRange.getText()) : 0, specialPower.getText(), MP.getText().matches("[\\d]+") ? Integer.parseInt(MP.getText()) : 0, cooldown.getText().matches("[\\d]+") ? Integer.parseInt(cooldown.getText()) : 0);
+                } catch (Exception e) {
+
+                }
+            }
+        });
+
+        backButton.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                setSoundOfMouse();
+                clear(1);
+                try {
+                    customCardCreate();
+                } catch (Exception e) {
+
+                }
+            }
+        });
+
+
+    }
+
+    public void finalCreateHero(String name, int cost, int HP, int AP, String attackType, int attackRange, String specialPower, int MP, int cooldown) throws Exception {
+
+        Font font = Font.loadFont(new FileInputStream("src/sample/font.ttf"), 20);
+
+        Image image1 = new Image(new FileInputStream("src/sample/backButton.png"));
+        ImageView backButton = new ImageView(image1);
+        root.getChildren().add(backButton);
+
+        Image image2 = new Image(new FileInputStream("src/sample/logout.png"));
+        ImageView next = new ImageView(image2);
+        next.setOpacity(0.8);
+        next.relocate(820, 490);
+        root.getChildren().add(next);
+
+        Label label1 = new Label("Create");
+        label1.setTextFill(Color.WHITE);
+        label1.setFont(font);
+        label1.setScaleY(1.5);
+        label1.setScaleX(1.5);
+        label1.relocate(880, 497);
+        root.getChildren().add(label1);
+
+        Image image = new Image(new FileInputStream("src/image/Hero/custom1/idle.gif"));
+        ImageView imageView = new ImageView(image);
+        imageView.relocate(530, 260);
+        imageView.setScaleX(2);
+        imageView.setScaleY(2);
+        imageView.setOpacity(0.7);
+        root.getChildren().add(imageView);
+
+        Image image3 = new Image(new FileInputStream("src/image/Hero/custom2/idle.gif"));
+        ImageView imageView1 = new ImageView(image3);
+        imageView1.relocate(740, 335);
+        imageView1.setScaleY(2);
+        imageView1.setScaleX(2);
+        imageView1.setOpacity(0.7);
+        root.getChildren().add(imageView1);
+
+        Image image4 = new Image(new FileInputStream("src/image/Hero/custom3/idle.gif"));
+        ImageView imageView2 = new ImageView(image4);
+        imageView2.relocate(880, 260);
+        imageView2.setScaleX(2);
+        imageView2.setScaleY(2);
+        imageView2.setOpacity(0.7);
+        root.getChildren().add(imageView2);
+
+        Image image5 = new Image(new FileInputStream("src/image/Hero/custom4/idle.gif"));
+        ImageView imageView3 = new ImageView(image5);
+        imageView3.relocate(1060, 250);
+        imageView3.setScaleY(2);
+        imageView3.setScaleX(2);
+        imageView3.setOpacity(0.7);
+        root.getChildren().add(imageView3);
+
+        Image image6 = new Image(new FileInputStream("src/image/Hero/custom5/idle.gif"));
+        ImageView imageView4 = new ImageView(image6);
+        imageView4.relocate(1200, 300);
+        imageView4.setScaleX(2);
+        imageView4.setScaleY(2);
+        imageView4.setOpacity(0.7);
+        root.getChildren().add(imageView4);
+
+        backButton.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                setSoundOfMouse();
+                try {
+                    clear(1);
+                    createHero();
+                } catch (Exception e) {
+
+                }
+            }
+        });
+
+        label1.setOnMouseEntered(event -> {
+            next.setOpacity(1);
+        });
+
+        next.setOnMouseEntered(event -> {
+            next.setOpacity(1);
+        });
+
+        next.setOnMouseExited(event -> {
+            next.setOpacity(0.8);
+        });
+
+        imageView.setOnMouseExited(event -> {
+            imageView.setOpacity(0.7);
+        });
+
+        imageView.setOnMouseEntered(event -> {
+            imageView.setOpacity(1);
+        });
+
+        imageView1.setOnMouseExited(event -> {
+            imageView1.setOpacity(0.7);
+        });
+
+        imageView1.setOnMouseEntered(event -> {
+            imageView1.setOpacity(1);
+        });
+
+        imageView2.setOnMouseExited(event -> {
+            imageView2.setOpacity(0.7);
+        });
+
+        imageView2.setOnMouseEntered(event -> {
+            imageView2.setOpacity(1);
+        });
+
+        imageView3.setOnMouseExited(event -> {
+            imageView3.setOpacity(0.7);
+        });
+
+        imageView3.setOnMouseEntered(event -> {
+            imageView3.setOpacity(1);
+        });
+
+        imageView4.setOnMouseExited(event -> {
+            imageView4.setOpacity(0.7);
+        });
+
+        imageView4.setOnMouseEntered(event -> {
+            imageView4.setOpacity(1);
+        });
+
+        imageView.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                setSoundOfMouse();
+                root.getChildren().remove(group);
+                group = getCardForMinion(310, 250, AP, HP, MP, Shop.getCard(specialPower) instanceof Spell ? ((Spell) Shop.getCard(specialPower)).getDesc() : "", name, "/idle.gif", "Hero", attackType, "custom1");
+                root.getChildren().add(group);
+                imageFolder = "custom1";
+            }
+        });
+
+        imageView1.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                setSoundOfMouse();
+                root.getChildren().remove(group);
+                group = getCardForMinion(310, 250, AP, HP, MP, Shop.getCard(specialPower) instanceof Spell ? ((Spell) Shop.getCard(specialPower)).getDesc() : "", name, "/idle.gif", "Hero", attackType, "custom2");
+                root.getChildren().add(group);
+                imageFolder = "custom2";
+            }
+        });
+
+        imageView2.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                setSoundOfMouse();
+                root.getChildren().remove(group);
+                group = getCardForMinion(310, 250, AP, HP, MP, Shop.getCard(specialPower) instanceof Spell ? ((Spell) Shop.getCard(specialPower)).getDesc() : "", name, "/idle.gif", "Hero", attackType, "custom3");
+                root.getChildren().add(group);
+                imageFolder = "custom3";
+            }
+        });
+
+        imageView3.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                setSoundOfMouse();
+                root.getChildren().remove(group);
+                group = getCardForMinion(310, 250, AP, HP, MP, Shop.getCard(specialPower) instanceof Spell ? ((Spell) Shop.getCard(specialPower)).getDesc() : "", name, "/idle.gif", "Hero", attackType, "custom4");
+                root.getChildren().add(group);
+                imageFolder = "custom4";
+            }
+        });
+
+        imageView4.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                setSoundOfMouse();
+                root.getChildren().remove(group);
+                group = getCardForMinion(310, 250, AP, HP, MP, Shop.getCard(specialPower) instanceof Spell ? ((Spell) Shop.getCard(specialPower)).getDesc() : "", name, "/idle.gif", "Hero", attackType, "custom5");
+                root.getChildren().add(group);
+                imageFolder = "custom5";
+            }
+        });
+
+        next.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                setSoundOfMouse();
+                clear(1);
+                ArrayList<Buff> buffs = new ArrayList<>();
+                if (Shop.getCard(specialPower) instanceof Spell) {
+                    for (Buff buff : Shop.getCard(specialPower).getBuffs()) {
+                        buffs.add(buff.copyBuff());
+                    }
+                }
+                Hero hero = new Hero(name, attackType, cost, MP, HP, AP, attackRange, cooldown, Shop.getCard(specialPower) instanceof Spell ? ((Spell) Shop.getCard(specialPower)).getDesc() : "Don't have special power", buffs, "one enemy", true, false, false, imageFolder);
+                Shop.getAllCards().add(hero);
+                try {
+                    customCardCreate();
+                } catch (Exception e) {
+
+                }
+            }
+        });
+
+        label1.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                if (event.getButton() == MouseButton.PRIMARY) {
+                    setSoundOfMouse();
+                    clear(1);
+                    ArrayList<Buff> buffs = new ArrayList<>();
+                    if (Shop.getCard(specialPower) instanceof Spell) {
+                        for (Buff buff : Shop.getCard(specialPower).getBuffs()) {
+                            buffs.add(buff);
+                        }
+                    }
+                    Hero hero = new Hero(name, attackType, cost, MP, HP, AP, attackRange, cooldown, Shop.getCard(specialPower) instanceof Spell ? ((Spell) Shop.getCard(specialPower)).getDesc() : "Don't have special power", buffs, "", true, false, false, imageFolder);
+                    Shop.getAllCards().add(hero);
+                    try {
+                        customCardCreate();
+                    } catch (Exception e) {
+
+                    }
+                }
+            }
+        });
+
+    }
+
+    public void setSearchCard(ArrayList<Group> groups, String name) {
+
+        Card card = Shop.getCard(name);
+        Group group = new Group();
+
+        try {
+            Font font = Font.loadFont(new FileInputStream("src/sample/font.ttf"), 20);
+
+            if (card == null) {
+                Label label = new Label("Don't exist this card");
+                label.setTextFill(Color.WHITE);
+                label.setScaleY(3);
+                label.setScaleX(3);
+                label.relocate(610, 370);
+                label.setFont(font);
+                group.getChildren().add(label);
+                groups.add(group);
+                root.getChildren().add(group);
+            } else {
+                if (card instanceof Spell) {
+                    group = getCardForMinion(115, 65, 0, 0, card.MP, ((Spell) card).getDesc(), card.name, "/idle.gif", "Spell", "", card.imageName);
+                    groups.add(group);
+                    root.getChildren().add(group);
+                } else if (card instanceof Minion) {
+                    group = getCardForMinion(115, 65, ((Minion) card).getAP(), ((Minion) card).getHP(), card.MP, ((Minion) card).getSpecialPower(), card.name, "/idle.gif", "Minion", ((Minion) card).getClas(), card.imageName);
+                    groups.add(group);
+                    root.getChildren().add(group);
+                } else if (card instanceof Hero) {
+                    group = getCardForMinion(115, 65, ((Hero) card).getAP(), ((Hero) card).getHP(), card.MP, ((Hero) card).getSpecialPower(), card.name, "/idle.gif", "Hero", ((Hero) card).getClas(), card.imageName);
+                    groups.add(group);
+                    root.getChildren().add(group);
+                } else {
+                    group = getCardForMinion(115, 65, 0, 0, 0, ((Item) card).getDesc(), card.name, "/idle.gif", "Item", "", card.imageName);
+                    groups.add(group);
+                    root.getChildren().add(group);
+                }
+            }
+        } catch (Exception e) {
+
+        }
+
+    }
+
     public void deleteGroup(ArrayList<Group> groups) {
         for (Group group : groups) {
             root.getChildren().remove(group);
@@ -901,29 +1681,29 @@ public class MainGraph extends Application {
     }
 
     public void setCardInShow(ArrayList<Group> groups, int page) {
-
+        System.out.println(Shop.getAllCards().size());
         for (int i = 0; i < 4; i++) {
 
             for (int j = 0; j < 2; j++) {
 
-                if ((page - 1) * 8 + i * 2 + j + 1 == Shop.getAllCards().size()) {
+                if ((page - 1) * 8 + i * 2 + j == Shop.getAllCards().size()) {
                     return;
                 }
                 Card card = Shop.getAllCards().get((page - 1) * 8 + i * 2 + j);
                 if (card instanceof Spell) {
-                    Group group = getCardForMinion(115 + i * 300, 65 + j * 320, 0, 0, card.MP, ((Spell) card).getDesc(), card.name, "1.gif", "Spell", "");
+                    Group group = getCardForMinion(115 + i * 300, 65 + j * 320, 0, 0, card.MP, ((Spell) card).getDesc(), card.name, "/idle.gif", "Spell", "", card.imageName);
                     groups.add(group);
                     root.getChildren().add(group);
                 } else if (card instanceof Minion) {
-                    Group group = getCardForMinion(115 + i * 300, 65 + j * 320, ((Minion) card).getAP(), ((Minion) card).getHP(), card.MP, ((Minion) card).getSpecialPower(), card.name, "1.gif", "Minion", ((Minion) card).getClas());
+                    Group group = getCardForMinion(115 + i * 300, 65 + j * 320, ((Minion) card).getAP(), ((Minion) card).getHP(), card.MP, ((Minion) card).getSpecialPower(), card.name, "/idle.gif", "Minion", ((Minion) card).getClas(), card.imageName);
                     groups.add(group);
                     root.getChildren().add(group);
                 } else if (card instanceof Hero) {
-                    Group group = getCardForMinion(115 + i * 300, 65 + j * 320, ((Hero) card).getAP(), ((Hero) card).getHP(), card.MP, ((Hero) card).getSpecialPower(), card.name, "1.gif", "Hero", ((Hero) card).getClas());
+                    Group group = getCardForMinion(115 + i * 300, 65 + j * 320, ((Hero) card).getAP(), ((Hero) card).getHP(), card.MP, ((Hero) card).getSpecialPower(), card.name, "/idle.gif", "Hero", ((Hero) card).getClas(), card.imageName);
                     groups.add(group);
                     root.getChildren().add(group);
                 } else {
-                    Group group = getCardForMinion(115 + i * 300, 65 + j * 320, 0, 0, 0, ((Item) card).getDesc(), card.name, "1.gif", "Item", "");
+                    Group group = getCardForMinion(115 + i * 300, 65 + j * 320, 0, 0, 0, ((Item) card).getDesc(), card.name, "/idle.gif", "Item", "", card.imageName);
                     groups.add(group);
                     root.getChildren().add(group);
                 }
@@ -968,9 +1748,41 @@ public class MainGraph extends Application {
         scene.setCursor(cursor);
     }
 
-    public Group getCardForMinion(int x, int y, int AP, int HP, int MP, String desc, String name, String imageName, String type, String typeAttack) {
+    public void setBuyOrSellCardInShop(ArrayList<Group> groups) {
+
+        for (Group group : groups) {
+            group.setOnMouseClicked(event -> {
+                if (event.getButton() == MouseButton.PRIMARY) {
+                    setSoundOfMouse();
+                    String nameOfCard = ((Label) ((StackPane) group.getChildren().get(2)).getChildren().get(1)).getText();
+                    int a = Shop.buy(nameOfCard, account);
+                    if (a == 1) {
+                        errorForSameUserName("You don't have enough money", true, 600, 350, 2.5, 2.5, 700);
+                    } else if (a == 2) {
+                        errorForSameUserName("You can't buy more item", true, 630, 350, 2.5, 2.5, 700);
+                    } else {
+                        errorForSameUserName("Successful shopping", true, 630, 350, 2.5, 2.5, 700);
+                    }
+                }
+            });
+        }
+    }
+
+    public void setOpacityOfGroups(ArrayList<Group> groups) {
+        for (Group group : groups) {
+            group.setOnMouseEntered(event -> {
+                group.setOpacity(1);
+            });
+            group.setOnMouseExited(event -> {
+                group.setOpacity(0.85);
+            });
+        }
+    }
+
+    public Group getCardForMinion(int x, int y, int AP, int HP, int MP, String desc, String name, String imageName, String type, String typeAttack, String imageFolder) {
 
         Group group = new Group();
+        group.setOpacity(0.85);
 
         try {
 
@@ -979,19 +1791,6 @@ public class MainGraph extends Application {
             backGroundCard.relocate(x, y);
             group.getChildren().add(backGroundCard);
 
-            if (!(type.matches("Hero")) && !(type.matches("Item"))) {
-                Image image1 = new Image(new FileInputStream("src/sample/mana.png"));
-                ImageView manaView = new ImageView(image1);
-                Label manaLable = new Label(Integer.toString(MP));
-                manaLable.setScaleX(1.3);
-                manaLable.setScaleY(1.3);
-                manaLable.setTextFill(Color.DARKBLUE);
-                manaLable.setStyle("-fx-font-weight: bold");
-                StackPane stackPane = new StackPane();
-                stackPane.getChildren().addAll(manaView, manaLable);
-                stackPane.relocate(x - 26, y - 30);
-                group.getChildren().add(stackPane);
-            }
 
             Label minionLable = new Label(type.toUpperCase());
             if (type.matches("Minion")) {
@@ -1015,6 +1814,20 @@ public class MainGraph extends Application {
             nameLable.setScaleX(1.2);
             stackPane1.getChildren().addAll(rectangle, nameLable);
             group.getChildren().add(stackPane1);
+
+            if (!(type.matches("Hero")) && !(type.matches("Item"))) {
+                Image image1 = new Image(new FileInputStream("src/sample/mana.png"));
+                ImageView manaView = new ImageView(image1);
+                Label manaLable = new Label(Integer.toString(MP));
+                manaLable.setScaleX(1.3);
+                manaLable.setScaleY(1.3);
+                manaLable.setTextFill(Color.DARKBLUE);
+                manaLable.setStyle("-fx-font-weight: bold");
+                StackPane stackPane = new StackPane();
+                stackPane.getChildren().addAll(manaView, manaLable);
+                stackPane.relocate(x - 26, y - 30);
+                group.getChildren().add(stackPane);
+            }
 
             if (!(type.matches("Spell")) && !(type.matches("Item"))) {
 
@@ -1066,17 +1879,19 @@ public class MainGraph extends Application {
             stackPane5.getChildren().addAll(rectangle4, line2);
             group.getChildren().add(stackPane4);
 
-            StackPane stackPane6 = new StackPane();
-            Rectangle rectangle5 = new Rectangle(226, 0);
-            Image image2 = new Image(new FileInputStream("src/image/" + type + "/" + imageName));
-            ImageView imageView = new ImageView(image2);
-            imageView.setFitWidth(100);
-            imageView.setFitHeight(100);
-            stackPane6.getChildren().addAll(rectangle5, imageView);
-            stackPane6.relocate(x, y + 15);
-            imageView.setScaleX(1.2);
-            imageView.setScaleY(1.2);
-            group.getChildren().add(stackPane6);
+            if (!imageName.matches("")) {
+                StackPane stackPane6 = new StackPane();
+                Rectangle rectangle5 = new Rectangle(226, 0);
+                Image image2 = new Image(new FileInputStream("src/image/" + type + "/" + imageFolder + imageName));
+                ImageView imageView = new ImageView(image2);
+                imageView.setFitWidth(100);
+                imageView.setFitHeight(100);
+                stackPane6.getChildren().addAll(rectangle5, imageView);
+                stackPane6.relocate(x, y + 15);
+                imageView.setScaleX(1.2);
+                imageView.setScaleY(1.2);
+                group.getChildren().add(stackPane6);
+            }
 
         } catch (Exception e) {
 
