@@ -1,7 +1,5 @@
 package sample;
 
-import sun.applet.Main;
-
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -14,20 +12,20 @@ public class MainMenu {
         accounts.add(account);
     }
 
-    /*public static void saveAccounts() {
+    public static void saveAccounts() {
         File.saveAccountInFile(accounts);
     }
 
     public static void loadAccounts() {
         File.loadAccount();
         Main.setScannerUser();
-    }*/
+    }
 
     public static ArrayList<Account> getAccounts() {
         return accounts;
     }
 
-    /*public static void rankAccounts() {
+    public static void rankAccounts() {
         for (int i = accounts.size() - 1; i > 0; i--) {
             for (int j = 0; j < accounts.size() - 1; j++) {
                 if (accounts.get(j).getCounterOfWin() < accounts.get(j + 1).getCounterOfWin()) {
@@ -41,9 +39,9 @@ public class MainMenu {
                 }
             }
         }
-    }*/
+    }
 
-    /*public static void showLeaderboard() {
+    public static void showLeaderboard() {
         for (Account account : accounts) {
             account.setCounterOfWin();
         }
@@ -52,7 +50,7 @@ public class MainMenu {
             System.out.printf("%d - UserName : %s - Wins : ", accounts.indexOf(account) + 1, account.getUsername());
             System.out.println(account.getCounterOfWin());
         }
-    }*/
+    }
 
     public static void help() {
         System.out.println("1. create account [username]");
