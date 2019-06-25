@@ -1,3 +1,5 @@
+package sample;
+
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -8,11 +10,12 @@ public class File {
     public static void saveAccountInFile(ArrayList<Account> accounts) {
 
         try {
-            FileWriter fileWriter = new FileWriter("/home/shajusoni/IdeaProjects/APProject/account.txt");
+            FileWriter fileWriter = new FileWriter("/home/shajusoni/IdeaProjects/APProjectGraph/account.txt");
             for (Account account : accounts) {
                 fileWriter.write("Username:" + account.getUsername() + "\n");
                 fileWriter.write("Password:" + account.getPassword() + "\n");
                 fileWriter.write("Money:" + account.getBudget() + "\n");
+                fileWriter.write("ProfilePhoto:" + account.getProfilePhoto() + "\n");
                 fileWriter.write("MatchHistory:\n");
                 if (account.getAllMatches().size() == 0) {
                     fileWriter.write("None\n");
@@ -74,6 +77,7 @@ public class File {
         }
         String command;
         Matcher matcher;
+        Pattern photoPat = Pattern.compile("^ProfilePhoto:(?<profilePhoto>\\p{all}+)$");
         Pattern usernamePat = Pattern.compile("^Username:(?<username>\\p{all}+)$");
         Pattern passwordPat = Pattern.compile("^Password:(?<password>\\p{all}+)$");
         Pattern matchHistoryPat = Pattern.compile("^[\\d]+[)]name:(?<name>\\p{all}+)win:(?<win>\\p{all}+)time:(?<time>\\p{all}+)$");
@@ -175,6 +179,11 @@ public class File {
                     command = Main.getScanner().nextLine();
                     matcher = collectionPat.matcher(command);
                 }
+            }
+
+            matcher = photoPat.matcher(command);
+            if (matcher.find()) {
+                account.setProfilePhoto(matcher.group("profilePhoto"));
             }
 
             if (command.matches("finish")) {
