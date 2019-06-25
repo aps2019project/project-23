@@ -1,3 +1,5 @@
+package sample;
+
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,6 +14,15 @@ public class Account {
     private Collection collection;
     private ArrayList<Match> allMatches = new ArrayList<Match>();
     private int numberOfPlayer;
+    private String profilePhoto = "";
+
+    public void setProfilePhoto(String profilePhoto) {
+        this.profilePhoto = profilePhoto;
+    }
+
+    public String getProfilePhoto() {
+        return profilePhoto;
+    }
 
     public ArrayList<Match> getAllMatches() {
         return allMatches;
