@@ -87,3 +87,64 @@ public class Account {
         budget += money;
     }
 
+    public void setCounterOfWin() {
+        int counterOfWin = 0;
+        for (Match match : allMatches) {
+            if (match.getWinOrLose().matches("win")) {
+                counterOfWin++;
+            }
+        }
+        this.counterOfWin = counterOfWin;
+    }
+
+    public void help() {
+        System.out.println("1. enter collection");
+        System.out.println("2. enter shop");
+        System.out.println("3. enter battle");
+        System.out.println("4. match history");
+        System.out.println("5. exit");
+        System.out.println("6. logout");
+    }
+
+    public void matchHistory() {
+        for (int i = 0; i < allMatches.size(); i++) {
+            System.out.printf("%d.", i+1);
+            System.out.println("    ");
+            allMatches.get(i).show();
+        }
+    }
+
+    public void menu(Account account) {
+        String command;
+        Pattern enterPat = Pattern.compile("^enter (?<entry>\\p{all}+)$");
+        Matcher matcher;
+        while (true) {
+            command = Main.getScanner().nextLine();
+            command = command.trim();
+            if (command.toLowerCase().matches("match history")) {
+                matchHistory();
+            } else if (command.toLowerCase().matches("help")) {
+                help();
+                continue;
+            } else if (command.toLowerCase().matches("exit")) {
+                MainMenu.saveAccounts();
+                System.exit(0);
+            } else if (command.toLowerCase().matches("logout"))
+                return;
+            command = command.toLowerCase();
+            matcher = enterPat.matcher(command);
+            if (matcher.find()) {
+                if (matcher.group("entry").matches("collection"))
+                    collection.menu();
+                else if (matcher.group("entry").matches("shop"))
+                    Shop.menu(account);
+                else if (matcher.group("entry").matches("battle")) {
+                    if (collection.validDeck()) {
+                        Battle.menu(account);
+                    }
+                }
+            }
+        }
+    }
+
+}
